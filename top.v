@@ -91,13 +91,26 @@ always@(posedge clk)begin
     //由红色变为蓝色，颜色值平移
 
 end
-always@(clk_240ms) begin 
-    vga_blue_st=vga_blue_st_1[11:0];#40;
-    vga_blue_st=vga_blue_st_2[11:0];#40;
-    vga_blue_st=vga_blue_st_3[11:0];#40;
-    vga_blue_st=vga_blue_st_4[11:0];#40;
-    vga_blue_st=vga_blue_st_5[11:0];#40;
-    vga_blue_st=vga_blue_st_6[11:0];#40;
+reg [31:0]ipcnt_blue_st;
+reg ip_blue_st;
+always @(posedge clk) begin
+    if(ipcnt_blue_st == 2_500_000) begin  // 40ms*100M=4M，由于计数器只有3位，所以这里实例只能计数到500k，所以选用了40ms/5=8ms，即2.5*100k
+        ipcnt_blue_st <= 0;
+        ip_blue_st <= ip_blue_st + 1;
+        if(ip_blue_st == 6) ip_blue_st <= 0;  // 6个ip核循环
+    end
+    else ipcnt_blue_st <= ipcnt_blue_st + 1;
+end
+
+always @(posedge clk) begin
+    case(ip_blue_st)
+        0: vga_blue_st <= vga_blue_st_1[11:0];
+        1: vga_blue_st <= vga_blue_st_2[11:0];
+        2: vga_blue_st <= vga_blue_st_3[11:0];
+        3: vga_blue_st <= vga_blue_st_4[11:0];
+        4: vga_blue_st <= vga_blue_st_5[11:0];
+        5: vga_blue_st <= vga_blue_st_6[11:0];
+    endcase
 end
 
 endmodule
