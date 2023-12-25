@@ -55,12 +55,7 @@ blue_static_3 blue_st_3f(.clka(clk),.addra(blue_st),.douta(vga_blue_st_3));
 // reg [10:0]blue_st_4;
 wire [11:0]vga_blue_st_4;
 blue_static_4 blue_st_4f(.clka(clk),.addra(blue_st),.douta(vga_blue_st_4));
-// reg [10:0]blue_st_5;
-wire [11:0]vga_blue_st_5;
-blue_static_5 blue_st_5f(.clka(clk),.addra(blue_st),.douta(vga_blue_st_5));
-// reg [10:0]blue_st_6;
-wire [11:0]vga_blue_st_6;
-blue_static_6 blue_st_6f(.clka(clk),.addra(blue_st),.douta(vga_blue_st_6));
+
 
 
 //给照片地址赋值(判断框里面是即将显示的范围，尺寸是551*401，就填550+400，？后面的值是coe文件的像素点的地址0-size-1)
@@ -92,24 +87,38 @@ always@(posedge clk)begin
 
 end
 reg [31:0]ipcnt_blue_st;
-reg ip_blue_st;
+reg [4:0]ip_blue_st;
 always @(posedge clk) begin
-    if(ipcnt_blue_st == 2_500_000) begin  // 40ms*100M=4M，由于计数器只有3位，所以这里实例只能计数到500k，所以选用了40ms/5=8ms，即2.5*100k
+    if(ipcnt_blue_st == 2_000_000) begin  // 40ms*100M=4M，由于计数器只有3位，所以这里实例只能计数到500k，所以选用了40ms/5=8ms，即2.5*100k
         ipcnt_blue_st <= 0;
         ip_blue_st <= ip_blue_st + 1;
-        if(ip_blue_st == 6) ip_blue_st <= 0;  // 6个ip核循环
+        if(ip_blue_st == 15) begin
+        ip_blue_st <= 0;  // 6个ip核循环
+        end
     end
-    else ipcnt_blue_st <= ipcnt_blue_st + 1;
+    else begin
+        ipcnt_blue_st <= ipcnt_blue_st + 1;
+    end
 end
 
 always @(posedge clk) begin
     case(ip_blue_st)
         0: vga_blue_st <= vga_blue_st_1[11:0];
-        1: vga_blue_st <= vga_blue_st_2[11:0];
-        2: vga_blue_st <= vga_blue_st_3[11:0];
-        3: vga_blue_st <= vga_blue_st_4[11:0];
-        4: vga_blue_st <= vga_blue_st_5[11:0];
-        5: vga_blue_st <= vga_blue_st_6[11:0];
+        1: vga_blue_st <= vga_blue_st_1[11:0];
+        2: vga_blue_st <= vga_blue_st_1[11:0];
+        3: vga_blue_st <= vga_blue_st_1[11:0];
+        4: vga_blue_st <= vga_blue_st_2[11:0];
+        5: vga_blue_st <= vga_blue_st_2[11:0];
+        6: vga_blue_st <= vga_blue_st_2[11:0];
+        7: vga_blue_st <= vga_blue_st_2[11:0];
+        8: vga_blue_st <= vga_blue_st_3[11:0];
+        9: vga_blue_st <= vga_blue_st_3[11:0];
+        10: vga_blue_st <= vga_blue_st_3[11:0];
+        11: vga_blue_st <= vga_blue_st_3[11:0];
+        12: vga_blue_st <= vga_blue_st_4[11:0];
+        13: vga_blue_st <= vga_blue_st_4[11:0];
+        14: vga_blue_st <= vga_blue_st_4[11:0];
+        15: vga_blue_st <= vga_blue_st_4[11:0];
     endcase
 end
 
