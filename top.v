@@ -46,15 +46,15 @@ reg [11:0]vga_blue_st;
 reg [10:0]blue_st;
 wire [11:0]vga_blue_st_1;
 blue_static_1 blue_st_1f(.clka(clk),.addra(blue_st),.douta(vga_blue_st_1));
-// reg [10:0]blue_st_2;
 wire [11:0]vga_blue_st_2;
-blue_static_2 blue_st_2f(.clka(clk),.addra(blue_st),.douta(vga_blue_st_2));
-// reg [10:0]blue_st_3;
+blue_static_5 blue_st_2f(.clka(clk),.addra(blue_st),.douta(vga_blue_st_2));
 wire [11:0]vga_blue_st_3;
-blue_static_3 blue_st_3f(.clka(clk),.addra(blue_st),.douta(vga_blue_st_3));
-// reg [10:0]blue_st_4;
+blue_static_9 blue_st_3f(.clka(clk),.addra(blue_st),.douta(vga_blue_st_3));
 wire [11:0]vga_blue_st_4;
-blue_static_4 blue_st_4f(.clka(clk),.addra(blue_st),.douta(vga_blue_st_4));
+blue_static_13 blue_st_4f(.clka(clk),.addra(blue_st),.douta(vga_blue_st_4));
+reg [11:0]vga_slim_st;
+reg [10:0]slim_st;
+
 
 
 
@@ -76,6 +76,7 @@ always@(posedge clk)begin
     //3.树
     //4.小石块
     //5.怪物
+
     //6.蓝色小人（筛选静态运动及删除背景色）
     if(col_addr_x>=x_blue&&col_addr_x<=x_blue+46&&row_addr_y>=y_blue&&row_addr_y<=y_blue+40)begin
         if(vga_blue_st[11:0]!=4*256+2*16+8)begin
@@ -86,18 +87,23 @@ always@(posedge clk)begin
     //由红色变为蓝色，颜色值平移
 
 end
-reg [31:0]ipcnt_blue_st;
+reg [31:0]ipcnt;
 reg [4:0]ip_blue_st;
+reg [5:0]ip_slim_st;
 always @(posedge clk) begin
-    if(ipcnt_blue_st == 2_000_000) begin  // 40ms*100M=4M，由于计数器只有3位，所以这里实例只能计数到500k，所以选用了40ms/5=8ms，即2.5*100k
-        ipcnt_blue_st <= 0;
+    if(ipcnt == 2_000_000) begin  // 40ms*100M=4M，由于计数器只有3位，所以这里实例只能计数到500k，所以选用了40ms/5=8ms，即2.5*100k
+        ipcnt <= 0;
         ip_blue_st <= ip_blue_st + 1;
+        ip_slim_st <= ip_slim_st + 1;
         if(ip_blue_st == 15) begin
         ip_blue_st <= 0;  // 6个ip核循环
         end
+        if(ip_blue_st == 38) begin
+        ip_slim_st <= 0;  // 39个ip核循环
+        end
     end
     else begin
-        ipcnt_blue_st <= ipcnt_blue_st + 1;
+        ipcnt <= ipcnt + 1;
     end
 end
 
@@ -120,6 +126,10 @@ always @(posedge clk) begin
         14: vga_blue_st <= vga_blue_st_4[11:0];
         15: vga_blue_st <= vga_blue_st_4[11:0];
     endcase
+    case(ip_slim_st)
+        0:vga
+    end
+
 end
 
 endmodule
