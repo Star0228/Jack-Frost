@@ -1,16 +1,14 @@
-wire [11:0]vga_snowflake_1;
-snowflake_1 snowflake_1f(.clka(clk),.addra(snowflake1),.douta(vga_snowflake1));
-wire [11:0]vga_snowflake_3;
-snowflake_3 snowflake_3f(.clka(clk),.addra(snowflake1),.douta(vga_snowflake_3));
-wire [11:0]vga_snowflake_5;
-snowflake_5 snowflake_5f(.clka(clk),.addra(snowflake1),.douta(vga_snowflake_5));
-wire [11:0]vga_snowflake_7;
-snowflake_7 snowflake_7f(.clka(clk),.addra(snowflake1),.douta(vga_snowflake_7));
-wire [11:0]vga_snowflake_9;
-snowflake_9 snowflake_9f(.clka(clk),.addra(snowflake1),.douta(vga_snowflake_9));
-wire [11:0]vga_snowflake11;
-snowflake_11 snowflake_11f(.clka(clk),.addra(snowflake1),.douta(vga_snowflake_11));
-wire [11:0]vga_snowflake13;
-snowflake_13 snowflake_13f(.clka(clk),.addra(snowflake1),.douta(vga_snowflake_13));
-wire [11:0]vga_snowflake15;
-snowflake_15 snowflake_15f(.clka(clk),.addra(snowflake1),.douta(vga_snowflake_15));
+ground_1 
+ground_1 
+ground_2 
+ground_3 
+ground_3 
+ground_3 
+ground_3 
+ground_1 
+ground_1 
+ground_1 
+ground_2 
+ground_2 
+ground_1 
+ground_3 
