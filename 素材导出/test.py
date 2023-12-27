@@ -52,4 +52,4 @@ for filename in os.listdir(folder_path):
         bmp_to_coe(full_path)
         
 # 使用方法: 指定文件夹路径和前缀字符串
-rename_files_in_directory("D:\\CS\\Logic-studying\\Jack-Frost\\素材导出\\shapes\\方块冰冻", "ground_fz_")
+rename_files_in_directory("D:\\CS\\Logic-studying\\Jack-Frost\\素材导出\\shapes\\方块冰冻", "ground_")
