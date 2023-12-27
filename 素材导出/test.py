@@ -45,11 +45,11 @@ def rename_files_in_directory(directory_path, prefix_str):
 
 
 
-folder_path = 'D:\\CS\\Logic-studying\\Jack-Frost\\素材导出\\shapes\\地面'
+folder_path = 'D:\\CS\\Logic-studying\\Jack-Frost\\素材导出\\shapes\\方块冰冻'
 for filename in os.listdir(folder_path):
     if filename.endswith('.bmp'):
         full_path = os.path.join(folder_path, filename)
         bmp_to_coe(full_path)
         
 # 使用方法: 指定文件夹路径和前缀字符串
-rename_files_in_directory("D:\\CS\\Logic-studying\\Jack-Frost\\素材导出\\shapes\\地面", "")
+rename_files_in_directory("D:\\CS\\Logic-studying\\Jack-Frost\\素材导出\\shapes\\方块冰冻", "ground_fz_")

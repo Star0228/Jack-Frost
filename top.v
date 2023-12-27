@@ -10,17 +10,15 @@ module top(
     output [3:0] r,g,b,
     output hs,vs
 );
-//photo's size 551*401
-reg [11:0]vga_data;
-wire [9:0]col_addr_x;
-wire [8:0]row_addr_y;
 //暂未使用>>>>>>>>>>>
 wire clk_total;
 reg isFinish;
 reg [31:0]score;
+reg [3:0]health;
 initial begin
     isFinish=0;
     score=32'b0;
+    health=4'b0000;
 end
 wire [31:0]clk_240ms;
 clk_240ms clkm1(.clk(clk),.clk_240ms(clk_240ms));
@@ -30,14 +28,21 @@ reg [31:0] clkdiv;
 always@(posedge clk)begin
 	clkdiv <= clkdiv+1'b1;
 end
+//photo's size 551*401
+reg [11:0]vga_data;
+wire [9:0]col_addr_x;
+wire [8:0]row_addr_y;
 vgac v1(.vga_clk(clkdiv[1]),.clrn(1'b1),.d_in(vga_data),.row_addr(row_addr_y),.col_addr(col_addr_x),.hs(hs),.vs(vs),.r(r),.g(g),.b(b));
 //坐标赋值
 //蓝色小人坐标
 reg [9:0]x_blue;
 reg [8:0]y_blue;
+reg [1:0]blue_state;
+//0->static    ,  1->walk,    2->jump, 
 initial begin
     x_blue=10'd0;
     y_blue=9'd0;
+    blue_state=2'd0;
 end
 //怪物1坐标
 reg [9:0]x_slim1;
@@ -129,9 +134,95 @@ initial begin
     x_ground40 = 10'd28;y_ground40 = 9'd322;
     x_ground41 = 10'd56;y_ground41 = 9'd322;
     x_ground42 = 10'd84;y_ground42 = 9'd322;
-
-
 end
+
+///逻辑模块↓↓↓↓↓↓↓↓↓↓
+//第一行是触发信号，逻辑模块实现对触发信号的赋值
+//1.方块变冰
+wire [49:0]bk_touched;//冰冻进行时信号
+reg [49:0]bk_tc_finish;//冰冻完成信号
+initial begin
+    bk_touched<=50'd0;
+    bk_tc_finish<=50'd0;
+end
+dt_block_fz dt_block_fz1(.clk(clk),.x_blue(x_blue),.y_blue(y_blue),.x_ground(x_ground1),.y_ground(y_ground1),.touched(bk_touched[0]));
+dt_block_fz dt_block_fz2(.clk(clk),.x_blue(x_blue),.y_blue(y_blue),.x_ground(x_ground2),.y_ground(y_ground2),.touched(bk_touched[1]));
+dt_block_fz dt_block_fz3(.clk(clk),.x_blue(x_blue),.y_blue(y_blue),.x_ground(x_ground3),.y_ground(y_ground3),.touched(bk_touched[2]));
+dt_block_fz dt_block_fz4(.clk(clk),.x_blue(x_blue),.y_blue(y_blue),.x_ground(x_ground4),.y_ground(y_ground4),.touched(bk_touched[3]));
+dt_block_fz dt_block_fz5(.clk(clk),.x_blue(x_blue),.y_blue(y_blue),.x_ground(x_ground5),.y_ground(y_ground5),.touched(bk_touched[4]));
+dt_block_fz dt_block_fz6(.clk(clk),.x_blue(x_blue),.y_blue(y_blue),.x_ground(x_ground6),.y_ground(y_ground6),.touched(bk_touched[5]));
+dt_block_fz dt_block_fz7(.clk(clk),.x_blue(x_blue),.y_blue(y_blue),.x_ground(x_ground7),.y_ground(y_ground7),.touched(bk_touched[6]));
+dt_block_fz dt_block_fz8(.clk(clk),.x_blue(x_blue),.y_blue(y_blue),.x_ground(x_ground8),.y_ground(y_ground8),.touched(bk_touched[7]));
+dt_block_fz dt_block_fz9(.clk(clk),.x_blue(x_blue),.y_blue(y_blue),.x_ground(x_ground9),.y_ground(y_ground9),.touched(bk_touched[8]));
+dt_block_fz dt_block_fz10(.clk(clk),.x_blue(x_blue),.y_blue(y_blue),.x_ground(x_ground10),.y_ground(y_ground10),.touched(bk_touched[9]));
+dt_block_fz dt_block_fz11(.clk(clk),.x_blue(x_blue),.y_blue(y_blue),.x_ground(x_ground11),.y_ground(y_ground11),.touched(bk_touched[10]));
+dt_block_fz dt_block_fz12(.clk(clk),.x_blue(x_blue),.y_blue(y_blue),.x_ground(x_ground12),.y_ground(y_ground12),.touched(bk_touched[11]));
+dt_block_fz dt_block_fz13(.clk(clk),.x_blue(x_blue),.y_blue(y_blue),.x_ground(x_ground13),.y_ground(y_ground13),.touched(bk_touched[12]));
+dt_block_fz dt_block_fz14(.clk(clk),.x_blue(x_blue),.y_blue(y_blue),.x_ground(x_ground14),.y_ground(y_ground14),.touched(bk_touched[13]));
+dt_block_fz dt_block_fz15(.clk(clk),.x_blue(x_blue),.y_blue(y_blue),.x_ground(x_ground15),.y_ground(y_ground15),.touched(bk_touched[14]));
+dt_block_fz dt_block_fz16(.clk(clk),.x_blue(x_blue),.y_blue(y_blue),.x_ground(x_ground16),.y_ground(y_ground16),.touched(bk_touched[15]));
+dt_block_fz dt_block_fz17(.clk(clk),.x_blue(x_blue),.y_blue(y_blue),.x_ground(x_ground17),.y_ground(y_ground17),.touched(bk_touched[16]));
+dt_block_fz dt_block_fz18(.clk(clk),.x_blue(x_blue),.y_blue(y_blue),.x_ground(x_ground18),.y_ground(y_ground18),.touched(bk_touched[17]));
+dt_block_fz dt_block_fz19(.clk(clk),.x_blue(x_blue),.y_blue(y_blue),.x_ground(x_ground19),.y_ground(y_ground19),.touched(bk_touched[18]));
+dt_block_fz dt_block_fz20(.clk(clk),.x_blue(x_blue),.y_blue(y_blue),.x_ground(x_ground20),.y_ground(y_ground20),.touched(bk_touched[19]));
+dt_block_fz dt_block_fz21(.clk(clk),.x_blue(x_blue),.y_blue(y_blue),.x_ground(x_ground21),.y_ground(y_ground21),.touched(bk_touched[20]));
+dt_block_fz dt_block_fz22(.clk(clk),.x_blue(x_blue),.y_blue(y_blue),.x_ground(x_ground22),.y_ground(y_ground22),.touched(bk_touched[21]));
+dt_block_fz dt_block_fz23(.clk(clk),.x_blue(x_blue),.y_blue(y_blue),.x_ground(x_ground23),.y_ground(y_ground23),.touched(bk_touched[22]));
+dt_block_fz dt_block_fz24(.clk(clk),.x_blue(x_blue),.y_blue(y_blue),.x_ground(x_ground24),.y_ground(y_ground24),.touched(bk_touched[23]));
+dt_block_fz dt_block_fz25(.clk(clk),.x_blue(x_blue),.y_blue(y_blue),.x_ground(x_ground25),.y_ground(y_ground25),.touched(bk_touched[24]));
+dt_block_fz dt_block_fz26(.clk(clk),.x_blue(x_blue),.y_blue(y_blue),.x_ground(x_ground26),.y_ground(y_ground26),.touched(bk_touched[25]));
+dt_block_fz dt_block_fz27(.clk(clk),.x_blue(x_blue),.y_blue(y_blue),.x_ground(x_ground27),.y_ground(y_ground27),.touched(bk_touched[26]));
+dt_block_fz dt_block_fz28(.clk(clk),.x_blue(x_blue),.y_blue(y_blue),.x_ground(x_ground28),.y_ground(y_ground28),.touched(bk_touched[27]));
+dt_block_fz dt_block_fz29(.clk(clk),.x_blue(x_blue),.y_blue(y_blue),.x_ground(x_ground29),.y_ground(y_ground29),.touched(bk_touched[28]));
+dt_block_fz dt_block_fz30(.clk(clk),.x_blue(x_blue),.y_blue(y_blue),.x_ground(x_ground30),.y_ground(y_ground30),.touched(bk_touched[29]));
+dt_block_fz dt_block_fz31(.clk(clk),.x_blue(x_blue),.y_blue(y_blue),.x_ground(x_ground31),.y_ground(y_ground31),.touched(bk_touched[30]));
+dt_block_fz dt_block_fz32(.clk(clk),.x_blue(x_blue),.y_blue(y_blue),.x_ground(x_ground32),.y_ground(y_ground32),.touched(bk_touched[31]));
+dt_block_fz dt_block_fz33(.clk(clk),.x_blue(x_blue),.y_blue(y_blue),.x_ground(x_ground33),.y_ground(y_ground33),.touched(bk_touched[32]));
+dt_block_fz dt_block_fz34(.clk(clk),.x_blue(x_blue),.y_blue(y_blue),.x_ground(x_ground34),.y_ground(y_ground34),.touched(bk_touched[33]));
+dt_block_fz dt_block_fz35(.clk(clk),.x_blue(x_blue),.y_blue(y_blue),.x_ground(x_ground35),.y_ground(y_ground35),.touched(bk_touched[34]));
+dt_block_fz dt_block_fz36(.clk(clk),.x_blue(x_blue),.y_blue(y_blue),.x_ground(x_ground36),.y_ground(y_ground36),.touched(bk_touched[35]));
+dt_block_fz dt_block_fz37(.clk(clk),.x_blue(x_blue),.y_blue(y_blue),.x_ground(x_ground37),.y_ground(y_ground37),.touched(bk_touched[36]));
+dt_block_fz dt_block_fz38(.clk(clk),.x_blue(x_blue),.y_blue(y_blue),.x_ground(x_ground38),.y_ground(y_ground38),.touched(bk_touched[37]));
+dt_block_fz dt_block_fz39(.clk(clk),.x_blue(x_blue),.y_blue(y_blue),.x_ground(x_ground39),.y_ground(y_ground39),.touched(bk_touched[38]));
+dt_block_fz dt_block_fz40(.clk(clk),.x_blue(x_blue),.y_blue(y_blue),.x_ground(x_ground40),.y_ground(y_ground40),.touched(bk_touched[39]));
+dt_block_fz dt_block_fz41(.clk(clk),.x_blue(x_blue),.y_blue(y_blue),.x_ground(x_ground41),.y_ground(y_ground41),.touched(bk_touched[40]));
+dt_block_fz dt_block_fz42(.clk(clk),.x_blue(x_blue),.y_blue(y_blue),.x_ground(x_ground42),.y_ground(y_ground42),.touched(bk_touched[41]));
+dt_block_fz dt_block_fz43(.clk(clk),.x_blue(x_blue),.y_blue(y_blue),.x_ground(x_ground43),.y_ground(y_ground43),.touched(bk_touched[42]));
+dt_block_fz dt_block_fz44(.clk(clk),.x_blue(x_blue),.y_blue(y_blue),.x_ground(x_ground44),.y_ground(y_ground44),.touched(bk_touched[43]));
+dt_block_fz dt_block_fz45(.clk(clk),.x_blue(x_blue),.y_blue(y_blue),.x_ground(x_ground45),.y_ground(y_ground45),.touched(bk_touched[44]));
+dt_block_fz dt_block_fz46(.clk(clk),.x_blue(x_blue),.y_blue(y_blue),.x_ground(x_ground46),.y_ground(y_ground46),.touched(bk_touched[45]));
+dt_block_fz dt_block_fz47(.clk(clk),.x_blue(x_blue),.y_blue(y_blue),.x_ground(x_ground47),.y_ground(y_ground47),.touched(bk_touched[46]));
+dt_block_fz dt_block_fz48(.clk(clk),.x_blue(x_blue),.y_blue(y_blue),.x_ground(x_ground48),.y_ground(y_ground48),.touched(bk_touched[47]));
+dt_block_fz dt_block_fz49(.clk(clk),.x_blue(x_blue),.y_blue(y_blue),.x_ground(x_ground49),.y_ground(y_ground49),.touched(bk_touched[48]));
+dt_block_fz dt_block_fz50(.clk(clk),.x_blue(x_blue),.y_blue(y_blue),.x_ground(x_ground50),.y_ground(y_ground50),.touched(bk_touched[49]));
+//2.小蓝冻结slim
+wire fz_slim1,fz_slim2;
+reg fz_sm1_fini,fz_sm2_fini;
+initial begin
+    fz_slim1<=0;
+    fz_sm1_fini<=0;
+    fz_slim2<=0;
+    fz_sm2_fini<=0;
+end
+dt_slim_fz dt_slim_fz1(.clk(clk),.x_blue(x_blue),.y_blue(y_blue),.x_slim(x_slim1),.y_slim(y_slim1),.frozen(fz_slim1));
+dt_slim_fz dt_slim_fz2(.clk(clk),.x_blue(x_blue),.y_blue(y_blue),.x_slim(x_slim2),.y_slim(y_slim2),.frozen(fz_slim2));
+//3.小蓝触碰slim会受伤
+//假定9个slim,寄存器>0==主角受伤,暂无研发受伤后无敌时间(有个小想法：我让10位的寄存器最高位判断是不是在无敌状态)
+wire [9:0]bk_slim;
+initial begin
+    bk_slim<=10'd0;
+end
+dt_slim_bk dt_slim_bk1(.clk(clk),.x_blue(x_blue),.y_blue(y_blue),.x_slim(x_slim1),.y_slim(y_slim1),.isfrozen(fz_slim1),.broken(bk_slim[0]));
+dt_slim_bk dt_slim_bk2(.clk(clk),.x_blue(x_blue),.y_blue(y_blue),.x_slim(x_slim2),.y_slim(y_slim2),.isfrozen(fz_slim2),.broken(bk_slim[1]));
+always@(posedge clk)begin
+    if(bk_slim)begin
+        health<=health-4'd1;
+        bk_slim[9]<=1'b1;
+        #3000;
+        bk_slim[9]<=1'b0;
+    end
+end
+///逻辑模块↑↑↑↑↑↑↑↑↑↑
 
 //地址赋值+各自vga输出
 //单张图片用wire，连续的要寄存器
@@ -150,6 +241,12 @@ reg [13:0]slim1_st;
 //怪物2静止图片的地址寄存器和vga输出
 reg [11:0]vga_slim2_st;
 reg [13:0]slim2_st;
+//怪物1被冰冻的图片的地址寄存器和vga输出
+reg [11:0]vga_slim1_fz;
+reg [13:0]slim1_fz;
+//怪物2被冰冻的图片的地址寄存器和vga输出
+reg [11:0]vga_slim2_fz;
+reg [13:0]slim2_fz;
 //雪花的地址寄存器和vga输出
 reg [11:0]vga_snowf1,vga_snowf1,vga_snowf2,vga_snowf3,vga_snowf4,vga_snowf5,vga_snowf6,vga_snowf7,vga_snowf8,vga_snowf9,vga_snowf10,vga_snowf11,vga_snowf12,vga_snowf13,vga_snowf14,vga_snowf15;
 reg [10:0]snowf1,snowf2,snowf3,snowf4,snowf5,snowf6,snowf7,snowf8,snowf9,snowf10,snowf11,snowf12,snowf13,snowf14,snowf15;
@@ -169,6 +266,10 @@ always @(posedge clk)begin
     slim1_st<= (col_addr_x>=x_slim1&&col_addr_x<=x_slim1+61&&row_addr_y>=y_slim1&&row_addr_y<=y_slim1+35)?(row_addr_y-y_slim1)*62+col_addr_x-x_slim1:0;
     //怪物2静止62*36（x_slim2,y_slim2）图片自带028的背景色
     slim2_st<= (col_addr_x>=x_slim2&&col_addr_x<=x_slim2+61&&row_addr_y>=y_slim2&&row_addr_y<=y_slim2+35)?(row_addr_y-y_slim2)*62+col_addr_x-x_slim2:0;
+    //怪物1冰冻50*51（x_slim1,y_slim1）图片自带028的背景色
+    slim1_fz<= (col_addr_x>=x_slim1&&col_addr_x<=x_slim1+49&&row_addr_y>=y_slim1&&row_addr_y<=y_slim1+50)?(row_addr_y-y_slim1)*50+col_addr_x-x_slim1:0;
+    //怪物2冰冻50*51（x_slim2,y_slim2）图片自带028的背景色
+    slim2_fz<= (col_addr_x>=x_slim2&&col_addr_x<=x_slim2+49&&row_addr_y>=y_slim2&&row_addr_y<=y_slim2+50)?(row_addr_y-y_slim2)*50+col_addr_x-x_slim2:0;
     //雪花1图片24*26（x_snowf1,y_snowf1）图片自带028的背景色
     snowf1<= (col_addr_x>=x_snowf1&&col_addr_x<=x_snowf1+23&&row_addr_y>=y_snowf1&&row_addr_y<=y_snowf1+25)?(row_addr_y-y_snowf1)*24+col_addr_x-x_snowf1:0;
     snowf2<= (col_addr_x>=x_snowf2&&col_addr_x<=x_snowf2+23&&row_addr_y>=y_snowf2&&row_addr_y<=y_snowf2+25)?(row_addr_y-y_snowf2)*24+col_addr_x-x_snowf2:0;
@@ -185,62 +286,61 @@ always @(posedge clk)begin
     snowf13<= (col_addr_x>=x_snowf13&&col_addr_x<=x_snowf13+23&&row_addr_y>=y_snowf13&&row_addr_y<=y_snowf13+25)?(row_addr_y-y_snowf13)*24+col_addr_x-x_snowf13:0;
     snowf14<= (col_addr_x>=x_snowf14&&col_addr_x<=x_snowf14+23&&row_addr_y>=y_snowf14&&row_addr_y<=y_snowf14+25)?(row_addr_y-y_snowf14)*24+col_addr_x-x_snowf14:0;
     snowf15<= (col_addr_x>=x_snowf15&&col_addr_x<=x_snowf15+23&&row_addr_y>=y_snowf15&&row_addr_y<=y_snowf15+25)?(row_addr_y-y_snowf15)*24+col_addr_x-x_snowf15:0;
-    //地面方块28*27（x_ground1,y_ground1）图片自带028的背景色
-    ground1<= (col_addr_x>=x_ground1&&col_addr_x<=x_ground1+27&&row_addr_y>=y_ground1&&row_addr_y<=y_ground1+26)?(row_addr_y-y_ground1)*28+col_addr_x-x_ground1:0;
-    ground2<= (col_addr_x>=x_ground2&&col_addr_x<=x_ground2+27&&row_addr_y>=y_ground2&&row_addr_y<=y_ground2+26)?(row_addr_y-y_ground2)*28+col_addr_x-x_ground2:0;
-    ground3<= (col_addr_x>=x_ground3&&col_addr_x<=x_ground3+27&&row_addr_y>=y_ground3&&row_addr_y<=y_ground3+26)?(row_addr_y-y_ground3)*28+col_addr_x-x_ground3:0;
-    ground4<= (col_addr_x>=x_ground4&&col_addr_x<=x_ground4+27&&row_addr_y>=y_ground4&&row_addr_y<=y_ground4+26)?(row_addr_y-y_ground4)*28+col_addr_x-x_ground4:0;
-    ground5<= (col_addr_x>=x_ground5&&col_addr_x<=x_ground5+27&&row_addr_y>=y_ground5&&row_addr_y<=y_ground5+26)?(row_addr_y-y_ground5)*28+col_addr_x-x_ground5:0;
-    ground6<= (col_addr_x>=x_ground6&&col_addr_x<=x_ground6+27&&row_addr_y>=y_ground6&&row_addr_y<=y_ground6+26)?(row_addr_y-y_ground6)*28+col_addr_x-x_ground6:0;
-    ground7<= (col_addr_x>=x_ground7&&col_addr_x<=x_ground7+27&&row_addr_y>=y_ground7&&row_addr_y<=y_ground7+26)?(row_addr_y-y_ground7)*28+col_addr_x-x_ground7:0;
-    ground8<= (col_addr_x>=x_ground8&&col_addr_x<=x_ground8+27&&row_addr_y>=y_ground8&&row_addr_y<=y_ground8+26)?(row_addr_y-y_ground8)*28+col_addr_x-x_ground8:0;
-    ground9<= (col_addr_x>=x_ground9&&col_addr_x<=x_ground9+27&&row_addr_y>=y_ground9&&row_addr_y<=y_ground9+26)?(row_addr_y-y_ground9)*28+col_addr_x-x_ground9:0;
-    ground10<= (col_addr_x>=x_ground10&&col_addr_x<=x_ground10+27&&row_addr_y>=y_ground10&&row_addr_y<=y_ground10+26)?(row_addr_y-y_ground10)*28+col_addr_x-x_ground10:0;
-    ground11<= (col_addr_x>=x_ground11&&col_addr_x<=x_ground11+27&&row_addr_y>=y_ground11&&row_addr_y<=y_ground11+26)?(row_addr_y-y_ground11)*28+col_addr_x-x_ground11:0;
-    ground12<= (col_addr_x>=x_ground12&&col_addr_x<=x_ground12+27&&row_addr_y>=y_ground12&&row_addr_y<=y_ground12+26)?(row_addr_y-y_ground12)*28+col_addr_x-x_ground12:0;
-    ground13<= (col_addr_x>=x_ground13&&col_addr_x<=x_ground13+27&&row_addr_y>=y_ground13&&row_addr_y<=y_ground13+26)?(row_addr_y-y_ground13)*28+col_addr_x-x_ground13:0;
-    ground14<= (col_addr_x>=x_ground14&&col_addr_x<=x_ground14+27&&row_addr_y>=y_ground14&&row_addr_y<=y_ground14+26)?(row_addr_y-y_ground14)*28+col_addr_x-x_ground14:0;
-    ground15<= (col_addr_x>=x_ground15&&col_addr_x<=x_ground15+27&&row_addr_y>=y_ground15&&row_addr_y<=y_ground15+26)?(row_addr_y-y_ground15)*28+col_addr_x-x_ground15:0;
-    ground16<= (col_addr_x>=x_ground16&&col_addr_x<=x_ground16+27&&row_addr_y>=y_ground16&&row_addr_y<=y_ground16+26)?(row_addr_y-y_ground16)*28+col_addr_x-x_ground16:0;
-    ground17<= (col_addr_x>=x_ground17&&col_addr_x<=x_ground17+27&&row_addr_y>=y_ground17&&row_addr_y<=y_ground17+26)?(row_addr_y-y_ground17)*28+col_addr_x-x_ground17:0;
-    ground18<= (col_addr_x>=x_ground18&&col_addr_x<=x_ground18+27&&row_addr_y>=y_ground18&&row_addr_y<=y_ground18+26)?(row_addr_y-y_ground18)*28+col_addr_x-x_ground18:0;
-    ground19<= (col_addr_x>=x_ground19&&col_addr_x<=x_ground19+27&&row_addr_y>=y_ground19&&row_addr_y<=y_ground19+26)?(row_addr_y-y_ground19)*28+col_addr_x-x_ground19:0;
-    ground20<= (col_addr_x>=x_ground20&&col_addr_x<=x_ground20+27&&row_addr_y>=y_ground20&&row_addr_y<=y_ground20+26)?(row_addr_y-y_ground20)*28+col_addr_x-x_ground20:0;
-    ground21<= (col_addr_x>=x_ground21&&col_addr_x<=x_ground21+27&&row_addr_y>=y_ground21&&row_addr_y<=y_ground21+26)?(row_addr_y-y_ground21)*28+col_addr_x-x_ground21:0;
-    ground22<= (col_addr_x>=x_ground22&&col_addr_x<=x_ground22+27&&row_addr_y>=y_ground22&&row_addr_y<=y_ground22+26)?(row_addr_y-y_ground22)*28+col_addr_x-x_ground22:0;
-    ground23<= (col_addr_x>=x_ground23&&col_addr_x<=x_ground23+27&&row_addr_y>=y_ground23&&row_addr_y<=y_ground23+26)?(row_addr_y-y_ground23)*28+col_addr_x-x_ground23:0;
-    ground24<= (col_addr_x>=x_ground24&&col_addr_x<=x_ground24+27&&row_addr_y>=y_ground24&&row_addr_y<=y_ground24+26)?(row_addr_y-y_ground24)*28+col_addr_x-x_ground24:0;
-    ground25<= (col_addr_x>=x_ground25&&col_addr_x<=x_ground25+27&&row_addr_y>=y_ground25&&row_addr_y<=y_ground25+26)?(row_addr_y-y_ground25)*28+col_addr_x-x_ground25:0;
-    ground26<= (col_addr_x>=x_ground26&&col_addr_x<=x_ground26+27&&row_addr_y>=y_ground26&&row_addr_y<=y_ground26+26)?(row_addr_y-y_ground26)*28+col_addr_x-x_ground26:0;
-    ground27<= (col_addr_x>=x_ground27&&col_addr_x<=x_ground27+27&&row_addr_y>=y_ground27&&row_addr_y<=y_ground27+26)?(row_addr_y-y_ground27)*28+col_addr_x-x_ground27:0;
-    ground28<= (col_addr_x>=x_ground28&&col_addr_x<=x_ground28+27&&row_addr_y>=y_ground28&&row_addr_y<=y_ground28+26)?(row_addr_y-y_ground28)*28+col_addr_x-x_ground28:0;
-    ground29<= (col_addr_x>=x_ground29&&col_addr_x<=x_ground29+27&&row_addr_y>=y_ground29&&row_addr_y<=y_ground29+26)?(row_addr_y-y_ground29)*28+col_addr_x-x_ground29:0;
-    ground30<= (col_addr_x>=x_ground30&&col_addr_x<=x_ground30+27&&row_addr_y>=y_ground30&&row_addr_y<=y_ground30+26)?(row_addr_y-y_ground30)*28+col_addr_x-x_ground30:0;
-    ground31<= (col_addr_x>=x_ground31&&col_addr_x<=x_ground31+27&&row_addr_y>=y_ground31&&row_addr_y<=y_ground31+26)?(row_addr_y-y_ground31)*28+col_addr_x-x_ground31:0;
-    ground32<= (col_addr_x>=x_ground32&&col_addr_x<=x_ground32+27&&row_addr_y>=y_ground32&&row_addr_y<=y_ground32+26)?(row_addr_y-y_ground32)*28+col_addr_x-x_ground32:0;
-    ground33<= (col_addr_x>=x_ground33&&col_addr_x<=x_ground33+27&&row_addr_y>=y_ground33&&row_addr_y<=y_ground33+26)?(row_addr_y-y_ground33)*28+col_addr_x-x_ground33:0;
-    ground34<= (col_addr_x>=x_ground34&&col_addr_x<=x_ground34+27&&row_addr_y>=y_ground34&&row_addr_y<=y_ground34+26)?(row_addr_y-y_ground34)*28+col_addr_x-x_ground34:0;
-    ground35<= (col_addr_x>=x_ground35&&col_addr_x<=x_ground35+27&&row_addr_y>=y_ground35&&row_addr_y<=y_ground35+26)?(row_addr_y-y_ground35)*28+col_addr_x-x_ground35:0;
-    ground36<= (col_addr_x>=x_ground36&&col_addr_x<=x_ground36+27&&row_addr_y>=y_ground36&&row_addr_y<=y_ground36+26)?(row_addr_y-y_ground36)*28+col_addr_x-x_ground36:0;
-    ground37<= (col_addr_x>=x_ground37&&col_addr_x<=x_ground37+27&&row_addr_y>=y_ground37&&row_addr_y<=y_ground37+26)?(row_addr_y-y_ground37)*28+col_addr_x-x_ground37:0;
-    ground38<= (col_addr_x>=x_ground38&&col_addr_x<=x_ground38+27&&row_addr_y>=y_ground38&&row_addr_y<=y_ground38+26)?(row_addr_y-y_ground38)*28+col_addr_x-x_ground38:0;
-    ground39<= (col_addr_x>=x_ground39&&col_addr_x<=x_ground39+27&&row_addr_y>=y_ground39&&row_addr_y<=y_ground39+26)?(row_addr_y-y_ground39)*28+col_addr_x-x_ground39:0;
-    ground40<= (col_addr_x>=x_ground40&&col_addr_x<=x_ground40+27&&row_addr_y>=y_ground40&&row_addr_y<=y_ground40+26)?(row_addr_y-y_ground40)*28+col_addr_x-x_ground40:0;
-    ground41<= (col_addr_x>=x_ground41&&col_addr_x<=x_ground41+27&&row_addr_y>=y_ground41&&row_addr_y<=y_ground41+26)?(row_addr_y-y_ground41)*28+col_addr_x-x_ground41:0;
-    ground42<= (col_addr_x>=x_ground42&&col_addr_x<=x_ground42+27&&row_addr_y>=y_ground42&&row_addr_y<=y_ground42+26)?(row_addr_y-y_ground42)*28+col_addr_x-x_ground42:0;
-    ground43<= (col_addr_x>=x_ground43&&col_addr_x<=x_ground43+27&&row_addr_y>=y_ground43&&row_addr_y<=y_ground43+26)?(row_addr_y-y_ground43)*28+col_addr_x-x_ground43:0;
-    ground44<= (col_addr_x>=x_ground44&&col_addr_x<=x_ground44+27&&row_addr_y>=y_ground44&&row_addr_y<=y_ground44+26)?(row_addr_y-y_ground44)*28+col_addr_x-x_ground44:0;
-    ground45<= (col_addr_x>=x_ground45&&col_addr_x<=x_ground45+27&&row_addr_y>=y_ground45&&row_addr_y<=y_ground45+26)?(row_addr_y-y_ground45)*28+col_addr_x-x_ground45:0;
-    ground46<= (col_addr_x>=x_ground46&&col_addr_x<=x_ground46+27&&row_addr_y>=y_ground46&&row_addr_y<=y_ground46+26)?(row_addr_y-y_ground46)*28+col_addr_x-x_ground46:0;
-    ground47<= (col_addr_x>=x_ground47&&col_addr_x<=x_ground47+27&&row_addr_y>=y_ground47&&row_addr_y<=y_ground47+26)?(row_addr_y-y_ground47)*28+col_addr_x-x_ground47:0;
-    ground48<= (col_addr_x>=x_ground48&&col_addr_x<=x_ground48+27&&row_addr_y>=y_ground48&&row_addr_y<=y_ground48+26)?(row_addr_y-y_ground48)*28+col_addr_x-x_ground48:0;
-    ground49<= (col_addr_x>=x_ground49&&col_addr_x<=x_ground49+27&&row_addr_y>=y_ground49&&row_addr_y<=y_ground49+26)?(row_addr_y-y_ground49)*28+col_addr_x-x_ground49:0;
-    ground50<= (col_addr_x>=x_ground50&&col_addr_x<=x_ground50+27&&row_addr_y>=y_ground50&&row_addr_y<=y_ground50+26)?(row_addr_y-y_ground50)*28+col_addr_x-x_ground50:0;
+    //地面方块28*42（x_ground1,y_ground1）图片自带028的背景色
+    ground1<= (col_addr_x>=x_ground1&&col_addr_x<=x_ground1+27&&row_addr_y>=y_ground1&&row_addr_y<=y_ground1+41)?(row_addr_y-y_ground1)*28+col_addr_x-x_ground1:0;
+    ground2<= (col_addr_x>=x_ground2&&col_addr_x<=x_ground2+27&&row_addr_y>=y_ground2&&row_addr_y<=y_ground2+41)?(row_addr_y-y_ground2)*28+col_addr_x-x_ground2:0;
+    ground3<= (col_addr_x>=x_ground3&&col_addr_x<=x_ground3+27&&row_addr_y>=y_ground3&&row_addr_y<=y_ground3+41)?(row_addr_y-y_ground3)*28+col_addr_x-x_ground3:0;
+    ground4<= (col_addr_x>=x_ground4&&col_addr_x<=x_ground4+27&&row_addr_y>=y_ground4&&row_addr_y<=y_ground4+41)?(row_addr_y-y_ground4)*28+col_addr_x-x_ground4:0;
+    ground5<= (col_addr_x>=x_ground5&&col_addr_x<=x_ground5+27&&row_addr_y>=y_ground5&&row_addr_y<=y_ground5+41)?(row_addr_y-y_ground5)*28+col_addr_x-x_ground5:0;
+    ground6<= (col_addr_x>=x_ground6&&col_addr_x<=x_ground6+27&&row_addr_y>=y_ground6&&row_addr_y<=y_ground6+41)?(row_addr_y-y_ground6)*28+col_addr_x-x_ground6:0;
+    ground7<= (col_addr_x>=x_ground7&&col_addr_x<=x_ground7+27&&row_addr_y>=y_ground7&&row_addr_y<=y_ground7+41)?(row_addr_y-y_ground7)*28+col_addr_x-x_ground7:0;
+    ground8<= (col_addr_x>=x_ground8&&col_addr_x<=x_ground8+27&&row_addr_y>=y_ground8&&row_addr_y<=y_ground8+41)?(row_addr_y-y_ground8)*28+col_addr_x-x_ground8:0;
+    ground9<= (col_addr_x>=x_ground9&&col_addr_x<=x_ground9+27&&row_addr_y>=y_ground9&&row_addr_y<=y_ground9+41)?(row_addr_y-y_ground9)*28+col_addr_x-x_ground9:0;
+    ground10<= (col_addr_x>=x_ground10&&col_addr_x<=x_ground10+27&&row_addr_y>=y_ground10&&row_addr_y<=y_ground10+41)?(row_addr_y-y_ground10)*28+col_addr_x-x_ground10:0;
+    ground11<= (col_addr_x>=x_ground11&&col_addr_x<=x_ground11+27&&row_addr_y>=y_ground11&&row_addr_y<=y_ground11+41)?(row_addr_y-y_ground11)*28+col_addr_x-x_ground11:0;
+    ground12<= (col_addr_x>=x_ground12&&col_addr_x<=x_ground12+27&&row_addr_y>=y_ground12&&row_addr_y<=y_ground12+41)?(row_addr_y-y_ground12)*28+col_addr_x-x_ground12:0;
+    ground13<= (col_addr_x>=x_ground13&&col_addr_x<=x_ground13+27&&row_addr_y>=y_ground13&&row_addr_y<=y_ground13+41)?(row_addr_y-y_ground13)*28+col_addr_x-x_ground13:0;
+    ground14<= (col_addr_x>=x_ground14&&col_addr_x<=x_ground14+27&&row_addr_y>=y_ground14&&row_addr_y<=y_ground14+41)?(row_addr_y-y_ground14)*28+col_addr_x-x_ground14:0;
+    ground15<= (col_addr_x>=x_ground15&&col_addr_x<=x_ground15+27&&row_addr_y>=y_ground15&&row_addr_y<=y_ground15+41)?(row_addr_y-y_ground15)*28+col_addr_x-x_ground15:0;
+    ground16<= (col_addr_x>=x_ground16&&col_addr_x<=x_ground16+27&&row_addr_y>=y_ground16&&row_addr_y<=y_ground16+41)?(row_addr_y-y_ground16)*28+col_addr_x-x_ground16:0;
+    ground17<= (col_addr_x>=x_ground17&&col_addr_x<=x_ground17+27&&row_addr_y>=y_ground17&&row_addr_y<=y_ground17+41)?(row_addr_y-y_ground17)*28+col_addr_x-x_ground17:0;
+    ground18<= (col_addr_x>=x_ground18&&col_addr_x<=x_ground18+27&&row_addr_y>=y_ground18&&row_addr_y<=y_ground18+41)?(row_addr_y-y_ground18)*28+col_addr_x-x_ground18:0;
+    ground19<= (col_addr_x>=x_ground19&&col_addr_x<=x_ground19+27&&row_addr_y>=y_ground19&&row_addr_y<=y_ground19+41)?(row_addr_y-y_ground19)*28+col_addr_x-x_ground19:0;
+    ground20<= (col_addr_x>=x_ground20&&col_addr_x<=x_ground20+27&&row_addr_y>=y_ground20&&row_addr_y<=y_ground20+41)?(row_addr_y-y_ground20)*28+col_addr_x-x_ground20:0;
+    ground21<= (col_addr_x>=x_ground21&&col_addr_x<=x_ground21+27&&row_addr_y>=y_ground21&&row_addr_y<=y_ground21+41)?(row_addr_y-y_ground21)*28+col_addr_x-x_ground21:0;
+    ground22<= (col_addr_x>=x_ground22&&col_addr_x<=x_ground22+27&&row_addr_y>=y_ground22&&row_addr_y<=y_ground22+41)?(row_addr_y-y_ground22)*28+col_addr_x-x_ground22:0;
+    ground23<= (col_addr_x>=x_ground23&&col_addr_x<=x_ground23+27&&row_addr_y>=y_ground23&&row_addr_y<=y_ground23+41)?(row_addr_y-y_ground23)*28+col_addr_x-x_ground23:0;
+    ground24<= (col_addr_x>=x_ground24&&col_addr_x<=x_ground24+27&&row_addr_y>=y_ground24&&row_addr_y<=y_ground24+41)?(row_addr_y-y_ground24)*28+col_addr_x-x_ground24:0;
+    ground25<= (col_addr_x>=x_ground25&&col_addr_x<=x_ground25+27&&row_addr_y>=y_ground25&&row_addr_y<=y_ground25+41)?(row_addr_y-y_ground25)*28+col_addr_x-x_ground25:0;
+    ground26<= (col_addr_x>=x_ground26&&col_addr_x<=x_ground26+27&&row_addr_y>=y_ground26&&row_addr_y<=y_ground26+41)?(row_addr_y-y_ground26)*28+col_addr_x-x_ground26:0;
+    ground27<= (col_addr_x>=x_ground27&&col_addr_x<=x_ground27+27&&row_addr_y>=y_ground27&&row_addr_y<=y_ground27+41)?(row_addr_y-y_ground27)*28+col_addr_x-x_ground27:0;
+    ground28<= (col_addr_x>=x_ground28&&col_addr_x<=x_ground28+27&&row_addr_y>=y_ground28&&row_addr_y<=y_ground28+41)?(row_addr_y-y_ground28)*28+col_addr_x-x_ground28:0;
+    ground29<= (col_addr_x>=x_ground29&&col_addr_x<=x_ground29+27&&row_addr_y>=y_ground29&&row_addr_y<=y_ground29+41)?(row_addr_y-y_ground29)*28+col_addr_x-x_ground29:0;
+    ground30<= (col_addr_x>=x_ground30&&col_addr_x<=x_ground30+27&&row_addr_y>=y_ground30&&row_addr_y<=y_ground30+41)?(row_addr_y-y_ground30)*28+col_addr_x-x_ground30:0;
+    ground31<= (col_addr_x>=x_ground31&&col_addr_x<=x_ground31+27&&row_addr_y>=y_ground31&&row_addr_y<=y_ground31+41)?(row_addr_y-y_ground31)*28+col_addr_x-x_ground31:0;
+    ground32<= (col_addr_x>=x_ground32&&col_addr_x<=x_ground32+27&&row_addr_y>=y_ground32&&row_addr_y<=y_ground32+41)?(row_addr_y-y_ground32)*28+col_addr_x-x_ground32:0;
+    ground33<= (col_addr_x>=x_ground33&&col_addr_x<=x_ground33+27&&row_addr_y>=y_ground33&&row_addr_y<=y_ground33+41)?(row_addr_y-y_ground33)*28+col_addr_x-x_ground33:0;
+    ground34<= (col_addr_x>=x_ground34&&col_addr_x<=x_ground34+27&&row_addr_y>=y_ground34&&row_addr_y<=y_ground34+41)?(row_addr_y-y_ground34)*28+col_addr_x-x_ground34:0;
+    ground35<= (col_addr_x>=x_ground35&&col_addr_x<=x_ground35+27&&row_addr_y>=y_ground35&&row_addr_y<=y_ground35+41)?(row_addr_y-y_ground35)*28+col_addr_x-x_ground35:0;
+    ground36<= (col_addr_x>=x_ground36&&col_addr_x<=x_ground36+27&&row_addr_y>=y_ground36&&row_addr_y<=y_ground36+41)?(row_addr_y-y_ground36)*28+col_addr_x-x_ground36:0;
+    ground37<= (col_addr_x>=x_ground37&&col_addr_x<=x_ground37+27&&row_addr_y>=y_ground37&&row_addr_y<=y_ground37+41)?(row_addr_y-y_ground37)*28+col_addr_x-x_ground37:0;
+    ground38<= (col_addr_x>=x_ground38&&col_addr_x<=x_ground38+27&&row_addr_y>=y_ground38&&row_addr_y<=y_ground38+41)?(row_addr_y-y_ground38)*28+col_addr_x-x_ground38:0;
+    ground39<= (col_addr_x>=x_ground39&&col_addr_x<=x_ground39+27&&row_addr_y>=y_ground39&&row_addr_y<=y_ground39+41)?(row_addr_y-y_ground39)*28+col_addr_x-x_ground39:0;
+    ground40<= (col_addr_x>=x_ground40&&col_addr_x<=x_ground40+27&&row_addr_y>=y_ground40&&row_addr_y<=y_ground40+41)?(row_addr_y-y_ground40)*28+col_addr_x-x_ground40:0;
+    ground41<= (col_addr_x>=x_ground41&&col_addr_x<=x_ground41+27&&row_addr_y>=y_ground41&&row_addr_y<=y_ground41+41)?(row_addr_y-y_ground41)*28+col_addr_x-x_ground41:0;
+    ground42<= (col_addr_x>=x_ground42&&col_addr_x<=x_ground42+27&&row_addr_y>=y_ground42&&row_addr_y<=y_ground42+41)?(row_addr_y-y_ground42)*28+col_addr_x-x_ground42:0;
+    ground43<= (col_addr_x>=x_ground43&&col_addr_x<=x_ground43+27&&row_addr_y>=y_ground43&&row_addr_y<=y_ground43+41)?(row_addr_y-y_ground43)*28+col_addr_x-x_ground43:0;
+    ground44<= (col_addr_x>=x_ground44&&col_addr_x<=x_ground44+27&&row_addr_y>=y_ground44&&row_addr_y<=y_ground44+41)?(row_addr_y-y_ground44)*28+col_addr_x-x_ground44:0;
+    ground45<= (col_addr_x>=x_ground45&&col_addr_x<=x_ground45+27&&row_addr_y>=y_ground45&&row_addr_y<=y_ground45+41)?(row_addr_y-y_ground45)*28+col_addr_x-x_ground45:0;
+    ground46<= (col_addr_x>=x_ground46&&col_addr_x<=x_ground46+27&&row_addr_y>=y_ground46&&row_addr_y<=y_ground46+41)?(row_addr_y-y_ground46)*28+col_addr_x-x_ground46:0;
+    ground47<= (col_addr_x>=x_ground47&&col_addr_x<=x_ground47+27&&row_addr_y>=y_ground47&&row_addr_y<=y_ground47+41)?(row_addr_y-y_ground47)*28+col_addr_x-x_ground47:0;
+    ground48<= (col_addr_x>=x_ground48&&col_addr_x<=x_ground48+27&&row_addr_y>=y_ground48&&row_addr_y<=y_ground48+41)?(row_addr_y-y_ground48)*28+col_addr_x-x_ground48:0;
+    ground49<= (col_addr_x>=x_ground49&&col_addr_x<=x_ground49+27&&row_addr_y>=y_ground49&&row_addr_y<=y_ground49+41)?(row_addr_y-y_ground49)*28+col_addr_x-x_ground49:0;
+    ground50<= (col_addr_x>=x_ground50&&col_addr_x<=x_ground50+27&&row_addr_y>=y_ground50&&row_addr_y<=y_ground50+41)?(row_addr_y-y_ground50)*28+col_addr_x-x_ground50:0;
 end
 
 //调用ip核输出背景像素值
 background bg2(.clka(clk),.addra(bg),.douta(vga_bg));
-
 
 //调用ip核输出蓝色小人静态图片像素值
 wire [11:0]vga_blue_st_1,vga_blue_st_2,vga_blue_st_3,vga_blue_st_4;
@@ -293,188 +393,27 @@ slim_static_32 slim2_st_32f(.clka(clk),.addra(slim2_st),.douta(vga_slim2_st_32))
 slim_static_34 slim2_st_34f(.clka(clk),.addra(slim2_st),.douta(vga_slim2_st_34));
 slim_static_36 slim2_st_36f(.clka(clk),.addra(slim2_st),.douta(vga_slim2_st_36));
 slim_static_38 slim2_st_38f(.clka(clk),.addra(slim2_st),.douta(vga_slim2_st_38));
+//粘液怪物1冰冻像素值
+wire [11:0]vga_slim1_fz_1,vga_slim1_fz_3,vga_slim1_fz_5,vga_slim1_fz_7,vga_slim1_fz_9;
+slim_frozen_1 slim1_fzf1(.clka(clk),.addra(slim1_fz),.douta(vga_slim1_fz_1));
+slim_frozen_3 slim1_fzf3(.clka(clk),.addra(slim1_fz),.douta(vga_slim1_fz_3));
+slim_frozen_5 slim1_fzf5(.clka(clk),.addra(slim1_fz),.douta(vga_slim1_fz_5));
+slim_frozen_7 slim1_fzf7(.clka(clk),.addra(slim1_fz),.douta(vga_slim1_fz_7));
+slim_frozen_9 slim1_fzf9(.clka(clk),.addra(slim1_fz),.douta(vga_slim1_fz_9));
+//粘液怪物2冰冻像素值
+wire [11:0]vga_slim2_fz_1,vga_slim2_fz_3,vga_slim2_fz_5,vga_slim2_fz_7,vga_slim2_fz_9;
+slim_frozen_1 slim2_fzf1(.clka(clk),.addra(slim2_fz),.douta(vga_slim2_fz_1));
+slim_frozen_3 slim2_fzf3(.clka(clk),.addra(slim2_fz),.douta(vga_slim2_fz_3));
+slim_frozen_5 slim2_fzf5(.clka(clk),.addra(slim2_fz),.douta(vga_slim2_fz_5));
+slim_frozen_7 slim2_fzf7(.clka(clk),.addra(slim2_fz),.douta(vga_slim2_fz_7));
+slim_frozen_9 slim2_fzf9(.clka(clk),.addra(slim2_fz),.douta(vga_slim2_fz_9));
+
+
 //雪花1像素值
-wire [11:0]vga_snowf1_1,vga_snowf2_1,vga_snowf3_1,vga_snowf4_1,vga_snowf5_1,vga_snowf6_1,vga_snowf7_1,vga_snowf8_1,vga_snowf9_1,vga_snowf10_1,vga_snowf11_1,vga_snowf12_1,vga_snowf13_1,vga_snowf14_1,vga_snowf15_1;
-snowf_1 snowf1_1f(.clka(clk),.addra(snowf1),.douta(vga_snowf1_1));
-snowf_1 snowf2_1f(.clka(clk),.addra(snowf2),.douta(vga_snowf2_1));
-snowf_1 snowf3_1f(.clka(clk),.addra(snowf3),.douta(vga_snowf3_1));
-snowf_1 snowf4_1f(.clka(clk),.addra(snowf4),.douta(vga_snowf4_1));
-snowf_1 snowf5_1f(.clka(clk),.addra(snowf5),.douta(vga_snowf5_1));
-snowf_1 snowf6_1f(.clka(clk),.addra(snowf6),.douta(vga_snowf6_1));
-snowf_1 snowf7_1f(.clka(clk),.addra(snowf7),.douta(vga_snowf7_1));
-snowf_1 snowf8_1f(.clka(clk),.addra(snowf8),.douta(vga_snowf8_1));
-snowf_1 snowf9_1f(.clka(clk),.addra(snowf9),.douta(vga_snowf9_1));
-snowf_1 snowf10_1f(.clka(clk),.addra(snowf10),.douta(vga_snowf10_1));
-snowf_1 snowf11_1f(.clka(clk),.addra(snowf11),.douta(vga_snowf11_1));
-snowf_1 snowf12_1f(.clka(clk),.addra(snowf12),.douta(vga_snowf12_1));
-snowf_1 snowf13_1f(.clka(clk),.addra(snowf13),.douta(vga_snowf13_1));
-snowf_1 snowf14_1f(.clka(clk),.addra(snowf14),.douta(vga_snowf14_1));
-snowf_1 snowf15_1f(.clka(clk),.addra(snowf15),.douta(vga_snowf15_1));
-wire [11:0]vga_snowf1_3,vga_snowf2_3,vga_snowf3_3,vga_snowf4_3,vga_snowf5_3,vga_snowf6_3,vga_snowf7_3,vga_snowf8_3,vga_snowf9_3,vga_snowf10_3,vga_snowf11_3,vga_snowf12_3,vga_snowf13_3,vga_snowf14_3,vga_snowf15_3;
-snowf_3 snowf1_3f(.clka(clk),.addra(snowf1),.douta(vga_snowf1_3));
-snowf_3 snowf2_3f(.clka(clk),.addra(snowf2),.douta(vga_snowf2_3));
-snowf_3 snowf3_3f(.clka(clk),.addra(snowf3),.douta(vga_snowf3_3));
-snowf_3 snowf4_3f(.clka(clk),.addra(snowf4),.douta(vga_snowf4_3));
-snowf_3 snowf5_3f(.clka(clk),.addra(snowf5),.douta(vga_snowf5_3));
-snowf_3 snowf6_3f(.clka(clk),.addra(snowf6),.douta(vga_snowf6_3));
-snowf_3 snowf7_3f(.clka(clk),.addra(snowf7),.douta(vga_snowf7_3));
-snowf_3 snowf8_3f(.clka(clk),.addra(snowf8),.douta(vga_snowf8_3));
-snowf_3 snowf9_3f(.clka(clk),.addra(snowf9),.douta(vga_snowf9_3));
-snowf_3 snowf10_3f(.clka(clk),.addra(snowf10),.douta(vga_snowf10_3));
-snowf_3 snowf11_3f(.clka(clk),.addra(snowf11),.douta(vga_snowf11_3));
-snowf_3 snowf12_3f(.clka(clk),.addra(snowf12),.douta(vga_snowf12_3));
-snowf_3 snowf13_3f(.clka(clk),.addra(snowf13),.douta(vga_snowf13_3));
-snowf_3 snowf14_3f(.clka(clk),.addra(snowf14),.douta(vga_snowf14_3));
-snowf_3 snowf15_3f(.clka(clk),.addra(snowf15),.douta(vga_snowf15_3));
-wire [11:0]vga_snowf1_5,vga_snowf2_5,vga_snowf3_5,vga_snowf4_5,vga_snowf5_5,vga_snowf6_5,vga_snowf7_5,vga_snowf8_5,vga_snowf9_5,vga_snowf10_5,vga_snowf11_5,vga_snowf12_5,vga_snowf13_5,vga_snowf14_5,vga_snowf15_5;
-snowf_5 snowf1_5f(.clka(clk),.addra(snowf1),.douta(vga_snowf1_5));
-snowf_5 snowf2_5f(.clka(clk),.addra(snowf2),.douta(vga_snowf2_5));
-snowf_5 snowf3_5f(.clka(clk),.addra(snowf3),.douta(vga_snowf3_5));
-snowf_5 snowf4_5f(.clka(clk),.addra(snowf4),.douta(vga_snowf4_5));
-snowf_5 snowf5_5f(.clka(clk),.addra(snowf5),.douta(vga_snowf5_5));
-snowf_5 snowf6_5f(.clka(clk),.addra(snowf6),.douta(vga_snowf6_5));
-snowf_5 snowf7_5f(.clka(clk),.addra(snowf7),.douta(vga_snowf7_5));
-snowf_5 snowf8_5f(.clka(clk),.addra(snowf8),.douta(vga_snowf8_5));
-snowf_5 snowf9_5f(.clka(clk),.addra(snowf9),.douta(vga_snowf9_5));
-snowf_5 snowf10_5f(.clka(clk),.addra(snowf10),.douta(vga_snowf10_5));
-snowf_5 snowf11_5f(.clka(clk),.addra(snowf11),.douta(vga_snowf11_5));
-snowf_5 snowf12_5f(.clka(clk),.addra(snowf12),.douta(vga_snowf12_5));
-snowf_5 snowf13_5f(.clka(clk),.addra(snowf13),.douta(vga_snowf13_5));
-snowf_5 snowf14_5f(.clka(clk),.addra(snowf14),.douta(vga_snowf14_5));
-snowf_5 snowf15_5f(.clka(clk),.addra(snowf15),.douta(vga_snowf15_5));
 
-wire [11:0]vga_snowf1_7,vga_snowf2_7,vga_snowf3_7,vga_snowf4_7,vga_snowf5_7,vga_snowf6_7,vga_snowf7_7,vga_snowf8_7,vga_snowf9_7,vga_snowf10_7,vga_snowf11_7,vga_snowf12_7,vga_snowf13_7,vga_snowf14_7,vga_snowf15_7;
-snowf_7 snowf1_7f(.clka(clk),.addra(snowf1),.douta(vga_snowf1_7));
-snowf_7 snowf2_7f(.clka(clk),.addra(snowf2),.douta(vga_snowf2_7));
-snowf_7 snowf3_7f(.clka(clk),.addra(snowf3),.douta(vga_snowf3_7));
-snowf_7 snowf4_7f(.clka(clk),.addra(snowf4),.douta(vga_snowf4_7));
-snowf_7 snowf5_7f(.clka(clk),.addra(snowf5),.douta(vga_snowf5_7));
-snowf_7 snowf6_7f(.clka(clk),.addra(snowf6),.douta(vga_snowf6_7));
-snowf_7 snowf7_7f(.clka(clk),.addra(snowf7),.douta(vga_snowf7_7));
-snowf_7 snowf8_7f(.clka(clk),.addra(snowf8),.douta(vga_snowf8_7));
-snowf_7 snowf9_7f(.clka(clk),.addra(snowf9),.douta(vga_snowf9_7));
-snowf_7 snowf10_7f(.clka(clk),.addra(snowf10),.douta(vga_snowf10_7));
-snowf_7 snowf11_7f(.clka(clk),.addra(snowf11),.douta(vga_snowf11_7));
-snowf_7 snowf12_7f(.clka(clk),.addra(snowf12),.douta(vga_snowf12_7));
-snowf_7 snowf13_7f(.clka(clk),.addra(snowf13),.douta(vga_snowf13_7));
-snowf_7 snowf14_7f(.clka(clk),.addra(snowf14),.douta(vga_snowf14_7));
-snowf_7 snowf15_7f(.clka(clk),.addra(snowf15),.douta(vga_snowf15_7));
-
-wire [11:0]vga_snowf1_9,vga_snowf2_9,vga_snowf3_9,vga_snowf4_9,vga_snowf5_9,vga_snowf6_9,vga_snowf7_9,vga_snowf8_9,vga_snowf9_9,vga_snowf10_9,vga_snowf11_9,vga_snowf12_9,vga_snowf13_9,vga_snowf14_9,vga_snowf15_9;
-snowf_9 snowf1_9f(.clka(clk),.addra(snowf1),.douta(vga_snowf1_9));
-snowf_9 snowf2_9f(.clka(clk),.addra(snowf2),.douta(vga_snowf2_9));
-snowf_9 snowf3_9f(.clka(clk),.addra(snowf3),.douta(vga_snowf3_9));
-snowf_9 snowf4_9f(.clka(clk),.addra(snowf4),.douta(vga_snowf4_9));
-snowf_9 snowf5_9f(.clka(clk),.addra(snowf5),.douta(vga_snowf5_9));
-snowf_9 snowf6_9f(.clka(clk),.addra(snowf6),.douta(vga_snowf6_9));
-snowf_9 snowf7_9f(.clka(clk),.addra(snowf7),.douta(vga_snowf7_9));
-snowf_9 snowf8_9f(.clka(clk),.addra(snowf8),.douta(vga_snowf8_9));
-snowf_9 snowf9_9f(.clka(clk),.addra(snowf9),.douta(vga_snowf9_9));
-snowf_9 snowf10_9f(.clka(clk),.addra(snowf10),.douta(vga_snowf10_9));
-snowf_9 snowf11_9f(.clka(clk),.addra(snowf11),.douta(vga_snowf11_9));
-snowf_9 snowf12_9f(.clka(clk),.addra(snowf12),.douta(vga_snowf12_9));
-snowf_9 snowf13_9f(.clka(clk),.addra(snowf13),.douta(vga_snowf13_9));
-snowf_9 snowf14_9f(.clka(clk),.addra(snowf14),.douta(vga_snowf14_9));
-snowf_9 snowf15_9f(.clka(clk),.addra(snowf15),.douta(vga_snowf15_9));
-wire [11:0]vga_snowf1_11,vga_snowf2_11,vga_snowf3_11,vga_snowf4_11,vga_snowf5_11,vga_snowf6_11,vga_snowf7_11,vga_snowf8_11,vga_snowf9_11,vga_snowf10_11,vga_snowf11_11,vga_snowf12_11,vga_snowf13_11,vga_snowf14_11,vga_snowf15_11;
-snowf_11 snowf1_11f(.clka(clk),.addra(snowf1),.douta(vga_snowf1_11));
-snowf_11 snowf2_11f(.clka(clk),.addra(snowf2),.douta(vga_snowf2_11));
-snowf_11 snowf3_11f(.clka(clk),.addra(snowf3),.douta(vga_snowf3_11));
-snowf_11 snowf4_11f(.clka(clk),.addra(snowf4),.douta(vga_snowf4_11));
-snowf_11 snowf5_11f(.clka(clk),.addra(snowf5),.douta(vga_snowf5_11));
-snowf_11 snowf6_11f(.clka(clk),.addra(snowf6),.douta(vga_snowf6_11));
-snowf_11 snowf7_11f(.clka(clk),.addra(snowf7),.douta(vga_snowf7_11));
-snowf_11 snowf8_11f(.clka(clk),.addra(snowf8),.douta(vga_snowf8_11));
-snowf_11 snowf9_11f(.clka(clk),.addra(snowf9),.douta(vga_snowf9_11));
-snowf_11 snowf10_11f(.clka(clk),.addra(snowf10),.douta(vga_snowf10_11));
-snowf_11 snowf11_11f(.clka(clk),.addra(snowf11),.douta(vga_snowf11_11));
-snowf_11 snowf12_11f(.clka(clk),.addra(snowf12),.douta(vga_snowf12_11));
-snowf_11 snowf13_11f(.clka(clk),.addra(snowf13),.douta(vga_snowf13_11));
-snowf_11 snowf14_11f(.clka(clk),.addra(snowf14),.douta(vga_snowf14_11));
-snowf_11 snowf15_11f(.clka(clk),.addra(snowf15),.douta(vga_snowf15_11));
-wire [11:0]vga_snowf1_13,vga_snowf2_13,vga_snowf3_13,vga_snowf4_13,vga_snowf5_13,vga_snowf6_13,vga_snowf7_13,vga_snowf8_13,vga_snowf9_13,vga_snowf10_13,vga_snowf11_13,vga_snowf12_13,vga_snowf13_13,vga_snowf14_13,vga_snowf15_13;
-snowf_13 snowf1_13f(.clka(clk),.addra(snowf1),.douta(vga_snowf1_13));
-snowf_13 snowf2_13f(.clka(clk),.addra(snowf2),.douta(vga_snowf2_13));
-snowf_13 snowf3_13f(.clka(clk),.addra(snowf3),.douta(vga_snowf3_13));
-snowf_13 snowf4_13f(.clka(clk),.addra(snowf4),.douta(vga_snowf4_13));
-snowf_13 snowf5_13f(.clka(clk),.addra(snowf5),.douta(vga_snowf5_13));
-snowf_13 snowf6_13f(.clka(clk),.addra(snowf6),.douta(vga_snowf6_13));
-snowf_13 snowf7_13f(.clka(clk),.addra(snowf7),.douta(vga_snowf7_13));
-snowf_13 snowf8_13f(.clka(clk),.addra(snowf8),.douta(vga_snowf8_13));
-snowf_13 snowf9_13f(.clka(clk),.addra(snowf9),.douta(vga_snowf9_13));
-snowf_13 snowf10_13f(.clka(clk),.addra(snowf10),.douta(vga_snowf10_13));
-snowf_13 snowf11_13f(.clka(clk),.addra(snowf11),.douta(vga_snowf11_13));
-snowf_13 snowf12_13f(.clka(clk),.addra(snowf12),.douta(vga_snowf12_13));
-snowf_13 snowf13_13f(.clka(clk),.addra(snowf13),.douta(vga_snowf13_13));
-snowf_13 snowf14_13f(.clka(clk),.addra(snowf14),.douta(vga_snowf14_13));
-snowf_13 snowf15_13f(.clka(clk),.addra(snowf15),.douta(vga_snowf15_13));
-wire [11:0]vga_snowf1_15,vga_snowf2_15,vga_snowf3_15,vga_snowf4_15,vga_snowf5_15,vga_snowf6_15,vga_snowf7_15,vga_snowf8_15,vga_snowf9_15,vga_snowf10_15,vga_snowf11_15,vga_snowf12_15,vga_snowf13_15,vga_snowf14_15,vga_snowf15_15;
-snowf_15 snowf1_15f(.clka(clk),.addra(snowf1),.douta(vga_snowf1_15));
-snowf_15 snowf2_15f(.clka(clk),.addra(snowf2),.douta(vga_snowf2_15));
-snowf_15 snowf3_15f(.clka(clk),.addra(snowf3),.douta(vga_snowf3_15));
-snowf_15 snowf4_15f(.clka(clk),.addra(snowf4),.douta(vga_snowf4_15));
-snowf_15 snowf5_15f(.clka(clk),.addra(snowf5),.douta(vga_snowf5_15));
-snowf_15 snowf6_15f(.clka(clk),.addra(snowf6),.douta(vga_snowf6_15));
-snowf_15 snowf7_15f(.clka(clk),.addra(snowf7),.douta(vga_snowf7_15));
-snowf_15 snowf8_15f(.clka(clk),.addra(snowf8),.douta(vga_snowf8_15));
-snowf_15 snowf9_15f(.clka(clk),.addra(snowf9),.douta(vga_snowf9_15));
-snowf_15 snowf10_15f(.clka(clk),.addra(snowf10),.douta(vga_snowf10_15));
-snowf_15 snowf11_15f(.clka(clk),.addra(snowf11),.douta(vga_snowf11_15));
-snowf_15 snowf12_15f(.clka(clk),.addra(snowf12),.douta(vga_snowf12_15));
-snowf_15 snowf13_15f(.clka(clk),.addra(snowf13),.douta(vga_snowf13_15));
-snowf_15 snowf14_15f(.clka(clk),.addra(snowf14),.douta(vga_snowf14_15));
-snowf_15 snowf15_15f(.clka(clk),.addra(snowf15),.douta(vga_snowf15_15));
 //方块像素值
-ground_1 ground1_1f(.clka(clk),.addra(ground1),.douta(vga_ground1));
-ground_1 ground1_2f(.clka(clk),.addra(ground2),.douta(vga_ground2));
-ground_2 ground2_1f(.clka(clk),.addra(ground3),.douta(vga_ground3));
-ground_3 ground3_1f(.clka(clk),.addra(ground4),.douta(vga_ground4));
-ground_3 ground3_2f(.clka(clk),.addra(ground5),.douta(vga_ground5));
-ground_3 ground3_3f(.clka(clk),.addra(ground6),.douta(vga_ground6));
-ground_3 ground3_4f(.clka(clk),.addra(ground7),.douta(vga_ground7));
-ground_1 ground1_3f(.clka(clk),.addra(ground8),.douta(vga_ground8));
-ground_1 ground1_4f(.clka(clk),.addra(ground9),.douta(vga_ground9));
-ground_1 ground1_5f(.clka(clk),.addra(ground10),.douta(vga_ground10));
-ground_2 ground2_2f(.clka(clk),.addra(ground11),.douta(vga_ground11));
-ground_2 ground2_3f(.clka(clk),.addra(ground12),.douta(vga_ground12));
-ground_1 ground1_6f(.clka(clk),.addra(ground13),.douta(vga_ground13));
-ground_3 ground3_5f(.clka(clk),.addra(ground14),.douta(vga_ground14));
-ground_1 ground1_7f(.clka(clk),.addra(ground15),.douta(vga_ground15));
-ground_1 ground1_8f(.clka(clk),.addra(ground16),.douta(vga_ground16)); 
-ground_2 ground2_4f(.clka(clk),.addra(ground17),.douta(vga_ground17));
-ground_3 ground3_6f(.clka(clk),.addra(ground18),.douta(vga_ground18));
-ground_3 ground3_7f(.clka(clk),.addra(ground19),.douta(vga_ground19));
-ground_3 ground3_8f(.clka(clk),.addra(ground20),.douta(vga_ground20));
-ground_3 ground3_9f(.clka(clk),.addra(ground21),.douta(vga_ground21));
-ground_1 ground1_9f(.clka(clk),.addra(ground22),.douta(vga_ground22));
-ground_1 ground1_10f(.clka(clk),.addra(ground23),.douta(vga_ground23));
-ground_1 ground1_11f(.clka(clk),.addra(ground24),.douta(vga_ground24));
-ground_2 ground2_5f(.clka(clk),.addra(ground25),.douta(vga_ground25));
-ground_2 ground2_6f(.clka(clk),.addra(ground26),.douta(vga_ground26));
-ground_1 ground1_12f(.clka(clk),.addra(ground27),.douta(vga_ground27));
-ground_3 ground3_10f(.clka(clk),.addra(ground28),.douta(vga_ground28));
-ground_1 ground1_13f(.clka(clk),.addra(ground29),.douta(vga_ground29));
-ground_1 ground1_14f(.clka(clk),.addra(ground30),.douta(vga_ground30));
-ground_2 ground2_7f(.clka(clk),.addra(ground31),.douta(vga_ground31));
-ground_3 ground3_11f(.clka(clk),.addra(ground32),.douta(vga_ground32));
-ground_3 ground3_12f(.clka(clk),.addra(ground33),.douta(vga_ground33));
-ground_3 ground3_13f(.clka(clk),.addra(ground34),.douta(vga_ground34));
-ground_3 ground3_14f(.clka(clk),.addra(ground35),.douta(vga_ground35));
-ground_1 ground1_15f(.clka(clk),.addra(ground36),.douta(vga_ground36));
-ground_1 ground1_16f(.clka(clk),.addra(ground37),.douta(vga_ground37));
-ground_1 ground1_17f(.clka(clk),.addra(ground38),.douta(vga_ground38));
-ground_2 ground2_8f(.clka(clk),.addra(ground39),.douta(vga_ground39));
-ground_2 ground2_9f(.clka(clk),.addra(ground40),.douta(vga_ground40));
-ground_1 ground1_18f(.clka(clk),.addra(ground41),.douta(vga_ground41));
-ground_3 ground3_15f(.clka(clk),.addra(ground42),.douta(vga_ground42));
-ground_1 ground1_19f(.clka(clk),.addra(ground43),.douta(vga_ground43));
-ground_1 ground1_20f(.clka(clk),.addra(ground44),.douta(vga_ground44));
-ground_2 ground2_10f(.clka(clk),.addra(ground45),.douta(vga_ground45));
-ground_3 ground3_16f(.clka(clk),.addra(ground46),.douta(vga_ground46));
-ground_3 ground3_17f(.clka(clk),.addra(ground47),.douta(vga_ground47));
-ground_3 ground3_18f(.clka(clk),.addra(ground48),.douta(vga_ground48));
-ground_3 ground3_19f(.clka(clk),.addra(ground49),.douta(vga_ground49));
-ground_1 ground1_21f(.clka(clk),.addra(ground50),.douta(vga_ground50));
+//方块被冰冻gif
+//我尝试直接加到显示模块
 
 
 //图片刷新
@@ -484,6 +423,8 @@ reg [4:0]ip_blue_rwk;
 reg [7:0]ip_slim1_st;
 reg [7:0]ip_slim2_st;
 reg [4:0]ip_snowf;
+//这里便能控制单次刷新后保持不变
+reg [4:0]ip_ground1,ip_ground2,ip_ground3,ip_ground4,ip_ground5,ip_ground6,ip_ground7,ip_ground8,ip_ground9,ip_ground10,ip_ground11,ip_ground12,ip_ground13,ip_ground14,ip_ground15,ip_ground16,ip_ground17,ip_ground18,ip_ground19,ip_ground20,ip_ground21,ip_ground22,ip_ground23,ip_ground24,ip_ground25,ip_ground26,ip_ground27,ip_ground28,ip_ground29,ip_ground30,ip_ground31,ip_ground32,ip_ground33,ip_ground34,ip_ground35,ip_ground36,ip_ground37,ip_ground38,ip_ground39,ip_ground40,ip_ground41,ip_ground42,ip_ground43,ip_ground44,ip_ground45,ip_ground46,ip_ground47,ip_ground48,ip_ground49,ip_ground50;
 always @(posedge clk) begin
     if(ipcnt == 6_000_000) begin  // 40ms*100M=4M，由于计数器只有3位，所以这里实例只能计数到500k，所以选用了40ms/5=8ms，即2.5*100k
         ipcnt <= 0;
@@ -492,6 +433,16 @@ always @(posedge clk) begin
         ip_slim2_st <= ip_slim2_st + 1;
         ip_blue_rwk <= ip_blue_rwk + 1;
         ip_snowf <= ip_snowf + 1;
+        //方块冰冻显示
+        if(bk_touched[0]&&!bk_tc_finish[0])begin
+            ip_ground1 <= ip_ground1 + 1;
+        end
+        if(bk_touched[1]&&!bk_tc_finish[1])begin
+            ip_ground2 <= ip_ground2 + 1;
+        end
+
+
+        ///上面是方块冰冻显示
         if(ip_blue_st == 15) begin
         ip_blue_st <= 0;  // 6个ip核循环16帧
         end
@@ -511,6 +462,98 @@ always @(posedge clk) begin
             ipcnt <= ipcnt + 1;
         end
     end
+
+
+    ///
+    case(ip_ground1)
+        0:begin 
+        ground_1 ground1_1f(.clka(clk),.addra(ground1),.douta(vga_ground1));
+        end
+        3:begin
+        ground_2 ground1_2f(.clka(clk),.addra(ground1),.douta(vga_ground1));
+        end
+        6:begin
+        ground_3 ground1_3f(.clka(clk),.addra(ground1),.douta(vga_ground1));
+        end
+        9:begin
+        ground_4 ground1_4f(.clka(clk),.addra(ground1),.douta(vga_ground1));
+        end
+        12:begin    
+        ground_5 ground1_5f(.clka(clk),.addra(ground1),.douta(vga_ground1));
+        end
+        15:begin
+        ground_6 ground1_6f(.clka(clk),.addra(ground1),.douta(vga_ground1));
+        bk_tc_finish[0] <= 1;
+        end
+    endcase
+    case(ip_ground2)
+        0:begin 
+        ground_1 ground2_1f(.clka(clk),.addra(ground2),.douta(vga_ground2));
+        end
+        3:begin
+        ground_2 ground2_2f(.clka(clk),.addra(ground2),.douta(vga_ground2));
+        end
+        6:begin
+        ground_3 ground2_3f(.clka(clk),.addra(ground2),.douta(vga_ground2));
+        end
+        9:begin
+        ground_4 ground2_4f(.clka(clk),.addra(ground2),.douta(vga_ground2));
+        end
+        12:begin    
+        ground_5 ground2_5f(.clka(clk),.addra(ground2),.douta(vga_ground2));
+        end
+        15:begin
+        ground_6 ground2_6f(.clka(clk),.addra(ground2),.douta(vga_ground2));
+        bk_tc_finish[1] <= 1;
+        end
+    endcase
+    case(ip_ground3)
+        0:begin 
+        ground_1 ground3_1f(.clka(clk),.addra(ground3),.douta(vga_ground3));
+        end
+        3:begin
+        ground_2 ground3_2f(.clka(clk),.addra(ground3),.douta(vga_ground3));
+        end
+        6:begin
+        ground_3 ground3_3f(.clka(clk),.addra(ground3),.douta(vga_ground3));
+        end
+        9:begin
+        ground_4 ground3_4f(.clka(clk),.addra(ground3),.douta(vga_ground3));
+        end
+        12:begin    
+        ground_5 ground3_5f(.clka(clk),.addra(ground3),.douta(vga_ground3));
+        end
+        15:begin
+        ground_6 ground3_6f(.clka(clk),.addra(ground3),.douta(vga_ground3));
+        end
+    endcase
+    case(ip_ground4)
+        0:begin 
+        ground_1 ground4_1f(.clka(clk),.addra(ground4),.douta(vga_ground4));
+        end
+        3:begin
+        ground_2 ground4_2f(.clka(clk),.addra(ground4),.douta(vga_ground4));
+        end
+        6:begin
+        ground_3 ground4_3f(.clka(clk),.addra(ground4),.douta(vga_ground4));
+        end
+        9:begin
+        ground_4 ground4_4f(.clka(clk),.addra(ground4),.douta(vga_ground4));
+        end
+        12:begin    
+        ground_5 ground4_5f(.clka(clk),.addra(ground4),.douta(vga_ground4));
+        end
+        15:begin
+        ground_6 ground4_6f(.clka(clk),.addra(ground4),.douta(vga_ground4));
+        end
+    endcase
+
+
+///还没补完，待补！！！
+
+
+
+    ///
     case(ip_blue_st)
         0: vga_blue_st <= vga_blue_st_1[11:0];
         4: vga_blue_st <= vga_blue_st_2[11:0];
@@ -563,143 +606,143 @@ always @(posedge clk) begin
     endcase
     case(ip_snowf)
         0:begin 
-        vga_snowf1 <= vga_snowf1_1[11:0];
-        vga_snowf2 <= vga_snowf2_1[11:0];
-        vga_snowf3 <= vga_snowf3_1[11:0];
-        vga_snowf4 <= vga_snowf4_1[11:0];
-        vga_snowf5 <= vga_snowf5_1[11:0];
-        vga_snowf6 <= vga_snowf6_1[11:0];
-        vga_snowf7 <= vga_snowf7_1[11:0];
-        vga_snowf8 <= vga_snowf8_1[11:0];
-        vga_snowf9 <= vga_snowf9_1[11:0];
-        vga_snowf10 <= vga_snowf10_1[11:0];
-        vga_snowf11 <= vga_snowf11_1[11:0];
-        vga_snowf12 <= vga_snowf12_1[11:0];
-        vga_snowf13 <= vga_snowf13_1[11:0];
-        vga_snowf14 <= vga_snowf14_1[11:0];
-        vga_snowf15 <= vga_snowf15_1[11:0];
+        snowf_1 snowf1_1f(.clka(clk),.addra(snowf1),.douta(vga_snowf1));
+        snowf_1 snowf2_1f(.clka(clk),.addra(snowf2),.douta(vga_snowf2));
+        snowf_1 snowf3_1f(.clka(clk),.addra(snowf3),.douta(vga_snowf3));
+        snowf_1 snowf4_1f(.clka(clk),.addra(snowf4),.douta(vga_snowf4));
+        snowf_1 snowf5_1f(.clka(clk),.addra(snowf5),.douta(vga_snowf5));
+        snowf_1 snowf6_1f(.clka(clk),.addra(snowf6),.douta(vga_snowf6));
+        snowf_1 snowf7_1f(.clka(clk),.addra(snowf7),.douta(vga_snowf7));
+        snowf_1 snowf8_1f(.clka(clk),.addra(snowf8),.douta(vga_snowf8));
+        snowf_1 snowf9_1f(.clka(clk),.addra(snowf9),.douta(vga_snowf9));
+        snowf_1 snowf10_1f(.clka(clk),.addra(snowf10),.douta(vga_snowf10));
+        snowf_1 snowf11_1f(.clka(clk),.addra(snowf11),.douta(vga_snowf11));
+        snowf_1 snowf12_1f(.clka(clk),.addra(snowf12),.douta(vga_snowf12));
+        snowf_1 snowf13_1f(.clka(clk),.addra(snowf13),.douta(vga_snowf13));
+        snowf_1 snowf14_1f(.clka(clk),.addra(snowf14),.douta(vga_snowf14));
+        snowf_1 snowf15_1f(.clka(clk),.addra(snowf15),.douta(vga_snowf15));
         end
         2:begin
-        vga_snowf1 <= vga_snowf1_3[11:0];
-        vga_snowf2 <= vga_snowf2_3[11:0];
-        vga_snowf3 <= vga_snowf3_3[11:0];
-        vga_snowf4 <= vga_snowf4_3[11:0];
-        vga_snowf5 <= vga_snowf5_3[11:0];
-        vga_snowf6 <= vga_snowf6_3[11:0];
-        vga_snowf7 <= vga_snowf7_3[11:0];
-        vga_snowf8 <= vga_snowf8_3[11:0];
-        vga_snowf9 <= vga_snowf9_3[11:0];
-        vga_snowf10 <= vga_snowf10_3[11:0];
-        vga_snowf11 <= vga_snowf11_3[11:0];
-        vga_snowf12 <= vga_snowf12_3[11:0];
-        vga_snowf13 <= vga_snowf13_3[11:0];
-        vga_snowf14 <= vga_snowf14_3[11:0];
-        vga_snowf15 <= vga_snowf15_3[11:0];
+        snowf_3 snowf1_3f(.clka(clk),.addra(snowf1),.douta(vga_snowf1));
+        snowf_3 snowf2_3f(.clka(clk),.addra(snowf2),.douta(vga_snowf2));
+        snowf_3 snowf3_3f(.clka(clk),.addra(snowf3),.douta(vga_snowf3));
+        snowf_3 snowf4_3f(.clka(clk),.addra(snowf4),.douta(vga_snowf4));
+        snowf_3 snowf5_3f(.clka(clk),.addra(snowf5),.douta(vga_snowf5));
+        snowf_3 snowf6_3f(.clka(clk),.addra(snowf6),.douta(vga_snowf6));
+        snowf_3 snowf7_3f(.clka(clk),.addra(snowf7),.douta(vga_snowf7));
+        snowf_3 snowf8_3f(.clka(clk),.addra(snowf8),.douta(vga_snowf8));
+        snowf_3 snowf9_3f(.clka(clk),.addra(snowf9),.douta(vga_snowf9));
+        snowf_3 snowf10_3f(.clka(clk),.addra(snowf10),.douta(vga_snowf10));
+        snowf_3 snowf11_3f(.clka(clk),.addra(snowf11),.douta(vga_snowf11));
+        snowf_3 snowf12_3f(.clka(clk),.addra(snowf12),.douta(vga_snowf12));
+        snowf_3 snowf13_3f(.clka(clk),.addra(snowf13),.douta(vga_snowf13));
+        snowf_3 snowf14_3f(.clka(clk),.addra(snowf14),.douta(vga_snowf14));
+        snowf_3 snowf15_3f(.clka(clk),.addra(snowf15),.douta(vga_snowf15));
         end
         4:begin
-        vga_snowf1 <= vga_snowf1_5[11:0];
-        vga_snowf2 <= vga_snowf2_5[11:0];
-        vga_snowf3 <= vga_snowf3_5[11:0];
-        vga_snowf4 <= vga_snowf4_5[11:0];
-        vga_snowf5 <= vga_snowf5_5[11:0];
-        vga_snowf6 <= vga_snowf6_5[11:0];
-        vga_snowf7 <= vga_snowf7_5[11:0];
-        vga_snowf8 <= vga_snowf8_5[11:0];
-        vga_snowf9 <= vga_snowf9_5[11:0];
-        vga_snowf10 <= vga_snowf10_5[11:0];
-        vga_snowf11 <= vga_snowf11_5[11:0];
-        vga_snowf12 <= vga_snowf12_5[11:0];
-        vga_snowf13 <= vga_snowf13_5[11:0];
-        vga_snowf14 <= vga_snowf14_5[11:0];
-        vga_snowf15 <= vga_snowf15_5[11:0];
+        snowf_5 snowf1_5f(.clka(clk),.addra(snowf1),.douta(vga_snowf1));
+        snowf_5 snowf2_5f(.clka(clk),.addra(snowf2),.douta(vga_snowf2));
+        snowf_5 snowf3_5f(.clka(clk),.addra(snowf3),.douta(vga_snowf3));
+        snowf_5 snowf4_5f(.clka(clk),.addra(snowf4),.douta(vga_snowf4));
+        snowf_5 snowf5_5f(.clka(clk),.addra(snowf5),.douta(vga_snowf5));
+        snowf_5 snowf6_5f(.clka(clk),.addra(snowf6),.douta(vga_snowf6));
+        snowf_5 snowf7_5f(.clka(clk),.addra(snowf7),.douta(vga_snowf7));
+        snowf_5 snowf8_5f(.clka(clk),.addra(snowf8),.douta(vga_snowf8));
+        snowf_5 snowf9_5f(.clka(clk),.addra(snowf9),.douta(vga_snowf9));
+        snowf_5 snowf10_5f(.clka(clk),.addra(snowf10),.douta(vga_snowf10));
+        snowf_5 snowf11_5f(.clka(clk),.addra(snowf11),.douta(vga_snowf11));
+        snowf_5 snowf12_5f(.clka(clk),.addra(snowf12),.douta(vga_snowf12));
+        snowf_5 snowf13_5f(.clka(clk),.addra(snowf13),.douta(vga_snowf13));
+        snowf_5 snowf14_5f(.clka(clk),.addra(snowf14),.douta(vga_snowf14));
+        snowf_5 snowf15_5f(.clka(clk),.addra(snowf15),.douta(vga_snowf15));
         end
         6:begin
-        vga_snowf1 <= vga_snowf1_7[11:0];
-        vga_snowf2 <= vga_snowf2_7[11:0];
-        vga_snowf3 <= vga_snowf3_7[11:0];
-        vga_snowf4 <= vga_snowf4_7[11:0];
-        vga_snowf5 <= vga_snowf5_7[11:0];
-        vga_snowf6 <= vga_snowf6_7[11:0];
-        vga_snowf7 <= vga_snowf7_7[11:0];
-        vga_snowf8 <= vga_snowf8_7[11:0];
-        vga_snowf9 <= vga_snowf9_7[11:0];
-        vga_snowf10 <= vga_snowf10_7[11:0];
-        vga_snowf11 <= vga_snowf11_7[11:0];
-        vga_snowf12 <= vga_snowf12_7[11:0];
-        vga_snowf13 <= vga_snowf13_7[11:0];
-        vga_snowf14 <= vga_snowf14_7[11:0]; 
-        vga_snowf15 <= vga_snowf15_7[11:0];
+        snowf_7 snowf1_7f(.clka(clk),.addra(snowf1),.douta(vga_snowf1));
+        snowf_7 snowf2_7f(.clka(clk),.addra(snowf2),.douta(vga_snowf2));
+        snowf_7 snowf3_7f(.clka(clk),.addra(snowf3),.douta(vga_snowf3));
+        snowf_7 snowf4_7f(.clka(clk),.addra(snowf4),.douta(vga_snowf4));
+        snowf_7 snowf5_7f(.clka(clk),.addra(snowf5),.douta(vga_snowf5));
+        snowf_7 snowf6_7f(.clka(clk),.addra(snowf6),.douta(vga_snowf6));
+        snowf_7 snowf7_7f(.clka(clk),.addra(snowf7),.douta(vga_snowf7));
+        snowf_7 snowf8_7f(.clka(clk),.addra(snowf8),.douta(vga_snowf8));
+        snowf_7 snowf9_7f(.clka(clk),.addra(snowf9),.douta(vga_snowf9));
+        snowf_7 snowf10_7f(.clka(clk),.addra(snowf10),.douta(vga_snowf10));
+        snowf_7 snowf11_7f(.clka(clk),.addra(snowf11),.douta(vga_snowf11));
+        snowf_7 snowf12_7f(.clka(clk),.addra(snowf12),.douta(vga_snowf12));
+        snowf_7 snowf13_7f(.clka(clk),.addra(snowf13),.douta(vga_snowf13));
+        snowf_7 snowf14_7f(.clka(clk),.addra(snowf14),.douta(vga_snowf14));
+        snowf_7 snowf15_7f(.clka(clk),.addra(snowf15),.douta(vga_snowf15));
         end    
         8:begin
-        vga_snowf1 <= vga_snowf1_9[11:0];
-        vga_snowf2 <= vga_snowf2_9[11:0];
-        vga_snowf3 <= vga_snowf3_9[11:0];
-        vga_snowf4 <= vga_snowf4_9[11:0];
-        vga_snowf5 <= vga_snowf5_9[11:0];
-        vga_snowf6 <= vga_snowf6_9[11:0];
-        vga_snowf7 <= vga_snowf7_9[11:0];
-        vga_snowf8 <= vga_snowf8_9[11:0];
-        vga_snowf9 <= vga_snowf9_9[11:0];
-        vga_snowf10 <= vga_snowf10_9[11:0];
-        vga_snowf11 <= vga_snowf11_9[11:0];
-        vga_snowf12 <= vga_snowf12_9[11:0];
-        vga_snowf13 <= vga_snowf13_9[11:0];
-        vga_snowf14 <= vga_snowf14_9[11:0]; 
-        vga_snowf15 <= vga_snowf15_9[11:0];
+        snowf_9 snowf1_9f(.clka(clk),.addra(snowf1),.douta(vga_snowf1));
+        snowf_9 snowf2_9f(.clka(clk),.addra(snowf2),.douta(vga_snowf2));
+        snowf_9 snowf3_9f(.clka(clk),.addra(snowf3),.douta(vga_snowf3));
+        snowf_9 snowf4_9f(.clka(clk),.addra(snowf4),.douta(vga_snowf4));
+        snowf_9 snowf5_9f(.clka(clk),.addra(snowf5),.douta(vga_snowf5));
+        snowf_9 snowf6_9f(.clka(clk),.addra(snowf6),.douta(vga_snowf6));
+        snowf_9 snowf7_9f(.clka(clk),.addra(snowf7),.douta(vga_snowf7));
+        snowf_9 snowf8_9f(.clka(clk),.addra(snowf8),.douta(vga_snowf8));
+        snowf_9 snowf9_9f(.clka(clk),.addra(snowf9),.douta(vga_snowf9));
+        snowf_9 snowf10_9f(.clka(clk),.addra(snowf10),.douta(vga_snowf10));
+        snowf_9 snowf11_9f(.clka(clk),.addra(snowf11),.douta(vga_snowf11));
+        snowf_9 snowf12_9f(.clka(clk),.addra(snowf12),.douta(vga_snowf12));
+        snowf_9 snowf13_9f(.clka(clk),.addra(snowf13),.douta(vga_snowf13));
+        snowf_9 snowf14_9f(.clka(clk),.addra(snowf14),.douta(vga_snowf14));
+        snowf_9 snowf15_9f(.clka(clk),.addra(snowf15),.douta(vga_snowf15));
         end
         10:begin
-        vga_snowf1 <= vga_snowf1_11[11:0];
-        vga_snowf2 <= vga_snowf2_11[11:0];
-        vga_snowf3 <= vga_snowf3_11[11:0];
-        vga_snowf4 <= vga_snowf4_11[11:0];
-        vga_snowf5 <= vga_snowf5_11[11:0];
-        vga_snowf6 <= vga_snowf6_11[11:0];
-        vga_snowf7 <= vga_snowf7_11[11:0];
-        vga_snowf8 <= vga_snowf8_11[11:0];
-        vga_snowf9 <= vga_snowf9_11[11:0];
-        vga_snowf10 <= vga_snowf10_11[11:0];
-        vga_snowf11 <= vga_snowf11_11[11:0];
-        vga_snowf12 <= vga_snowf12_11[11:0];
-        vga_snowf13 <= vga_snowf13_11[11:0];
-        vga_snowf14 <= vga_snowf14_11[11:0]; 
-        vga_snowf15 <= vga_snowf15_11[11:0];
+        snowf_11 snowf1_11f(.clka(clk),.addra(snowf1),.douta(vga_snowf1));
+        snowf_11 snowf2_11f(.clka(clk),.addra(snowf2),.douta(vga_snowf2));
+        snowf_11 snowf3_11f(.clka(clk),.addra(snowf3),.douta(vga_snowf3));
+        snowf_11 snowf4_11f(.clka(clk),.addra(snowf4),.douta(vga_snowf4));
+        snowf_11 snowf5_11f(.clka(clk),.addra(snowf5),.douta(vga_snowf5));
+        snowf_11 snowf6_11f(.clka(clk),.addra(snowf6),.douta(vga_snowf6));
+        snowf_11 snowf7_11f(.clka(clk),.addra(snowf7),.douta(vga_snowf7));
+        snowf_11 snowf8_11f(.clka(clk),.addra(snowf8),.douta(vga_snowf8));
+        snowf_11 snowf9_11f(.clka(clk),.addra(snowf9),.douta(vga_snowf9));
+        snowf_11 snowf10_11f(.clka(clk),.addra(snowf10),.douta(vga_snowf10));
+        snowf_11 snowf11_11f(.clka(clk),.addra(snowf11),.douta(vga_snowf11));
+        snowf_11 snowf12_11f(.clka(clk),.addra(snowf12),.douta(vga_snowf12));
+        snowf_11 snowf13_11f(.clka(clk),.addra(snowf13),.douta(vga_snowf13));
+        snowf_11 snowf14_11f(.clka(clk),.addra(snowf14),.douta(vga_snowf14));
+        snowf_11 snowf15_11f(.clka(clk),.addra(snowf15),.douta(vga_snowf15));
         end 
         12:begin
-        vga_snowf1 <= vga_snowf1_13[11:0];
-        vga_snowf2 <= vga_snowf2_13[11:0];
-        vga_snowf3 <= vga_snowf3_13[11:0];
-        vga_snowf4 <= vga_snowf4_13[11:0];
-        vga_snowf5 <= vga_snowf5_13[11:0];
-        vga_snowf6 <= vga_snowf6_13[11:0];
-        vga_snowf7 <= vga_snowf7_13[11:0];
-        vga_snowf8 <= vga_snowf8_13[11:0];
-        vga_snowf9 <= vga_snowf9_13[11:0];
-        vga_snowf10 <= vga_snowf10_13[11:0];
-        vga_snowf11 <= vga_snowf11_13[11:0];
-        vga_snowf12 <= vga_snowf12_13[11:0];
-        vga_snowf13 <= vga_snowf13_13[11:0];
-        vga_snowf14 <= vga_snowf14_13[11:0]; 
-        vga_snowf15 <= vga_snowf15_13[11:0];
+        snowf_13 snowf1_13f(.clka(clk),.addra(snowf1),.douta(vga_snowf1));
+        snowf_13 snowf2_13f(.clka(clk),.addra(snowf2),.douta(vga_snowf2));
+        snowf_13 snowf3_13f(.clka(clk),.addra(snowf3),.douta(vga_snowf3));
+        snowf_13 snowf4_13f(.clka(clk),.addra(snowf4),.douta(vga_snowf4));
+        snowf_13 snowf5_13f(.clka(clk),.addra(snowf5),.douta(vga_snowf5));
+        snowf_13 snowf6_13f(.clka(clk),.addra(snowf6),.douta(vga_snowf6));
+        snowf_13 snowf7_13f(.clka(clk),.addra(snowf7),.douta(vga_snowf7));
+        snowf_13 snowf8_13f(.clka(clk),.addra(snowf8),.douta(vga_snowf8));
+        snowf_13 snowf9_13f(.clka(clk),.addra(snowf9),.douta(vga_snowf9));
+        snowf_13 snowf10_13f(.clka(clk),.addra(snowf10),.douta(vga_snowf10));
+        snowf_13 snowf11_13f(.clka(clk),.addra(snowf11),.douta(vga_snowf11));
+        snowf_13 snowf12_13f(.clka(clk),.addra(snowf12),.douta(vga_snowf12));
+        snowf_13 snowf13_13f(.clka(clk),.addra(snowf13),.douta(vga_snowf13));
+        snowf_13 snowf14_13f(.clka(clk),.addra(snowf14),.douta(vga_snowf14));
+        snowf_13 snowf15_13f(.clka(clk),.addra(snowf15),.douta(vga_snowf15));
         end
         14:begin
-        vga_snowf1 <= vga_snowf1_15[11:0];
-        vga_snowf2 <= vga_snowf2_15[11:0];
-        vga_snowf3 <= vga_snowf3_15[11:0];
-        vga_snowf4 <= vga_snowf4_15[11:0];
-        vga_snowf5 <= vga_snowf5_15[11:0];
-        vga_snowf6 <= vga_snowf6_15[11:0];
-        vga_snowf7 <= vga_snowf7_15[11:0];
-        vga_snowf8 <= vga_snowf8_15[11:0];
-        vga_snowf9 <= vga_snowf9_15[11:0];
-        vga_snowf10 <= vga_snowf10_15[11:0];
-        vga_snowf11 <= vga_snowf11_15[11:0];
-        vga_snowf12 <= vga_snowf12_15[11:0];
-        vga_snowf13 <= vga_snowf13_15[11:0];
-        vga_snowf14 <= vga_snowf14_15[11:0]; 
-        vga_snowf15 <= vga_snowf15_15[11:0];
+        snowf_15 snowf1_15f(.clka(clk),.addra(snowf1),.douta(vga_snowf1));
+        snowf_15 snowf2_15f(.clka(clk),.addra(snowf2),.douta(vga_snowf2));
+        snowf_15 snowf3_15f(.clka(clk),.addra(snowf3),.douta(vga_snowf3));
+        snowf_15 snowf4_15f(.clka(clk),.addra(snowf4),.douta(vga_snowf4));
+        snowf_15 snowf5_15f(.clka(clk),.addra(snowf5),.douta(vga_snowf5));
+        snowf_15 snowf6_15f(.clka(clk),.addra(snowf6),.douta(vga_snowf6));
+        snowf_15 snowf7_15f(.clka(clk),.addra(snowf7),.douta(vga_snowf7));
+        snowf_15 snowf8_15f(.clka(clk),.addra(snowf8),.douta(vga_snowf8));
+        snowf_15 snowf9_15f(.clka(clk),.addra(snowf9),.douta(vga_snowf9));
+        snowf_15 snowf10_15f(.clka(clk),.addra(snowf10),.douta(vga_snowf10));
+        snowf_15 snowf11_15f(.clka(clk),.addra(snowf11),.douta(vga_snowf11));
+        snowf_15 snowf12_15f(.clka(clk),.addra(snowf12),.douta(vga_snowf12));
+        snowf_15 snowf13_15f(.clka(clk),.addra(snowf13),.douta(vga_snowf13));
+        snowf_15 snowf14_15f(.clka(clk),.addra(snowf14),.douta(vga_snowf14));
+        snowf_15 snowf15_15f(.clka(clk),.addra(snowf15),.douta(vga_snowf15));
         end
     endcase
-end
+
 
 
 
@@ -712,252 +755,252 @@ always@(posedge clk)begin
         vga_data<=vga_bg[11:0];   
     end
     //2.方块
-    if(col_addr_x>=x_ground1&&col_addr_x<=x_ground1+23&&row_addr_y>=y_ground1&&row_addr_y<=y_ground1+25)begin
+    if(col_addr_x>=x_ground1&&col_addr_x<=x_ground1+27&&row_addr_y>=y_ground1&&row_addr_y<=y_ground1+41)begin
         if(vga_ground1[11:0]!=0*256+2*16+8)begin
             vga_data<=vga_ground1[11:0];   
-        end
+        end 
     end
-    if(col_addr_x>=x_ground2&&col_addr_x<=x_ground2+23&&row_addr_y>=y_ground2&&row_addr_y<=y_ground2+25)begin
+    if(col_addr_x>=x_ground2&&col_addr_x<=x_ground2+27&&row_addr_y>=y_ground2&&row_addr_y<=y_ground2+41)begin
         if(vga_ground2[11:0]!=0*256+2*16+8)begin
             vga_data<=vga_ground2[11:0];   
         end
     end
-    if(col_addr_x>=x_ground3&&col_addr_x<=x_ground3+23&&row_addr_y>=y_ground3&&row_addr_y<=y_ground3+25)begin
+    if(col_addr_x>=x_ground3&&col_addr_x<=x_ground3+27&&row_addr_y>=y_ground3&&row_addr_y<=y_ground3+41)begin
         if(vga_ground3[11:0]!=0*256+2*16+8)begin
             vga_data<=vga_ground3[11:0];   
         end
     end
-    if(col_addr_x>=x_ground4&&col_addr_x<=x_ground4+23&&row_addr_y>=y_ground4&&row_addr_y<=y_ground4+25)begin
+    if(col_addr_x>=x_ground4&&col_addr_x<=x_ground4+27&&row_addr_y>=y_ground4&&row_addr_y<=y_ground4+41)begin
         if(vga_ground4[11:0]!=0*256+2*16+8)begin
             vga_data<=vga_ground4[11:0];   
         end
     end
-    if(col_addr_x>=x_ground5&&col_addr_x<=x_ground5+23&&row_addr_y>=y_ground5&&row_addr_y<=y_ground5+25)begin
+    if(col_addr_x>=x_ground5&&col_addr_x<=x_ground5+27&&row_addr_y>=y_ground5&&row_addr_y<=y_ground5+41)begin
         if(vga_ground5[11:0]!=0*256+2*16+8)begin
             vga_data<=vga_ground5[11:0];   
         end
     end
-    if(col_addr_x>=x_ground6&&col_addr_x<=x_ground6+23&&row_addr_y>=y_ground6&&row_addr_y<=y_ground6+25)begin
+    if(col_addr_x>=x_ground6&&col_addr_x<=x_ground6+27&&row_addr_y>=y_ground6&&row_addr_y<=y_ground6+41)begin
         if(vga_ground6[11:0]!=0*256+2*16+8)begin
             vga_data<=vga_ground6[11:0];   
         end
     end
-    if(col_addr_x>=x_ground7&&col_addr_x<=x_ground7+23&&row_addr_y>=y_ground7&&row_addr_y<=y_ground7+25)begin
+    if(col_addr_x>=x_ground7&&col_addr_x<=x_ground7+27&&row_addr_y>=y_ground7&&row_addr_y<=y_ground7+41)begin
         if(vga_ground7[11:0]!=0*256+2*16+8)begin
             vga_data<=vga_ground7[11:0];   
         end
     end
-    if(col_addr_x>=x_ground8&&col_addr_x<=x_ground8+23&&row_addr_y>=y_ground8&&row_addr_y<=y_ground8+25)begin
+    if(col_addr_x>=x_ground8&&col_addr_x<=x_ground8+27&&row_addr_y>=y_ground8&&row_addr_y<=y_ground8+41)begin
         if(vga_ground8[11:0]!=0*256+2*16+8)begin
             vga_data<=vga_ground8[11:0];   
         end
     end
-    if(col_addr_x>=x_ground9&&col_addr_x<=x_ground9+23&&row_addr_y>=y_ground9&&row_addr_y<=y_ground9+25)begin
+    if(col_addr_x>=x_ground9&&col_addr_x<=x_ground9+27&&row_addr_y>=y_ground9&&row_addr_y<=y_ground9+41)begin
         if(vga_ground9[11:0]!=0*256+2*16+8)begin
             vga_data<=vga_ground9[11:0];   
         end
     end
-    if(col_addr_x>=x_ground10&&col_addr_x<=x_ground10+23&&row_addr_y>=y_ground10&&row_addr_y<=y_ground10+25)begin
+    if(col_addr_x>=x_ground10&&col_addr_x<=x_ground10+27&&row_addr_y>=y_ground10&&row_addr_y<=y_ground10+41)begin
         if(vga_ground10[11:0]!=0*256+2*16+8)begin
             vga_data<=vga_ground10[11:0];   
         end
     end
-    if(col_addr_x>=x_ground11&&col_addr_x<=x_ground11+23&&row_addr_y>=y_ground11&&row_addr_y<=y_ground11+25)begin
+    if(col_addr_x>=x_ground11&&col_addr_x<=x_ground11+27&&row_addr_y>=y_ground11&&row_addr_y<=y_ground11+41)begin
         if(vga_ground11[11:0]!=0*256+2*16+8)begin
             vga_data<=vga_ground11[11:0];   
         end
     end
-    if(col_addr_x>=x_ground12&&col_addr_x<=x_ground12+23&&row_addr_y>=y_ground12&&row_addr_y<=y_ground12+25)begin
+    if(col_addr_x>=x_ground12&&col_addr_x<=x_ground12+27&&row_addr_y>=y_ground12&&row_addr_y<=y_ground12+41)begin
         if(vga_ground12[11:0]!=0*256+2*16+8)begin
             vga_data<=vga_ground12[11:0];   
         end
     end
-    if(col_addr_x>=x_ground13&&col_addr_x<=x_ground13+23&&row_addr_y>=y_ground13&&row_addr_y<=y_ground13+25)begin
+    if(col_addr_x>=x_ground13&&col_addr_x<=x_ground13+27&&row_addr_y>=y_ground13&&row_addr_y<=y_ground13+41)begin
         if(vga_ground13[11:0]!=0*256+2*16+8)begin
             vga_data<=vga_ground13[11:0];   
         end
     end
-    if(col_addr_x>=x_ground14&&col_addr_x<=x_ground14+23&&row_addr_y>=y_ground14&&row_addr_y<=y_ground14+25)begin
+    if(col_addr_x>=x_ground14&&col_addr_x<=x_ground14+27&&row_addr_y>=y_ground14&&row_addr_y<=y_ground14+41)begin
         if(vga_ground14[11:0]!=0*256+2*16+8)begin
             vga_data<=vga_ground14[11:0];   
         end
     end
-    if(col_addr_x>=x_ground15&&col_addr_x<=x_ground15+23&&row_addr_y>=y_ground15&&row_addr_y<=y_ground15+25)begin
+    if(col_addr_x>=x_ground15&&col_addr_x<=x_ground15+27&&row_addr_y>=y_ground15&&row_addr_y<=y_ground15+41)begin
         if(vga_ground15[11:0]!=0*256+2*16+8)begin
             vga_data<=vga_ground15[11:0];   
         end
     end
-    if(col_addr_x>=x_ground16&&col_addr_x<=x_ground16+23&&row_addr_y>=y_ground16&&row_addr_y<=y_ground16+25)begin
+    if(col_addr_x>=x_ground16&&col_addr_x<=x_ground16+27&&row_addr_y>=y_ground16&&row_addr_y<=y_ground16+41)begin
         if(vga_ground16[11:0]!=0*256+2*16+8)begin
             vga_data<=vga_ground16[11:0];   
         end
     end
-    if(col_addr_x>=x_ground17&&col_addr_x<=x_ground17+23&&row_addr_y>=y_ground17&&row_addr_y<=y_ground17+25)begin
+    if(col_addr_x>=x_ground17&&col_addr_x<=x_ground17+27&&row_addr_y>=y_ground17&&row_addr_y<=y_ground17+41)begin
         if(vga_ground17[11:0]!=0*256+2*16+8)begin
             vga_data<=vga_ground17[11:0];   
         end
     end
-    if(col_addr_x>=x_ground18&&col_addr_x<=x_ground18+23&&row_addr_y>=y_ground18&&row_addr_y<=y_ground18+25)begin
+    if(col_addr_x>=x_ground18&&col_addr_x<=x_ground18+27&&row_addr_y>=y_ground18&&row_addr_y<=y_ground18+41)begin
         if(vga_ground18[11:0]!=0*256+2*16+8)begin
             vga_data<=vga_ground18[11:0];   
         end
     end
-    if(col_addr_x>=x_ground19&&col_addr_x<=x_ground19+23&&row_addr_y>=y_ground19&&row_addr_y<=y_ground19+25)begin
+    if(col_addr_x>=x_ground19&&col_addr_x<=x_ground19+27&&row_addr_y>=y_ground19&&row_addr_y<=y_ground19+41)begin
         if(vga_ground19[11:0]!=0*256+2*16+8)begin
             vga_data<=vga_ground19[11:0];   
         end
     end
-    if(col_addr_x>=x_ground20&&col_addr_x<=x_ground20+23&&row_addr_y>=y_ground20&&row_addr_y<=y_ground20+25)begin
+    if(col_addr_x>=x_ground20&&col_addr_x<=x_ground20+27&&row_addr_y>=y_ground20&&row_addr_y<=y_ground20+41)begin
         if(vga_ground20[11:0]!=0*256+2*16+8)begin
             vga_data<=vga_ground20[11:0];   
         end
     end
-    if(col_addr_x>=x_ground21&&col_addr_x<=x_ground21+23&&row_addr_y>=y_ground21&&row_addr_y<=y_ground21+25)begin
+    if(col_addr_x>=x_ground21&&col_addr_x<=x_ground21+27&&row_addr_y>=y_ground21&&row_addr_y<=y_ground21+41)begin
         if(vga_ground21[11:0]!=0*256+2*16+8)begin
             vga_data<=vga_ground21[11:0];   
         end
     end
-    if(col_addr_x>=x_ground22&&col_addr_x<=x_ground22+23&&row_addr_y>=y_ground22&&row_addr_y<=y_ground22+25)begin
+    if(col_addr_x>=x_ground22&&col_addr_x<=x_ground22+27&&row_addr_y>=y_ground22&&row_addr_y<=y_ground22+41)begin
         if(vga_ground22[11:0]!=0*256+2*16+8)begin
             vga_data<=vga_ground22[11:0];   
         end
     end
-    if(col_addr_x>=x_ground23&&col_addr_x<=x_ground23+23&&row_addr_y>=y_ground23&&row_addr_y<=y_ground23+25)begin
+    if(col_addr_x>=x_ground23&&col_addr_x<=x_ground23+27&&row_addr_y>=y_ground23&&row_addr_y<=y_ground23+41)begin
         if(vga_ground23[11:0]!=0*256+2*16+8)begin
             vga_data<=vga_ground23[11:0];   
         end
     end
-    if(col_addr_x>=x_ground24&&col_addr_x<=x_ground24+23&&row_addr_y>=y_ground24&&row_addr_y<=y_ground24+25)begin
+    if(col_addr_x>=x_ground24&&col_addr_x<=x_ground24+27&&row_addr_y>=y_ground24&&row_addr_y<=y_ground24+41)begin
         if(vga_ground24[11:0]!=0*256+2*16+8)begin
             vga_data<=vga_ground24[11:0];   
         end
     end
-    if(col_addr_x>=x_ground25&&col_addr_x<=x_ground25+23&&row_addr_y>=y_ground25&&row_addr_y<=y_ground25+25)begin
+    if(col_addr_x>=x_ground25&&col_addr_x<=x_ground25+27&&row_addr_y>=y_ground25&&row_addr_y<=y_ground25+41)begin
         if(vga_ground25[11:0]!=0*256+2*16+8)begin
             vga_data<=vga_ground25[11:0];   
         end
     end
-    if(col_addr_x>=x_ground26&&col_addr_x<=x_ground26+23&&row_addr_y>=y_ground26&&row_addr_y<=y_ground26+25)begin
+    if(col_addr_x>=x_ground26&&col_addr_x<=x_ground26+27&&row_addr_y>=y_ground26&&row_addr_y<=y_ground26+41)begin
         if(vga_ground26[11:0]!=0*256+2*16+8)begin
             vga_data<=vga_ground26[11:0];   
         end
     end
-    if(col_addr_x>=x_ground27&&col_addr_x<=x_ground27+23&&row_addr_y>=y_ground27&&row_addr_y<=y_ground27+25)begin
+    if(col_addr_x>=x_ground27&&col_addr_x<=x_ground27+27&&row_addr_y>=y_ground27&&row_addr_y<=y_ground27+41)begin
         if(vga_ground27[11:0]!=0*256+2*16+8)begin
             vga_data<=vga_ground27[11:0];   
         end
     end
-    if(col_addr_x>=x_ground28&&col_addr_x<=x_ground28+23&&row_addr_y>=y_ground28&&row_addr_y<=y_ground28+25)begin
+    if(col_addr_x>=x_ground28&&col_addr_x<=x_ground28+27&&row_addr_y>=y_ground28&&row_addr_y<=y_ground28+41)begin
         if(vga_ground28[11:0]!=0*256+2*16+8)begin
             vga_data<=vga_ground28[11:0];   
         end
     end
-    if(col_addr_x>=x_ground29&&col_addr_x<=x_ground29+23&&row_addr_y>=y_ground29&&row_addr_y<=y_ground29+25)begin
+    if(col_addr_x>=x_ground29&&col_addr_x<=x_ground29+27&&row_addr_y>=y_ground29&&row_addr_y<=y_ground29+41)begin
         if(vga_ground29[11:0]!=0*256+2*16+8)begin
             vga_data<=vga_ground29[11:0];   
         end
     end
-    if(col_addr_x>=x_ground30&&col_addr_x<=x_ground30+23&&row_addr_y>=y_ground30&&row_addr_y<=y_ground30+25)begin
+    if(col_addr_x>=x_ground30&&col_addr_x<=x_ground30+27&&row_addr_y>=y_ground30&&row_addr_y<=y_ground30+41)begin
         if(vga_ground30[11:0]!=0*256+2*16+8)begin
             vga_data<=vga_ground30[11:0];   
         end
     end
-    if(col_addr_x>=x_ground31&&col_addr_x<=x_ground31+23&&row_addr_y>=y_ground31&&row_addr_y<=y_ground31+25)begin
+    if(col_addr_x>=x_ground31&&col_addr_x<=x_ground31+27&&row_addr_y>=y_ground31&&row_addr_y<=y_ground31+41)begin
         if(vga_ground31[11:0]!=0*256+2*16+8)begin
             vga_data<=vga_ground31[11:0];   
         end
     end
-    if(col_addr_x>=x_ground32&&col_addr_x<=x_ground32+23&&row_addr_y>=y_ground32&&row_addr_y<=y_ground32+25)begin
+    if(col_addr_x>=x_ground32&&col_addr_x<=x_ground32+27&&row_addr_y>=y_ground32&&row_addr_y<=y_ground32+41)begin
         if(vga_ground32[11:0]!=0*256+2*16+8)begin
             vga_data<=vga_ground32[11:0];   
         end
     end
-    if(col_addr_x>=x_ground33&&col_addr_x<=x_ground33+23&&row_addr_y>=y_ground33&&row_addr_y<=y_ground33+25)begin
+    if(col_addr_x>=x_ground33&&col_addr_x<=x_ground33+27&&row_addr_y>=y_ground33&&row_addr_y<=y_ground33+41)begin
         if(vga_ground33[11:0]!=0*256+2*16+8)begin
             vga_data<=vga_ground33[11:0];   
         end
     end
-    if(col_addr_x>=x_ground34&&col_addr_x<=x_ground34+23&&row_addr_y>=y_ground34&&row_addr_y<=y_ground34+25)begin
+    if(col_addr_x>=x_ground34&&col_addr_x<=x_ground34+27&&row_addr_y>=y_ground34&&row_addr_y<=y_ground34+41)begin
         if(vga_ground34[11:0]!=0*256+2*16+8)begin
             vga_data<=vga_ground34[11:0];   
         end
     end
-    if(col_addr_x>=x_ground35&&col_addr_x<=x_ground35+23&&row_addr_y>=y_ground35&&row_addr_y<=y_ground35+25)begin
+    if(col_addr_x>=x_ground35&&col_addr_x<=x_ground35+27&&row_addr_y>=y_ground35&&row_addr_y<=y_ground35+41)begin
         if(vga_ground35[11:0]!=0*256+2*16+8)begin
             vga_data<=vga_ground35[11:0];   
         end
     end
-    if(col_addr_x>=x_ground36&&col_addr_x<=x_ground36+23&&row_addr_y>=y_ground36&&row_addr_y<=y_ground36+25)begin
+    if(col_addr_x>=x_ground36&&col_addr_x<=x_ground36+27&&row_addr_y>=y_ground36&&row_addr_y<=y_ground36+41)begin
         if(vga_ground36[11:0]!=0*256+2*16+8)begin
             vga_data<=vga_ground36[11:0];   
         end
     end
-    if(col_addr_x>=x_ground37&&col_addr_x<=x_ground37+23&&row_addr_y>=y_ground37&&row_addr_y<=y_ground37+25)begin
+    if(col_addr_x>=x_ground37&&col_addr_x<=x_ground37+27&&row_addr_y>=y_ground37&&row_addr_y<=y_ground37+41)begin
         if(vga_ground37[11:0]!=0*256+2*16+8)begin
             vga_data<=vga_ground37[11:0];   
         end
     end
-    if(col_addr_x>=x_ground38&&col_addr_x<=x_ground38+23&&row_addr_y>=y_ground38&&row_addr_y<=y_ground38+25)begin
+    if(col_addr_x>=x_ground38&&col_addr_x<=x_ground38+27&&row_addr_y>=y_ground38&&row_addr_y<=y_ground38+41)begin
         if(vga_ground38[11:0]!=0*256+2*16+8)begin
             vga_data<=vga_ground38[11:0];   
         end
     end
-    if(col_addr_x>=x_ground39&&col_addr_x<=x_ground39+23&&row_addr_y>=y_ground39&&row_addr_y<=y_ground39+25)begin
+    if(col_addr_x>=x_ground39&&col_addr_x<=x_ground39+27&&row_addr_y>=y_ground39&&row_addr_y<=y_ground39+41)begin
         if(vga_ground39[11:0]!=0*256+2*16+8)begin
             vga_data<=vga_ground39[11:0];   
         end
     end
-    if(col_addr_x>=x_ground40&&col_addr_x<=x_ground40+23&&row_addr_y>=y_ground40&&row_addr_y<=y_ground40+25)begin
+    if(col_addr_x>=x_ground40&&col_addr_x<=x_ground40+27&&row_addr_y>=y_ground40&&row_addr_y<=y_ground40+41)begin
         if(vga_ground40[11:0]!=0*256+2*16+8)begin
             vga_data<=vga_ground40[11:0];   
         end
     end
-    if(col_addr_x>=x_ground41&&col_addr_x<=x_ground41+23&&row_addr_y>=y_ground41&&row_addr_y<=y_ground41+25)begin
+    if(col_addr_x>=x_ground41&&col_addr_x<=x_ground41+27&&row_addr_y>=y_ground41&&row_addr_y<=y_ground41+41)begin
         if(vga_ground41[11:0]!=0*256+2*16+8)begin
             vga_data<=vga_ground41[11:0];   
         end
     end
-    if(col_addr_x>=x_ground42&&col_addr_x<=x_ground42+23&&row_addr_y>=y_ground42&&row_addr_y<=y_ground42+25)begin
+    if(col_addr_x>=x_ground42&&col_addr_x<=x_ground42+27&&row_addr_y>=y_ground42&&row_addr_y<=y_ground42+41)begin
         if(vga_ground42[11:0]!=0*256+2*16+8)begin
             vga_data<=vga_ground42[11:0];   
         end
     end
-    if(col_addr_x>=x_ground43&&col_addr_x<=x_ground43+23&&row_addr_y>=y_ground43&&row_addr_y<=y_ground43+25)begin
+    if(col_addr_x>=x_ground43&&col_addr_x<=x_ground43+27&&row_addr_y>=y_ground43&&row_addr_y<=y_ground43+41)begin
         if(vga_ground43[11:0]!=0*256+2*16+8)begin
             vga_data<=vga_ground43[11:0];   
         end
     end
-    if(col_addr_x>=x_ground44&&col_addr_x<=x_ground44+23&&row_addr_y>=y_ground44&&row_addr_y<=y_ground44+25)begin
+    if(col_addr_x>=x_ground44&&col_addr_x<=x_ground44+27&&row_addr_y>=y_ground44&&row_addr_y<=y_ground44+41)begin
         if(vga_ground44[11:0]!=0*256+2*16+8)begin
             vga_data<=vga_ground44[11:0];   
         end
     end
-    if(col_addr_x>=x_ground45&&col_addr_x<=x_ground45+23&&row_addr_y>=y_ground45&&row_addr_y<=y_ground45+25)begin
+    if(col_addr_x>=x_ground45&&col_addr_x<=x_ground45+27&&row_addr_y>=y_ground45&&row_addr_y<=y_ground45+41)begin
         if(vga_ground45[11:0]!=0*256+2*16+8)begin
             vga_data<=vga_ground45[11:0];   
         end
     end
-    if(col_addr_x>=x_ground46&&col_addr_x<=x_ground46+23&&row_addr_y>=y_ground46&&row_addr_y<=y_ground46+25)begin
+    if(col_addr_x>=x_ground46&&col_addr_x<=x_ground46+27&&row_addr_y>=y_ground46&&row_addr_y<=y_ground46+41)begin
         if(vga_ground46[11:0]!=0*256+2*16+8)begin
             vga_data<=vga_ground46[11:0];   
         end
     end
-    if(col_addr_x>=x_ground47&&col_addr_x<=x_ground47+23&&row_addr_y>=y_ground47&&row_addr_y<=y_ground47+25)begin
+    if(col_addr_x>=x_ground47&&col_addr_x<=x_ground47+27&&row_addr_y>=y_ground47&&row_addr_y<=y_ground47+41)begin
         if(vga_ground47[11:0]!=0*256+2*16+8)begin
             vga_data<=vga_ground47[11:0];   
         end
     end
-    if(col_addr_x>=x_ground48&&col_addr_x<=x_ground48+23&&row_addr_y>=y_ground48&&row_addr_y<=y_ground48+25)begin
+    if(col_addr_x>=x_ground48&&col_addr_x<=x_ground48+27&&row_addr_y>=y_ground48&&row_addr_y<=y_ground48+41)begin
         if(vga_ground48[11:0]!=0*256+2*16+8)begin
             vga_data<=vga_ground48[11:0];   
         end
     end
-    if(col_addr_x>=x_ground49&&col_addr_x<=x_ground49+23&&row_addr_y>=y_ground49&&row_addr_y<=y_ground49+25)begin
+    if(col_addr_x>=x_ground49&&col_addr_x<=x_ground49+27&&row_addr_y>=y_ground49&&row_addr_y<=y_ground49+41)begin
         if(vga_ground49[11:0]!=0*256+2*16+8)begin
             vga_data<=vga_ground49[11:0];   
         end
     end
-    if(col_addr_x>=x_ground50&&col_addr_x<=x_ground50+23&&row_addr_y>=y_ground50&&row_addr_y<=y_ground50+25)begin
+    if(col_addr_x>=x_ground50&&col_addr_x<=x_ground50+27&&row_addr_y>=y_ground50&&row_addr_y<=y_ground50+41)begin
         if(vga_ground50[11:0]!=0*256+2*16+8)begin
             vga_data<=vga_ground50[11:0];   
         end
@@ -1054,27 +1097,19 @@ always@(posedge clk)begin
     end
 
     //7.蓝色小人（筛选静态运动及删除背景色）47*41  428
-    // if(col_addr_x>=x_blue&&col_addr_x<=x_blue+46&&row_addr_y>=y_blue&&row_addr_y<=y_blue+40)begin
-    //     if(vga_blue_st[11:0]!=4*256+2*16+8)begin
-    //         vga_data<=vga_blue_st[11:0];   
-    //     end
-    // end
+    if(blue_state==2'd0&&col_addr_x>=x_blue&&col_addr_x<=x_blue+46&&row_addr_y>=y_blue&&row_addr_y<=y_blue+40)begin
+        if(vga_blue_st[11:0]!=4*256+2*16+8)begin
+            vga_data<=vga_blue_st[11:0];   
+        end
+    end
 
     //8.蓝色小人（筛选奔跑及删除背景色）47*43 028
-    if(col_addr_x>=x_blue&&col_addr_x<=x_blue+46&&row_addr_y>=y_blue&&row_addr_y<=y_blue+42)begin
+    if(blue_state==2'd1&&col_addr_x>=x_blue&&col_addr_x<=x_blue+46&&row_addr_y>=y_blue&&row_addr_y<=y_blue+42)begin
         if(vga_blue_rwk[11:0]!=0*256+2*16+8)begin
             vga_data<=vga_blue_rwk[11:0];   
         end
     end
 end
-//帧动画单次显示
-// always @(posedge clk)begin
-    //1.方块变冰块
-    //2.树变冰
-    //3.小石块变冰
-    //4.怪物变冰
-    //5.人物受伤
-// end
-//帧固定(可以放到循环最后，if***则赋值定值)
+
 
 endmodule
