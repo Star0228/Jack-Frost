@@ -57,7 +57,7 @@ end
 reg [9:0] x_snowf1,x_snowf2,x_snowf3,x_snowf4,x_snowf5,x_snowf6,x_snowf7,x_snowf8,x_snowf9,x_snowf10,x_snowf11,x_snowf12,x_snowf13,x_snowf14,x_snowf15;
 reg [8:0] y_snowf1,y_snowf2,y_snowf3,y_snowf4,y_snowf5,y_snowf6,y_snowf7,y_snowf8,y_snowf9,y_snowf10,y_snowf11,y_snowf12,y_snowf13,y_snowf14,y_snowf15;
 initial begin
-    x_snowf1=x_snowf2=x_snowf3=x_snowf4=x_snowf5=x_snowf6=x_snowf7=x_snowf8=x_snowf9=x_snowf10=x_snowf11=x_snowf12=x_snowf13=x_snowf14=x_snowf15=10'd144;
+   // x_snowf1=x_snowf2=x_snowf3=x_snowf4=x_snowf5=x_snowf6=x_snowf7=x_snowf8=x_snowf9=x_snowf10=x_snowf11=x_snowf12=x_snowf13=x_snowf14=x_snowf15=10'd144;
     y_snowf1=9'd0;
     y_snowf2=9'd26;
     y_snowf3=9'd52;
@@ -76,77 +76,87 @@ initial begin
 end
 
 //地面方块模块
-reg [499:0] x_ground;
-reg [449:0] y_ground;
-initial begin
-    x_ground=500'd0;
-    y_ground=450'd0;
-end
-relay_ground rg1(.clk(clk),.x_ground(x_ground),.y_ground(y_ground),.x_blue(x_blue), .y_blue(y_blue), .flag(flag));
+// reg [499:0] x_ground;
+// reg [449:0] y_ground;
+// initial begin
+//     x_ground=500'd0;
+//     y_ground=450'd0;
+// end
+// relay_ground rg1(.clk(clk),.x_ground(x_ground),.y_ground(y_ground),.x_blue(x_blue), .y_blue(y_blue), .flag(flag));
+//可以依靠这个设计地图，不同的initial或是直接赋值，冰雪动画覆盖地面方块
 reg [9:0]x_ground1,x_ground2,x_ground3,x_ground4,x_ground5,x_ground6,x_ground7,x_ground8,x_ground9,x_ground10,x_ground11,x_ground12,x_ground13,x_ground14,x_ground15,x_ground16,x_ground17,x_ground18,x_ground19,x_ground20,x_ground21,x_ground22,x_ground23,x_ground24,x_ground25,x_ground26,x_ground27,x_ground28,x_ground29,x_ground30,x_ground31,x_ground32,x_ground33,x_ground34,x_ground35,x_ground36,x_ground37,x_ground38,x_ground39,x_ground40,x_ground41,x_ground42,x_ground43,x_ground44,x_ground45,x_ground46,x_ground47,x_ground48,x_ground49,x_ground50;
 reg [8:0]y_ground1,y_ground2,y_ground3,y_ground4,y_ground5,y_ground6,y_ground7,y_ground8,y_ground9,y_ground10,y_ground11,y_ground12,y_ground13,y_ground14,y_ground15,y_ground16,y_ground17,y_ground18,y_ground19,y_ground20,y_ground21,y_ground22,y_ground23,y_ground24,y_ground25,y_ground26,y_ground27,y_ground28,y_ground29,y_ground30,y_ground31,y_ground32,y_ground33,y_ground34,y_ground35,y_ground36,y_ground37,y_ground38,y_ground39,y_ground40,y_ground41,y_ground42,y_ground43,y_ground44,y_ground45,y_ground46,y_ground47,y_ground48,y_ground49,y_ground50;
 initial begin
-    x_ground1 = 10'd0; y_ground1 = 9'd474;
-    x_ground2 = 10'd28;y_ground2 = 9'd474;
-    x_ground3 = 10'd56;y_ground3 = 9'd474;
-    x_ground4 = 10'd84;y_ground4 = 9'd474;
-    x_ground5 = 10'd112;y_ground5 = 9'd474;
-    x_ground6 = 10'd140;y_ground6 = 9'd474;
-    x_ground7 = 10'd168;y_ground7 = 9'd474;
-    x_ground8 = 10'd196;y_ground8 = 9'd474;
-    x_ground9 = 10'd224;y_ground9 = 9'd474;
-    x_ground10 = 10'd252;y_ground10 = 9'd474;
-    x_ground11 = 10'd280;y_ground11 = 9'd474;
-    x_ground12 = 10'd308;y_ground12 = 9'd474;
-    x_ground13 = 10'd336;y_ground13 = 9'd474;
-    x_ground14 = 10'd364;y_ground14 = 9'd474;
-    x_ground15 = 10'd392;y_ground15 = 9'd474;
-    x_ground16 = 10'd420;y_ground16 = 9'd474;
-    x_ground17 = 10'd448;y_ground17 = 9'd474;
-    x_ground18 = 10'd476;y_ground18 = 9'd474;
-    x_ground19 = 10'd504;y_ground19 = 9'd474;
-    x_ground20 = 10'd0;y_ground20 = 9'433;
-    x_ground21 = 10'd28;y_ground21 = 9'433;
-    x_ground22 = 10'd56;y_ground22 = 9'433;
-    x_ground23 = 10'd84;y_ground23 = 9'433;
-    x_ground24 = 10'd112;y_ground24 = 9'433;
-    x_ground25 = 10'd140;y_ground25 = 9'433;
-    x_ground26 = 10'd168;y_ground26 = 9'433;
-    x_ground27 = 10'd196;y_ground27 = 9'433;
-    x_ground28 = 10'd224;y_ground28 = 9'433;
-    x_ground29 = 10'd252;y_ground29 = 9'433;
-    x_ground30 = 10'd280;y_ground30 = 9'433;
-    x_ground31 = 10'd308;y_ground31 = 9'433;
-    x_ground32 = 10'd336;y_ground32 = 9'433;
-    x_ground33 = 10'd364;y_ground33 = 9'433;
-    x_ground34 = 10'd392;y_ground34 = 9'433;
-    x_ground35 = 10'd420;y_ground35 = 9'433;
-    x_ground36 = 10'd448;y_ground36 = 9'433;
-    x_ground37 = 10'd476;y_ground37 = 9'433;
-    x_ground38 = 10'd504;y_ground38 = 9'433;
-    x_ground39 = 10'd0;y_ground39 = 9'392;
-    x_ground40 = 10'd28;y_ground40 = 9'392;
-    x_ground41 = 10'd56;y_ground41 = 9'392;
-    x_ground42 = 10'd84;y_ground42 = 9'392;
+    x_ground1 = 10'd0; y_ground1 = 9'd374;
+    x_ground2 = 10'd28;y_ground2 = 9'd374;
+    x_ground3 = 10'd56;y_ground3 = 9'd374;
+    x_ground4 = 10'd84;y_ground4 = 9'd374;
+    x_ground5 = 10'd112;y_ground5 = 9'd374;
+    x_ground6 = 10'd140;y_ground6 = 9'd374;
+    x_ground7 = 10'd168;y_ground7 = 9'd374;
+    x_ground8 = 10'd196;y_ground8 = 9'd374;
+    x_ground9 = 10'd224;y_ground9 = 9'd374;
+    x_ground10 = 10'd252;y_ground10 = 9'd374;
+    x_ground11 = 10'd280;y_ground11 = 9'd374;
+    x_ground12 = 10'd308;y_ground12 = 9'd374;
+    x_ground13 = 10'd336;y_ground13 = 9'd374;
+    x_ground14 = 10'd364;y_ground14 = 9'd374;
+    x_ground15 = 10'd392;y_ground15 = 9'd374;
+    x_ground16 = 10'd420;y_ground16 = 9'd374;
+    x_ground17 = 10'd448;y_ground17 = 9'd374;
+    x_ground18 = 10'd476;y_ground18 = 9'd374;
+    x_ground19 = 10'd504;y_ground19 = 9'd374;
+    x_ground20 = 10'd0;y_ground20 = 9'd348;
+    x_ground21 = 10'd28;y_ground21 = 9'd348;
+    x_ground22 = 10'd56;y_ground22 = 9'd348;
+    x_ground23 = 10'd84;y_ground23 = 9'd348;
+    x_ground24 = 10'd112;y_ground24 = 9'd348;
+    x_ground25 = 10'd140;y_ground25 = 9'd348;
+    x_ground26 = 10'd168;y_ground26 = 9'd348;
+    x_ground27 = 10'd196;y_ground27 = 9'd348;
+    x_ground28 = 10'd224;y_ground28 = 9'd348;
+    x_ground29 = 10'd252;y_ground29 = 9'd348;
+    x_ground30 = 10'd280;y_ground30 = 9'd348;
+    x_ground31 = 10'd308;y_ground31 = 9'd348;
+    x_ground32 = 10'd336;y_ground32 = 9'd348;
+    x_ground33 = 10'd364;y_ground33 = 9'd348;
+    x_ground34 = 10'd392;y_ground34 = 9'd348;
+    x_ground35 = 10'd420;y_ground35 = 9'd348;
+    x_ground36 = 10'd448;y_ground36 = 9'd348;
+    x_ground37 = 10'd476;y_ground37 = 9'd348;
+    x_ground38 = 10'd504;y_ground38 = 9'd348;
+    x_ground39 = 10'd0;y_ground39 = 9'd322;
+    x_ground40 = 10'd28;y_ground40 = 9'd322;
+    x_ground41 = 10'd56;y_ground41 = 9'd322;
+    x_ground42 = 10'd84;y_ground42 = 9'd322;
 
 
 end
 
 //地址赋值+各自vga输出
+//单张图片用wire，连续的要寄存器
+//背景1的地址寄存器和vga输出
 reg [18:0] bg;
 wire [11:0] vga_bg; 
+//蓝色小人静态图片的地址寄存器和vga输出
 reg [13:0]blue_st;
 reg [11:0]vga_blue_st;
+//蓝色小人向右奔跑的图片的地址寄存器和vga输出
 reg [13:0]blue_rwk;
 reg [11:0]vga_blue_rwk;
+//怪物1静止图片的地址寄存器和vga输出
 reg [11:0]vga_slim1_st;
 reg [13:0]slim1_st;
+//怪物2静止图片的地址寄存器和vga输出
 reg [11:0]vga_slim2_st;
 reg [13:0]slim2_st;
-reg [11:0]vga_snowf1,vga_snowf_3,vga_snowf_5,vga_snowf_7,vga_snowf_9,vga_snowf11,vga_snowf13,vga_snowf15;
+//雪花的地址寄存器和vga输出
+reg [11:0]vga_snowf1,vga_snowf1,vga_snowf2,vga_snowf3,vga_snowf4,vga_snowf5,vga_snowf6,vga_snowf7,vga_snowf8,vga_snowf9,vga_snowf10,vga_snowf11,vga_snowf12,vga_snowf13,vga_snowf14,vga_snowf15;
 reg [10:0]snowf1,snowf2,snowf3,snowf4,snowf5,snowf6,snowf7,snowf8,snowf9,snowf10,snowf11,snowf12,snowf13,snowf14,snowf15;
-reg [11:0]vga_ground1,vga_ground2,vga_ground3,vga_ground4,vga_ground5,vga_ground6,vga_ground7,vga_ground8,vga_ground9,vga_ground10,vga_ground11,vga_ground12,vga_ground13,vga_ground14,vga_ground15,vga_ground16,vga_ground17,vga_ground18,vga_ground19,vga_ground20,vga_ground21,vga_ground22,vga_ground23,vga_ground24,vga_ground25,vga_ground26,vga_ground27,vga_ground28,vga_ground29,vga_ground30,vga_ground31,vga_ground32,vga_ground33,vga_ground34,vga_ground35,vga_ground36,vga_ground37,vga_ground38,vga_ground39,vga_ground40,vga_ground41,vga_ground42,vga_ground43,vga_ground44,vga_ground45,vga_ground46,vga_ground47,vga_ground48,vga_ground49,vga_ground50;
+//地面方块的地址寄存器和vga输出（wire）
 reg [11:0]ground1,ground2,ground3,ground4,ground5,ground6,ground7,ground8,ground9,ground10,ground11,ground12,ground13,ground14,ground15,ground16,ground17,ground18,ground19,ground20,ground21,ground22,ground23,ground24,ground25,ground26,ground27,ground28,ground29,ground30,ground31,ground32,ground33,ground34,ground35,ground36,ground37,ground38,ground39,ground40,ground41,ground42,ground43,ground44,ground45,ground46,ground47,ground48,ground49,ground50;
+wire [11:0]vga_ground1,vga_ground2,vga_ground3,vga_ground4,vga_ground5,vga_ground6,vga_ground7,vga_ground8,vga_ground9,vga_ground10,vga_ground11,vga_ground12,vga_ground13,vga_ground14,vga_ground15,vga_ground16,vga_ground17,vga_ground18,vga_ground19,vga_ground20,vga_ground21,vga_ground22,vga_ground23,vga_ground24,vga_ground25,vga_ground26,vga_ground27,vga_ground28,vga_ground29,vga_ground30,vga_ground31,vga_ground32,vga_ground33,vga_ground34,vga_ground35,vga_ground36,vga_ground37,vga_ground38,vga_ground39,vga_ground40,vga_ground41,vga_ground42,vga_ground43,vga_ground44,vga_ground45,vga_ground46,vga_ground47,vga_ground48,vga_ground49,vga_ground50;
+
 //给照片地址赋值(判断框里面是即将显示的范围，尺寸是551*401，就填550+400，？后面的值是coe文件的像素点的地址0-size-1)
 always @(posedge clk)begin
     //背景551*401
@@ -253,36 +263,36 @@ blue_r_walk_15 blue_rwk_15f(.clka(clk),.addra(blue_rwk),.douta(vga_blue_rwk_15))
 
 //粘液怪物1静止像素值
 wire [11:0]vga_slim1_st_1,vga_slim1_st_11,vga_slim1_st_13,vga_slim1_st_18,vga_slim1_st_20,vga_slim1_st_22,vga_slim1_st_24,vga_slim1_st_26,vga_slim1_st_28,vga_slim1_st_30,vga_slim1_st_32,vga_slim1_st_34,vga_slim1_st_36,vga_slim1_st_38;
-slim1_static_1 slim1_st_1f(.clka(clk),.addra(slim1_st),.douta(vga_slim1_st_1));
-slim1_static_11 slim1_st_11f(.clka(clk),.addra(slim1_st),.douta(vga_slim1_st_11));
-slim1_static_13 slim1_st_13f(.clka(clk),.addra(slim1_st),.douta(vga_slim1_st_13));
-slim1_static_18 slim1_st_18f(.clka(clk),.addra(slim1_st),.douta(vga_slim1_st_18));
-slim1_static_20 slim1_st_20f(.clka(clk),.addra(slim1_st),.douta(vga_slim1_st_20));
-slim1_static_22 slim1_st_22f(.clka(clk),.addra(slim1_st),.douta(vga_slim1_st_22));
-slim1_static_24 slim1_st_24f(.clka(clk),.addra(slim1_st),.douta(vga_slim1_st_24));
-slim1_static_26 slim1_st_26f(.clka(clk),.addra(slim1_st),.douta(vga_slim1_st_26));
-slim1_static_28 slim1_st_28f(.clka(clk),.addra(slim1_st),.douta(vga_slim1_st_28));
-slim1_static_30 slim1_st_30f(.clka(clk),.addra(slim1_st),.douta(vga_slim1_st_30));
-slim1_static_32 slim1_st_32f(.clka(clk),.addra(slim1_st),.douta(vga_slim1_st_32));
-slim1_static_34 slim1_st_34f(.clka(clk),.addra(slim1_st),.douta(vga_slim1_st_34));
-slim1_static_36 slim1_st_36f(.clka(clk),.addra(slim1_st),.douta(vga_slim1_st_36));
-slim1_static_38 slim1_st_38f(.clka(clk),.addra(slim1_st),.douta(vga_slim1_st_38));
+slim_static_1 slim1_st_1f(.clka(clk),.addra(slim1_st),.douta(vga_slim1_st_1));
+slim_static_11 slim1_st_11f(.clka(clk),.addra(slim1_st),.douta(vga_slim1_st_11));
+slim_static_13 slim1_st_13f(.clka(clk),.addra(slim1_st),.douta(vga_slim1_st_13));
+slim_static_18 slim1_st_18f(.clka(clk),.addra(slim1_st),.douta(vga_slim1_st_18));
+slim_static_20 slim1_st_20f(.clka(clk),.addra(slim1_st),.douta(vga_slim1_st_20));
+slim_static_22 slim1_st_22f(.clka(clk),.addra(slim1_st),.douta(vga_slim1_st_22));
+slim_static_24 slim1_st_24f(.clka(clk),.addra(slim1_st),.douta(vga_slim1_st_24));
+slim_static_26 slim1_st_26f(.clka(clk),.addra(slim1_st),.douta(vga_slim1_st_26));
+slim_static_28 slim1_st_28f(.clka(clk),.addra(slim1_st),.douta(vga_slim1_st_28));
+slim_static_30 slim1_st_30f(.clka(clk),.addra(slim1_st),.douta(vga_slim1_st_30));
+slim_static_32 slim1_st_32f(.clka(clk),.addra(slim1_st),.douta(vga_slim1_st_32));
+slim_static_34 slim1_st_34f(.clka(clk),.addra(slim1_st),.douta(vga_slim1_st_34));
+slim_static_36 slim1_st_36f(.clka(clk),.addra(slim1_st),.douta(vga_slim1_st_36));
+slim_static_38 slim1_st_38f(.clka(clk),.addra(slim1_st),.douta(vga_slim1_st_38));
 //粘液怪物2静止像素值
 wire [11:0]vga_slim2_st_1,vga_slim2_st_11,vga_slim2_st_13,vga_slim2_st_18,vga_slim2_st_20,vga_slim2_st_22,vga_slim2_st_24,vga_slim2_st_26,vga_slim2_st_28,vga_slim2_st_30,vga_slim2_st_32,vga_slim2_st_34,vga_slim2_st_36,vga_slim2_st_38;
-slim1_static_1 slim1_st_1f(.clka(clk),.addra(slim1_st),.douta(vga_slim2_st_1));
-slim1_static_11 slim1_st_11f(.clka(clk),.addra(slim1_st),.douta(vga_slim2_st_11));
-slim1_static_13 slim1_st_13f(.clka(clk),.addra(slim1_st),.douta(vga_slim2_st_13));
-slim1_static_18 slim1_st_18f(.clka(clk),.addra(slim1_st),.douta(vga_slim2_st_18));
-slim1_static_20 slim1_st_20f(.clka(clk),.addra(slim1_st),.douta(vga_slim2_st_20));
-slim1_static_22 slim1_st_22f(.clka(clk),.addra(slim1_st),.douta(vga_slim2_st_22));
-slim1_static_24 slim1_st_24f(.clka(clk),.addra(slim1_st),.douta(vga_slim2_st_24));
-slim1_static_26 slim1_st_26f(.clka(clk),.addra(slim1_st),.douta(vga_slim2_st_26));
-slim1_static_28 slim1_st_28f(.clka(clk),.addra(slim1_st),.douta(vga_slim2_st_28));
-slim1_static_30 slim1_st_30f(.clka(clk),.addra(slim1_st),.douta(vga_slim2_st_30));
-slim1_static_32 slim1_st_32f(.clka(clk),.addra(slim1_st),.douta(vga_slim2_st_32));
-slim1_static_34 slim1_st_34f(.clka(clk),.addra(slim1_st),.douta(vga_slim2_st_34));
-slim1_static_36 slim1_st_36f(.clka(clk),.addra(slim1_st),.douta(vga_slim2_st_36));
-slim1_static_38 slim1_st_38f(.clka(clk),.addra(slim1_st),.douta(vga_slim2_st_38));
+slim_static_1 slim2_st_1f(.clka(clk),.addra(slim2_st),.douta(vga_slim2_st_1));
+slim_static_11 slim2_st_11f(.clka(clk),.addra(slim2_st),.douta(vga_slim2_st_11));
+slim_static_13 slim2_st_13f(.clka(clk),.addra(slim2_st),.douta(vga_slim2_st_13));
+slim_static_18 slim2_st_18f(.clka(clk),.addra(slim2_st),.douta(vga_slim2_st_18));
+slim_static_20 slim2_st_20f(.clka(clk),.addra(slim2_st),.douta(vga_slim2_st_20));
+slim_static_22 slim2_st_22f(.clka(clk),.addra(slim2_st),.douta(vga_slim2_st_22));
+slim_static_24 slim2_st_24f(.clka(clk),.addra(slim2_st),.douta(vga_slim2_st_24));
+slim_static_26 slim2_st_26f(.clka(clk),.addra(slim2_st),.douta(vga_slim2_st_26));
+slim_static_28 slim2_st_28f(.clka(clk),.addra(slim2_st),.douta(vga_slim2_st_28));
+slim_static_30 slim2_st_30f(.clka(clk),.addra(slim2_st),.douta(vga_slim2_st_30));
+slim_static_32 slim2_st_32f(.clka(clk),.addra(slim2_st),.douta(vga_slim2_st_32));
+slim_static_34 slim2_st_34f(.clka(clk),.addra(slim2_st),.douta(vga_slim2_st_34));
+slim_static_36 slim2_st_36f(.clka(clk),.addra(slim2_st),.douta(vga_slim2_st_36));
+slim_static_38 slim2_st_38f(.clka(clk),.addra(slim2_st),.douta(vga_slim2_st_38));
 //雪花1像素值
 wire [11:0]vga_snowf1_1,vga_snowf2_1,vga_snowf3_1,vga_snowf4_1,vga_snowf5_1,vga_snowf6_1,vga_snowf7_1,vga_snowf8_1,vga_snowf9_1,vga_snowf10_1,vga_snowf11_1,vga_snowf12_1,vga_snowf13_1,vga_snowf14_1,vga_snowf15_1;
 snowf_1 snowf1_1f(.clka(clk),.addra(snowf1),.douta(vga_snowf1_1));
@@ -473,12 +483,15 @@ reg [4:0]ip_blue_st;
 reg [4:0]ip_blue_rwk;
 reg [7:0]ip_slim1_st;
 reg [7:0]ip_slim2_st;
-reg [4:0]ip_snowf1,ip_snowf2,ip_snowf3,ip_snowf4,ip_snowf5,ip_snowf6,ip_snowf7,ip_snowf8,ip_snowf9,ip_snowf10,ip_snowf11,ip_snowf12,ip_snowf13,ip_snowf14,ip_snowf15;
+reg [4:0]ip_snowf;
 always @(posedge clk) begin
     if(ipcnt == 6_000_000) begin  // 40ms*100M=4M，由于计数器只有3位，所以这里实例只能计数到500k，所以选用了40ms/5=8ms，即2.5*100k
         ipcnt <= 0;
         ip_blue_st <= ip_blue_st + 1;
         ip_slim1_st <= ip_slim1_st + 1;
+        ip_slim2_st <= ip_slim2_st + 1;
+        ip_blue_rwk <= ip_blue_rwk + 1;
+        ip_snowf <= ip_snowf + 1;
         if(ip_blue_st == 15) begin
         ip_blue_st <= 0;  // 6个ip核循环16帧
         end
@@ -491,29 +504,13 @@ always @(posedge clk) begin
         if(ip_blue_rwk == 15) begin
         ip_blue_rwk <= 0;  // 8个ip核循环16帧
         end
-        if(ip_snowf1 == 15) begin
-        ip_snowf1 <= 0;  // 8个ip核循环16帧
-        ip_snowf2 <= 0;  // 8个ip核循环16帧
-        ip_snowf3 <= 0;  // 8个ip核循环16帧
-        ip_snowf4 <= 0;  // 8个ip核循环16帧
-        ip_snowf5 <= 0;  // 8个ip核循环16帧
-        ip_snowf6 <= 0;  // 8个ip核循环16帧
-        ip_snowf7 <= 0;  // 8个ip核循环16帧
-        ip_snowf8 <= 0;  // 8个ip核循环16帧
-        ip_snowf9 <= 0;  // 8个ip核循环16帧
-        ip_snowf10 <= 0;  // 8个ip核循环16帧
-        ip_snowf11 <= 0;  // 8个ip核循环16帧
-        ip_snowf12 <= 0;  // 8个ip核循环16帧
-        ip_snowf13 <= 0;  // 8个ip核循环16帧
-        ip_snowf14 <= 0;  // 8个ip核循环16帧
-        ip_snowf15 <= 0;  // 8个ip核循环16帧
+        if(ip_snowf == 15) begin
+        ip_snowf <= 0;  // 8个ip核循环16帧
         end
         else begin
             ipcnt <= ipcnt + 1;
         end
     end
-end
-always @(posedge clk) begin
     case(ip_blue_st)
         0: vga_blue_st <= vga_blue_st_1[11:0];
         4: vga_blue_st <= vga_blue_st_2[11:0];
@@ -564,15 +561,143 @@ always @(posedge clk) begin
         12: vga_blue_rwk <= vga_blue_rwk_13[11:0];
         14: vga_blue_rwk <= vga_blue_rwk_15[11:0];
     endcase
-    case(ip_snowf1)
-        0: vga_snowf1 <= vga_snowf_1[11:0];
-        2: vga_snowf1 <= vga_snowf_3[11:0];    
-        4: vga_snowf1 <= vga_snowf_5[11:0];
-        6: vga_snowf1 <= vga_snowf_7[11:0];
-        8: vga_snowf1 <= vga_snowf_9[11:0];
-        10: vga_snowf1 <= vga_snowf11[11:0];
-        12: vga_snowf1 <= vga_snowf13[11:0];
-        14: vga_snowf1 <= vga_snowf15[11:0];
+    case(ip_snowf)
+        0:begin 
+        vga_snowf1 <= vga_snowf1_1[11:0];
+        vga_snowf2 <= vga_snowf2_1[11:0];
+        vga_snowf3 <= vga_snowf3_1[11:0];
+        vga_snowf4 <= vga_snowf4_1[11:0];
+        vga_snowf5 <= vga_snowf5_1[11:0];
+        vga_snowf6 <= vga_snowf6_1[11:0];
+        vga_snowf7 <= vga_snowf7_1[11:0];
+        vga_snowf8 <= vga_snowf8_1[11:0];
+        vga_snowf9 <= vga_snowf9_1[11:0];
+        vga_snowf10 <= vga_snowf10_1[11:0];
+        vga_snowf11 <= vga_snowf11_1[11:0];
+        vga_snowf12 <= vga_snowf12_1[11:0];
+        vga_snowf13 <= vga_snowf13_1[11:0];
+        vga_snowf14 <= vga_snowf14_1[11:0];
+        vga_snowf15 <= vga_snowf15_1[11:0];
+        end
+        2:begin
+        vga_snowf1 <= vga_snowf1_3[11:0];
+        vga_snowf2 <= vga_snowf2_3[11:0];
+        vga_snowf3 <= vga_snowf3_3[11:0];
+        vga_snowf4 <= vga_snowf4_3[11:0];
+        vga_snowf5 <= vga_snowf5_3[11:0];
+        vga_snowf6 <= vga_snowf6_3[11:0];
+        vga_snowf7 <= vga_snowf7_3[11:0];
+        vga_snowf8 <= vga_snowf8_3[11:0];
+        vga_snowf9 <= vga_snowf9_3[11:0];
+        vga_snowf10 <= vga_snowf10_3[11:0];
+        vga_snowf11 <= vga_snowf11_3[11:0];
+        vga_snowf12 <= vga_snowf12_3[11:0];
+        vga_snowf13 <= vga_snowf13_3[11:0];
+        vga_snowf14 <= vga_snowf14_3[11:0];
+        vga_snowf15 <= vga_snowf15_3[11:0];
+        end
+        4:begin
+        vga_snowf1 <= vga_snowf1_5[11:0];
+        vga_snowf2 <= vga_snowf2_5[11:0];
+        vga_snowf3 <= vga_snowf3_5[11:0];
+        vga_snowf4 <= vga_snowf4_5[11:0];
+        vga_snowf5 <= vga_snowf5_5[11:0];
+        vga_snowf6 <= vga_snowf6_5[11:0];
+        vga_snowf7 <= vga_snowf7_5[11:0];
+        vga_snowf8 <= vga_snowf8_5[11:0];
+        vga_snowf9 <= vga_snowf9_5[11:0];
+        vga_snowf10 <= vga_snowf10_5[11:0];
+        vga_snowf11 <= vga_snowf11_5[11:0];
+        vga_snowf12 <= vga_snowf12_5[11:0];
+        vga_snowf13 <= vga_snowf13_5[11:0];
+        vga_snowf14 <= vga_snowf14_5[11:0];
+        vga_snowf15 <= vga_snowf15_5[11:0];
+        end
+        6:begin
+        vga_snowf1 <= vga_snowf1_7[11:0];
+        vga_snowf2 <= vga_snowf2_7[11:0];
+        vga_snowf3 <= vga_snowf3_7[11:0];
+        vga_snowf4 <= vga_snowf4_7[11:0];
+        vga_snowf5 <= vga_snowf5_7[11:0];
+        vga_snowf6 <= vga_snowf6_7[11:0];
+        vga_snowf7 <= vga_snowf7_7[11:0];
+        vga_snowf8 <= vga_snowf8_7[11:0];
+        vga_snowf9 <= vga_snowf9_7[11:0];
+        vga_snowf10 <= vga_snowf10_7[11:0];
+        vga_snowf11 <= vga_snowf11_7[11:0];
+        vga_snowf12 <= vga_snowf12_7[11:0];
+        vga_snowf13 <= vga_snowf13_7[11:0];
+        vga_snowf14 <= vga_snowf14_7[11:0]; 
+        vga_snowf15 <= vga_snowf15_7[11:0];
+        end    
+        8:begin
+        vga_snowf1 <= vga_snowf1_9[11:0];
+        vga_snowf2 <= vga_snowf2_9[11:0];
+        vga_snowf3 <= vga_snowf3_9[11:0];
+        vga_snowf4 <= vga_snowf4_9[11:0];
+        vga_snowf5 <= vga_snowf5_9[11:0];
+        vga_snowf6 <= vga_snowf6_9[11:0];
+        vga_snowf7 <= vga_snowf7_9[11:0];
+        vga_snowf8 <= vga_snowf8_9[11:0];
+        vga_snowf9 <= vga_snowf9_9[11:0];
+        vga_snowf10 <= vga_snowf10_9[11:0];
+        vga_snowf11 <= vga_snowf11_9[11:0];
+        vga_snowf12 <= vga_snowf12_9[11:0];
+        vga_snowf13 <= vga_snowf13_9[11:0];
+        vga_snowf14 <= vga_snowf14_9[11:0]; 
+        vga_snowf15 <= vga_snowf15_9[11:0];
+        end
+        10:begin
+        vga_snowf1 <= vga_snowf1_11[11:0];
+        vga_snowf2 <= vga_snowf2_11[11:0];
+        vga_snowf3 <= vga_snowf3_11[11:0];
+        vga_snowf4 <= vga_snowf4_11[11:0];
+        vga_snowf5 <= vga_snowf5_11[11:0];
+        vga_snowf6 <= vga_snowf6_11[11:0];
+        vga_snowf7 <= vga_snowf7_11[11:0];
+        vga_snowf8 <= vga_snowf8_11[11:0];
+        vga_snowf9 <= vga_snowf9_11[11:0];
+        vga_snowf10 <= vga_snowf10_11[11:0];
+        vga_snowf11 <= vga_snowf11_11[11:0];
+        vga_snowf12 <= vga_snowf12_11[11:0];
+        vga_snowf13 <= vga_snowf13_11[11:0];
+        vga_snowf14 <= vga_snowf14_11[11:0]; 
+        vga_snowf15 <= vga_snowf15_11[11:0];
+        end 
+        12:begin
+        vga_snowf1 <= vga_snowf1_13[11:0];
+        vga_snowf2 <= vga_snowf2_13[11:0];
+        vga_snowf3 <= vga_snowf3_13[11:0];
+        vga_snowf4 <= vga_snowf4_13[11:0];
+        vga_snowf5 <= vga_snowf5_13[11:0];
+        vga_snowf6 <= vga_snowf6_13[11:0];
+        vga_snowf7 <= vga_snowf7_13[11:0];
+        vga_snowf8 <= vga_snowf8_13[11:0];
+        vga_snowf9 <= vga_snowf9_13[11:0];
+        vga_snowf10 <= vga_snowf10_13[11:0];
+        vga_snowf11 <= vga_snowf11_13[11:0];
+        vga_snowf12 <= vga_snowf12_13[11:0];
+        vga_snowf13 <= vga_snowf13_13[11:0];
+        vga_snowf14 <= vga_snowf14_13[11:0]; 
+        vga_snowf15 <= vga_snowf15_13[11:0];
+        end
+        14:begin
+        vga_snowf1 <= vga_snowf1_15[11:0];
+        vga_snowf2 <= vga_snowf2_15[11:0];
+        vga_snowf3 <= vga_snowf3_15[11:0];
+        vga_snowf4 <= vga_snowf4_15[11:0];
+        vga_snowf5 <= vga_snowf5_15[11:0];
+        vga_snowf6 <= vga_snowf6_15[11:0];
+        vga_snowf7 <= vga_snowf7_15[11:0];
+        vga_snowf8 <= vga_snowf8_15[11:0];
+        vga_snowf9 <= vga_snowf9_15[11:0];
+        vga_snowf10 <= vga_snowf10_15[11:0];
+        vga_snowf11 <= vga_snowf11_15[11:0];
+        vga_snowf12 <= vga_snowf12_15[11:0];
+        vga_snowf13 <= vga_snowf13_15[11:0];
+        vga_snowf14 <= vga_snowf14_15[11:0]; 
+        vga_snowf15 <= vga_snowf15_15[11:0];
+        end
     endcase
 end
 
@@ -929,11 +1054,11 @@ always@(posedge clk)begin
     end
 
     //7.蓝色小人（筛选静态运动及删除背景色）47*41  428
-    if(col_addr_x>=x_blue&&col_addr_x<=x_blue+46&&row_addr_y>=y_blue&&row_addr_y<=y_blue+40)begin
-        if(vga_blue_st[11:0]!=4*256+2*16+8)begin
-            vga_data<=vga_blue_st[11:0];   
-        end
-    end
+    // if(col_addr_x>=x_blue&&col_addr_x<=x_blue+46&&row_addr_y>=y_blue&&row_addr_y<=y_blue+40)begin
+    //     if(vga_blue_st[11:0]!=4*256+2*16+8)begin
+    //         vga_data<=vga_blue_st[11:0];   
+    //     end
+    // end
 
     //8.蓝色小人（筛选奔跑及删除背景色）47*43 028
     if(col_addr_x>=x_blue&&col_addr_x<=x_blue+46&&row_addr_y>=y_blue&&row_addr_y<=y_blue+42)begin
@@ -943,13 +1068,13 @@ always@(posedge clk)begin
     end
 end
 //帧动画单次显示
-always @(posedge clk)begin
+// always @(posedge clk)begin
     //1.方块变冰块
     //2.树变冰
     //3.小石块变冰
     //4.怪物变冰
     //5.人物受伤
-end
+// end
 //帧固定(可以放到循环最后，if***则赋值定值)
 
 endmodule

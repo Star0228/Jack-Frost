@@ -1,14 +1,15 @@
-ground_1 
-ground_1 
-ground_2 
-ground_3 
-ground_3 
-ground_3 
-ground_3 
-ground_1 
-ground_1 
-ground_1 
-ground_2 
-ground_2 
-ground_1 
-ground_3 
+vga_snowf1 <= vga_snowf1_15[11:0];
+        vga_snowf2 <= vga_snowf2_15[11:0];
+        vga_snowf3 <= vga_snowf3_15[11:0];
+        vga_snowf4 <= vga_snowf4_15[11:0];
+        vga_snowf5 <= vga_snowf5_15[11:0];
+        vga_snowf6 <= vga_snowf6_15[11:0];
+        vga_snowf7 <= vga_snowf7_15[11:0];
+        vga_snowf8 <= vga_snowf8_15[11:0];
+        vga_snowf9 <= vga_snowf9_15[11:0];
+        vga_snowf10 <= vga_snowf10_15[11:0];
+        vga_snowf11 <= vga_snowf11_15[11:0];
+        vga_snowf12 <= vga_snowf12_15[11:0];
+        vga_snowf13 <= vga_snowf13_15[11:0];
+        vga_snowf14 <= vga_snowf14_15[11:0]; 
+        vga_snowf15 <= vga_snowf15_15[11:0];
