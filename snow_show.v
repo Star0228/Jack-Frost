@@ -12,16 +12,16 @@ wire [11:0]vga_snow_3;
 snowf_1 snow_f1(.clka(clk),.addra(snow),.douta(vga_snow_1));
 snowf_5 snow_f2(.clka(clk),.addra(snow),.douta(vga_snow_2));
 snowf_13 snow_f3(.clka(clk),.addra(snow),.douta(vga_snow_3));
-reg [1:0]ip_snow;
+reg [3:0]ip_snow;
 always @(posedge clk )begin
     if(ipcnt == 6000000)begin
         ip_snow <=ip_snow+1;
     end
     case(ip_snow)
-        2'b00:vga_snow <= vga_snow_1;
-        2'b01:vga_snow <= vga_snow_2;
-        2'b10:vga_snow <= vga_snow_3;
-        2'b11:begin
+        0:vga_snow <= vga_snow_1;
+        4:vga_snow <= vga_snow_2;
+        8:vga_snow <= vga_snow_3;
+        15:begin
             vga_snow <= vga_snow_1;
             ip_snow <= 0;
         end

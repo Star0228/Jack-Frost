@@ -10,22 +10,21 @@ module ground_show(
 wire [11:0]vga_ground_1;
 wire [11:0]vga_ground_2;
 wire [11:0]vga_ground_3;
-ground_1 ground_f1(.clka(clk),.addra(ground),.douta(vga_ground_1));
+ground_1 ground_f1(.clka(clk),.addra(ground),.douta(vga_ground_1));//ip核
 ground_4 ground_f2(.clka(clk),.addra(ground),.douta(vga_ground_2));
 ground_6 ground_f3(.clka(clk),.addra(ground),.douta(vga_ground_3));
 reg bk_tc_finish;
-reg [1:0]ip_ground;
+reg [4:0]ip_ground;
 always @(posedge clk )begin
     if(ipcnt == 6000000&&bk_touched&& ~bk_tc_finish)begin
         ip_ground <=ip_ground+1;
     end
     case(ip_ground)
-        2'b00:vga_ground <= vga_ground_1;
-        2'b01:vga_ground <= vga_ground_2;
-        2'b10:vga_ground <= vga_ground_3;
-        2'b11:begin
-            vga_ground <= vga_ground_1;
-            bk_tc_finish <= 1;
+        0:vga_ground <= vga_ground_1;
+        13:vga_ground <= vga_ground_2;
+        31:begin
+            vga_ground <= vga_ground_3;
+             bk_tc_finish <= 1;
         end
     endcase
 end

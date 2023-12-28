@@ -80,7 +80,6 @@ end
 
 assign ready=cnt[4];
 assign key_board=data;
-    
 
 endmodule
 

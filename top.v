@@ -37,8 +37,8 @@
     //蓝色小人坐标
     reg [9:0]x_blue;
     reg [8:0]y_blue;
-    reg [1:0]blue_state;
-    //0->static    ,  1->walk,    2->jump, 
+    reg [2:0]blue_state;
+    //000->right static 001->right_walk ,  010->right_jump, 100->left static 101->left_walk ,  110->left_jump
     initial begin
         x_blue=10'd0;
         y_blue=9'd0;
@@ -61,6 +61,7 @@
     //雪花1坐标
     reg [9:0] x_snowf1,x_snowf2,x_snowf3,x_snowf4,x_snowf5,x_snowf6,x_snowf7,x_snowf8,x_snowf9,x_snowf10,x_snowf11,x_snowf12,x_snowf13,x_snowf14,x_snowf15;
     reg [8:0] y_snowf1,y_snowf2,y_snowf3,y_snowf4,y_snowf5,y_snowf6,y_snowf7,y_snowf8,y_snowf9,y_snowf10,y_snowf11,y_snowf12,y_snowf13,y_snowf14,y_snowf15;
+    
     initial begin
     // x_snowf1=x_snowf2=x_snowf3=x_snowf4=x_snowf5=x_snowf6=x_snowf7=x_snowf8=x_snowf9=x_snowf10=x_snowf11=x_snowf12=x_snowf13=x_snowf14=x_snowf15=10'd144;
         y_snowf1=9'd0;
@@ -255,8 +256,8 @@
         bg<= (col_addr_x>=0&&col_addr_x<=550&&row_addr_y>=0&&row_addr_y<=400)?(row_addr_y)*551+col_addr_x:0;
         //蓝色小人静态图片47*41（x_blue,y_blue）图片自带428的背景色
         blue_st<= (col_addr_x>=x_blue&&col_addr_x<=x_blue+46&&row_addr_y>=y_blue&&row_addr_y<=y_blue+40)?(row_addr_y-y_blue)*47+col_addr_x-x_blue:0;
-        //蓝色小人向右奔跑的图片47*43（x_blue,y_blue）图片自带028的背景色
-        blue_rwk<= (col_addr_x>=x_blue&&col_addr_x<=x_blue+46&&row_addr_y>=y_blue&&row_addr_y<=y_blue+42)?(row_addr_y-y_blue)*47+col_addr_x-x_blue:0;
+        // //蓝色小人向右奔跑的图片47*43（x_blue,y_blue）图片自带028的背景色
+        // blue_rwk<= (col_addr_x>=x_blue&&col_addr_x<=x_blue+46&&row_addr_y>=y_blue&&row_addr_y<=y_blue+42)?(row_addr_y-y_blue)*47+col_addr_x-x_blue:0;
         //怪物1静止62*36（x_slim1,y_slim1）图片自带028的背景色
         slim1_st<= (col_addr_x>=x_slim1&&col_addr_x<=x_slim1+61&&row_addr_y>=y_slim1&&row_addr_y<=y_slim1+35)?(row_addr_y-y_slim1)*62+col_addr_x-x_slim1:0;
         //怪物2静止62*36（x_slim2,y_slim2）图片自带028的背景色
@@ -337,23 +338,6 @@
     //调用ip核输出背景像素值
     background bg2(.clka(clk),.addra(bg),.douta(vga_bg));
 
-    //调用ip核输出蓝色小人静态图片像素值
-    wire [11:0]vga_blue_st_1,vga_blue_st_2,vga_blue_st_3,vga_blue_st_4;
-    blue_static_1 blue_st_1f(.clka(clk),.addra(blue_st),.douta(vga_blue_st_1));
-    blue_static_5 blue_st_2f(.clka(clk),.addra(blue_st),.douta(vga_blue_st_2));
-    blue_static_9 blue_st_3f(.clka(clk),.addra(blue_st),.douta(vga_blue_st_3));
-    blue_static_13 blue_st_4f(.clka(clk),.addra(blue_st),.douta(vga_blue_st_4));
-    //蓝色小人向右奔跑的图片像素值
-
-    wire [11:0]vga_blue_rwk_1,vga_blue_rwk_3,vga_blue_rwk_5,vga_blue_rwk_7,vga_blue_rwk_9,vga_blue_rwk_11,vga_blue_rwk_13,vga_blue_rwk_15;
-    blue_r_walk_1 blue_rwk_1f(.clka(clk),.addra(blue_rwk),.douta(vga_blue_rwk_1));
-    blue_r_walk_3 blue_rwk_3f(.clka(clk),.addra(blue_rwk),.douta(vga_blue_rwk_3));
-    blue_r_walk_5 blue_rwk_5f(.clka(clk),.addra(blue_rwk),.douta(vga_blue_rwk_5));
-    blue_r_walk_7 blue_rwk_7f(.clka(clk),.addra(blue_rwk),.douta(vga_blue_rwk_7));
-    blue_r_walk_9 blue_rwk_9f(.clka(clk),.addra(blue_rwk),.douta(vga_blue_rwk_9));
-    blue_r_walk_11 blue_rwk_11f(.clka(clk),.addra(blue_rwk),.douta(vga_blue_rwk_11));
-    blue_r_walk_13 blue_rwk_13f(.clka(clk),.addra(blue_rwk),.douta(vga_blue_rwk_13));
-    blue_r_walk_15 blue_rwk_15f(.clka(clk),.addra(blue_rwk),.douta(vga_blue_rwk_15));
 
 
     //粘液怪物1静止像素值
@@ -512,9 +496,18 @@ end
 ground_show ground1_show(.clk(clk),.ipcnt(ipcnt),.ground(ground1),.bk_touched(bk_touched[0]),.vga_ground(vga_ground1));
 ground_show ground2_show(.clk(clk),.ipcnt(ipcnt),.ground(ground2),.bk_touched(bk_touched[1]),.vga_ground(vga_ground2));
 ground_show ground3_show(.clk(clk),.ipcnt(ipcnt),.ground(ground3),.bk_touched(bk_touched[2]),.vga_ground(vga_ground3));
+ground_show ground4_show(.clk(clk),.ipcnt(ipcnt),.ground(ground4),.bk_touched(bk_touched[3]),.vga_ground(vga_ground4));
+ground_show ground5_show(.clk(clk),.ipcnt(ipcnt),.ground(ground5),.bk_touched(bk_touched[4]),.vga_ground(vga_ground5));
+ground_show ground6_show(.clk(clk),.ipcnt(ipcnt),.ground(ground6),.bk_touched(bk_touched[5]),.vga_ground(vga_ground6));
+ground_show ground7_show(.clk(clk),.ipcnt(ipcnt),.ground(ground7),.bk_touched(bk_touched[6]),.vga_ground(vga_ground7));
+ground_show ground8_show(.clk(clk),.ipcnt(ipcnt),.ground(ground8),.bk_touched(bk_touched[7]),.vga_ground(vga_ground8));
+ground_show ground9_show(.clk(clk),.ipcnt(ipcnt),.ground(ground9),.bk_touched(bk_touched[8]),.vga_ground(vga_ground9));
+ground_show ground10_show(.clk(clk),.ipcnt(ipcnt),.ground(ground10),.bk_touched(bk_touched[9]),.vga_ground(vga_ground10));
 snow_show snow_f1(.clk(clk),.ipcnt(ipcnt),.snow(snowf1),.vga_snow(vga_snowf1));
 snow_show snow_f2(.clk(clk),.ipcnt(ipcnt),.snow(snowf2),.vga_snow(vga_snowf2));
 snow_show snow_f3(.clk(clk),.ipcnt(ipcnt),.snow(snowf3),.vga_snow(vga_snowf3));
+snow_show snow_f4(.clk(clk),.ipcnt(ipcnt),.snow(snowf4),.vga_snow(vga_snowf4));
+snow_show snow_f5(.clk(clk),.ipcnt(ipcnt),.snow(snowf5),.vga_snow(vga_snowf5));
 
 
 
@@ -541,41 +534,41 @@ snow_show snow_f3(.clk(clk),.ipcnt(ipcnt),.snow(snowf3),.vga_snow(vga_snowf3));
                 vga_data<=vga_ground3[11:0];   
             end
         end
-        // if(col_addr_x>=x_ground4&&col_addr_x<=x_ground4+27&&row_addr_y>=y_ground4&&row_addr_y<=y_ground4+41)begin
-        //     if(vga_ground4[11:0]!=0*256+2*16+8)begin
-        //         vga_data<=vga_ground4[11:0];   
-        //     end
-        // end
-        // if(col_addr_x>=x_ground5&&col_addr_x<=x_ground5+27&&row_addr_y>=y_ground5&&row_addr_y<=y_ground5+41)begin
-        //     if(vga_ground5[11:0]!=0*256+2*16+8)begin
-        //         vga_data<=vga_ground5[11:0];   
-        //     end
-        // end
-        // if(col_addr_x>=x_ground6&&col_addr_x<=x_ground6+27&&row_addr_y>=y_ground6&&row_addr_y<=y_ground6+41)begin
-        //     if(vga_ground6[11:0]!=0*256+2*16+8)begin
-        //         vga_data<=vga_ground6[11:0];   
-        //     end
-        // end
-        // if(col_addr_x>=x_ground7&&col_addr_x<=x_ground7+27&&row_addr_y>=y_ground7&&row_addr_y<=y_ground7+41)begin
-        //     if(vga_ground7[11:0]!=0*256+2*16+8)begin
-        //         vga_data<=vga_ground7[11:0];   
-        //     end
-        // end
-        // if(col_addr_x>=x_ground8&&col_addr_x<=x_ground8+27&&row_addr_y>=y_ground8&&row_addr_y<=y_ground8+41)begin
-        //     if(vga_ground8[11:0]!=0*256+2*16+8)begin
-        //         vga_data<=vga_ground8[11:0];   
-        //     end
-        // end
-        // if(col_addr_x>=x_ground9&&col_addr_x<=x_ground9+27&&row_addr_y>=y_ground9&&row_addr_y<=y_ground9+41)begin
-        //     if(vga_ground9[11:0]!=0*256+2*16+8)begin
-        //         vga_data<=vga_ground9[11:0];   
-        //     end
-        // end
-        // if(col_addr_x>=x_ground10&&col_addr_x<=x_ground10+27&&row_addr_y>=y_ground10&&row_addr_y<=y_ground10+41)begin
-        //     if(vga_ground10[11:0]!=0*256+2*16+8)begin
-        //         vga_data<=vga_ground10[11:0];   
-        //     end
-        // end
+        if(col_addr_x>=x_ground4&&col_addr_x<=x_ground4+27&&row_addr_y>=y_ground4&&row_addr_y<=y_ground4+41)begin
+            if(vga_ground4[11:0]!=0*256+2*16+8)begin
+                vga_data<=vga_ground4[11:0];   
+            end
+        end
+        if(col_addr_x>=x_ground5&&col_addr_x<=x_ground5+27&&row_addr_y>=y_ground5&&row_addr_y<=y_ground5+41)begin
+            if(vga_ground5[11:0]!=0*256+2*16+8)begin
+                vga_data<=vga_ground5[11:0];   
+            end
+        end
+        if(col_addr_x>=x_ground6&&col_addr_x<=x_ground6+27&&row_addr_y>=y_ground6&&row_addr_y<=y_ground6+41)begin
+            if(vga_ground6[11:0]!=0*256+2*16+8)begin
+                vga_data<=vga_ground6[11:0];   
+            end
+        end
+        if(col_addr_x>=x_ground7&&col_addr_x<=x_ground7+27&&row_addr_y>=y_ground7&&row_addr_y<=y_ground7+41)begin
+            if(vga_ground7[11:0]!=0*256+2*16+8)begin
+                vga_data<=vga_ground7[11:0];   
+            end
+        end
+        if(col_addr_x>=x_ground8&&col_addr_x<=x_ground8+27&&row_addr_y>=y_ground8&&row_addr_y<=y_ground8+41)begin
+            if(vga_ground8[11:0]!=0*256+2*16+8)begin
+                vga_data<=vga_ground8[11:0];   
+            end
+        end
+        if(col_addr_x>=x_ground9&&col_addr_x<=x_ground9+27&&row_addr_y>=y_ground9&&row_addr_y<=y_ground9+41)begin
+            if(vga_ground9[11:0]!=0*256+2*16+8)begin
+                vga_data<=vga_ground9[11:0];   
+            end
+        end
+        if(col_addr_x>=x_ground10&&col_addr_x<=x_ground10+27&&row_addr_y>=y_ground10&&row_addr_y<=y_ground10+41)begin
+            if(vga_ground10[11:0]!=0*256+2*16+8)begin
+                vga_data<=vga_ground10[11:0];   
+            end
+        end
         // if(col_addr_x>=x_ground11&&col_addr_x<=x_ground11+27&&row_addr_y>=y_ground11&&row_addr_y<=y_ground11+41)begin
         //     if(vga_ground11[11:0]!=0*256+2*16+8)begin
         //         vga_data<=vga_ground11[11:0];   
@@ -794,16 +787,16 @@ snow_show snow_f3(.clk(clk),.ipcnt(ipcnt),.snow(snowf3),.vga_snow(vga_snowf3));
                 vga_data<=vga_snowf3[11:0];   
             end
         end
-        // if(col_addr_x>=x_snowf4&&col_addr_x<=x_snowf4+23&&row_addr_y>=y_snowf4&&row_addr_y<=y_snowf4+25)begin
-        //     if(vga_snowf4[11:0]!=0*256+2*16+8)begin
-        //         vga_data<=vga_snowf4[11:0];   
-        //     end
-        // end
-        // if(col_addr_x>=x_snowf5&&col_addr_x<=x_snowf5+23&&row_addr_y>=y_snowf5&&row_addr_y<=y_snowf5+25)begin
-        //     if(vga_snowf5[11:0]!=0*256+2*16+8)begin
-        //         vga_data<=vga_snowf5[11:0];   
-        //     end
-        // end
+        if(col_addr_x>=x_snowf4&&col_addr_x<=x_snowf4+23&&row_addr_y>=y_snowf4&&row_addr_y<=y_snowf4+25)begin
+            if(vga_snowf4[11:0]!=0*256+2*16+8)begin
+                vga_data<=vga_snowf4[11:0];   
+            end
+        end
+        if(col_addr_x>=x_snowf5&&col_addr_x<=x_snowf5+23&&row_addr_y>=y_snowf5&&row_addr_y<=y_snowf5+25)begin
+            if(vga_snowf5[11:0]!=0*256+2*16+8)begin
+                vga_data<=vga_snowf5[11:0];   
+            end
+        end
         // if(col_addr_x>=x_snowf6&&col_addr_x<=x_snowf6+23&&row_addr_y>=y_snowf6&&row_addr_y<=y_snowf6+25)begin
         //     if(vga_snowf6[11:0]!=0*256+2*16+8)begin
         //         vga_data<=vga_snowf6[11:0];   
@@ -880,7 +873,7 @@ snow_show snow_f3(.clk(clk),.ipcnt(ipcnt),.snow(snowf3),.vga_snow(vga_snowf3));
     //             vga_data<=vga_blue_rwk[11:0];   
     //         end
     //     end
-     end
+    end
 
 
     endmodule
