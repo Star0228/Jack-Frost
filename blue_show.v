@@ -9,8 +9,7 @@ module blue_show(
 //000:stand&left 001:stand&right 010:run&left 011:run&right 100:jump&left 101:jump&right
 //last two bits: 00:stand 01:run 10:jump
 //first bit: 0:left 1:right
-wire blue_l;
-assign blue_l = (46-blue % 47)+blue/47;
+reg blue_l<= (46-blue % 47)+(blue/47)*47;
 //蓝色小人向右静止的图片像素值  1 5 9 13
 wire [11:0]vga_blue_st_1,vga_blue_st_5,vga_blue_st_9,vga_blue_st_13;
 blue_static_1 blue_st_1f(.clka(clk),.addra(blue),.douta(vga_blue_st_1));
@@ -65,8 +64,7 @@ always @(posedge clk )begin
                 12:vga_blue <= vga_blue_st_13;
                 13:vga_blue <= vga_blue_st_13;
                 14:vga_blue <= vga_blue_st_13;
-                15:vga_blue <= vga_blue_st_13;
-                16:begin
+                15:begin
                     vga_blue <= vga_blue_st_1;
                     ip_blue <= 0;
                 end
@@ -89,8 +87,7 @@ always @(posedge clk )begin
                 12:vga_blue <= vga_blue_rwk_13;
                 13:vga_blue <= vga_blue_rwk_13;
                 14:vga_blue <= vga_blue_rwk_13;
-                15:vga_blue <= vga_blue_rwk_13;
-                16:begin
+                15:begin
                     vga_blue <= vga_blue_rwk_1;
                     ip_blue <= 0;
                 end
@@ -113,14 +110,14 @@ always @(posedge clk )begin
                 12:vga_blue <= vga_blue_jump;
                 13:vga_blue <= vga_blue_jump;
                 14:vga_blue <= vga_blue_jump;
-                15:vga_blue <= vga_blue_jump;
-                16:begin
+                15:begin
                     vga_blue <= vga_blue_jump;
                     ip_blue <= 0;
                 end
             endcase
         end
-    end else begin
+    end 
+    if(blue_state[0]==0)begin
         if(blue_state[2:1]==2'b00)begin
             case(ip_blue)
                 0:vga_blue <= vga_bl_st_l1;
@@ -138,8 +135,7 @@ always @(posedge clk )begin
                 12:vga_blue <= vga_bl_st_l13;
                 13:vga_blue <= vga_bl_st_l13;
                 14:vga_blue <= vga_bl_st_l13;
-                15:vga_blue <= vga_bl_st_l13;
-                16:begin
+                15:begin
                     vga_blue <= vga_bl_st_l1;
                     ip_blue <= 0;
                 end
@@ -162,8 +158,7 @@ always @(posedge clk )begin
                 12:vga_blue <= vga_bl_lwk_13;
                 13:vga_blue <= vga_bl_lwk_13;
                 14:vga_blue <= vga_bl_lwk_13;
-                15:vga_blue <= vga_bl_lwk_13;
-                16:begin
+                15:begin
                     vga_blue <= vga_bl_lwk_1;
                     ip_blue <= 0;
                 end
@@ -186,17 +181,13 @@ always @(posedge clk )begin
                 12:vga_blue <= vga_bl_ljump;
                 13:vga_blue <= vga_bl_ljump;
                 14:vga_blue <= vga_bl_ljump;
-                15:vga_blue <= vga_bl_ljump;
-                16:begin
+                15:begin
                     vga_blue <= vga_bl_ljump;
                     ip_blue <= 0;
                 end
             endcase
         end
     end
-
 end
-
-
 endmodule
 
