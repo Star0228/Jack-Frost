@@ -36,17 +36,19 @@
 ////////////////Global Variables and Initialize//////////////////////////////
 
 ////////////////////////////////Initialize the coordinates of various objects//////////////////////////////
-    //蓝色小人坐标
+   //蓝色小人坐标
     reg [9:0]x_blue;
     reg [8:0]y_blue;
     //record the state of Jack
-    //0:stand 1:run 2:jump 3:jump&run
+    //000:stand&left 001:stand&right 010:run&left 011:run&right 100:jump&left 101:jump&right
+    //last two bits: 00:stand 01:run 10:jump
+    //first bit: 0:left 1:right
     reg [2:0]blue_state;
 
     initial begin
         x_blue=10'd0;
         y_blue=9'd0;
-        blue_state=2'd0;
+        blue_state=3'd0;
     end
    
     //Initialize the coordinate of the monsters with loop
@@ -132,8 +134,8 @@
     reg [18:0] bg;
     wire [11:0] vga_bg; 
     //蓝色小人静态图片的地址寄存器和vga输出
-    reg [13:0]blue_st;
-    reg [11:0]vga_blue_st;
+    reg [13:0]blue;
+    wire [11:0]vga_blue;
     
     //The address of the monsters and the output of vga
     reg [11:0] vga_slim_st[0:monster_num-1];
@@ -152,7 +154,7 @@
         //背景551*401
         bg<= (col_addr_x>=0&&col_addr_x<=550&&row_addr_y>=0&&row_addr_y<=400)?(row_addr_y)*551+col_addr_x:0;
         //蓝色小人静态图片47*41（x_blue,y_blue）图片自带428的背景色
-        blue_st<= (col_addr_x>=x_blue&&col_addr_x<=x_blue+46&&row_addr_y>=y_blue&&row_addr_y<=y_blue+40)?(row_addr_y-y_blue)*47+col_addr_x-x_blue:0;
+        blue<= (col_addr_x>=x_blue&&col_addr_x<=x_blue+46&&row_addr_y>=y_blue&&row_addr_y<=y_blue+40)?(row_addr_y-y_blue)*47+col_addr_x-x_blue:0;
 
         // //怪物1静止62*36（x_slim1,y_slim1）图片自带028的背景色
         for (integer i=0;i<monster_num;i=i+1)begin
@@ -186,6 +188,7 @@
         end
     end
     //assign the address to the vga
+    blue_show blue_show(.clk(clk),.ipcnt(ipcnt),.blue(blue),.blue_state(blue_state),.vga_blue(vga_blue));
     genvar ground_show_i;
     generate
         for (ground_show_i=0;ground_show_i<ground_num;ground_show_i=ground_show_i+1)begin:ground_show
@@ -241,17 +244,11 @@
 
         //7.蓝色小人（筛选静态运动及删除背景色）47*41  428
         if(col_addr_x>=x_blue&&col_addr_x<=x_blue+46&&row_addr_y>=y_blue&&row_addr_y<=y_blue+40)begin
-            if(vga_blue_st[11:0]!=4*256+2*16+8)begin
-                vga_data<=vga_blue_st[11:0];   
+            if(vga_blue[11:0]!=4*256+2*16+8)begin
+                vga_data<=vga_blue[11:0];   
             end
         end
 
-    //     //8.蓝色小人（筛选奔跑及删除背景色）47*43 028
-    //     if(blue_state==2'd1&&col_addr_x>=x_blue&&col_addr_x<=x_blue+46&&row_addr_y>=y_blue&&row_addr_y<=y_blue+42)begin
-    //         if(vga_blue_rwk[11:0]!=0*256+2*16+8)begin
-    //             vga_data<=vga_blue_rwk[11:0];   
-    //         end
-    //     end
     end
 ////////////////////////////////Image processing//////////////////////////////
 

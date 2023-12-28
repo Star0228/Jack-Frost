@@ -19,8 +19,20 @@ always @(posedge clk )begin
     end
     case(ip_snow)
         0:vga_snow <= vga_snow_1;
+        1:vga_snow <= vga_snow_1;
+        2:vga_snow <= vga_snow_1;
+        3:vga_snow <= vga_snow_1;
         4:vga_snow <= vga_snow_2;
+        5:vga_snow <= vga_snow_2;
+        6:vga_snow <= vga_snow_2;
+        7:vga_snow <= vga_snow_2;
         8:vga_snow <= vga_snow_3;
+        9:vga_snow <= vga_snow_3;
+        10:vga_snow <= vga_snow_3;
+        11:vga_snow <= vga_snow_3;
+        12:vga_snow <= vga_snow_1;
+        13:vga_snow <= vga_snow_1;
+        14:vga_snow <= vga_snow_1;
         15:begin
             vga_snow <= vga_snow_1;
             ip_snow <= 0;
