@@ -13,8 +13,8 @@ def bmp_to_coe(input_file):
         coe_file.write('memory_initialization_vector=\n')
         for y in range(im.size[1]):
             for x in range(im.size[0]):
-                r ,g,b= pix[x, y]
-                coe_file.write('%01x%01x%01x,\n' % (r% 4, g >> 4, b >> 4))
+                r,g,b= pix[x, y]
+                coe_file.write('%01x%01x%01x,\n' % (r>> 4, g >> 4, b >> 4))
         coe_file.seek(coe_file.tell() - 2, 0) # remove last comma
         coe_file.write(';')
 
@@ -30,8 +30,8 @@ def bmp_to_coe24(input_file):
         coe_file.write('memory_initialization_vector=\n')
         for y in range(im.size[1]):
             for x in range(im.size[0]):
-                r,g,b= pix[x, y]
-                coe_file.write('%02x%02x%02x,\n' % (r, g , b))
+                r,g,b,a = pix[x, y]
+                coe_file.write('%02x%02x%02x,\n' % (r, g, b))
         coe_file.seek(coe_file.tell() - 2, 0) # remove last comma
         coe_file.write(';')
 
@@ -44,12 +44,11 @@ def rename_files_in_directory(directory_path, prefix_str):
             os.rename(old_file_path, new_file_path)
 
 
-
-folder_path = 'D:\\CS\\Logic-studying\\Jack-Frost\\素材导出\\sprites\\蓝色小人向右奔跑，需做出向左奔跑建议镜像'
+folder_path = 'D:\\CS\\Logic-studying\\Jack-Frost\\素材导出\\shapes\\images'
 for filename in os.listdir(folder_path):
     if filename.endswith('.bmp'):
         full_path = os.path.join(folder_path, filename)
         bmp_to_coe(full_path)
         
 # 使用方法: 指定文件夹路径和前缀字符串
-rename_files_in_directory("D:\\CS\\Logic-studying\\Jack-Frost\\素材导出\\sprites\\蓝色小人向右奔跑，需做出向左奔跑建议镜像", "blue_r_walk_")
+rename_files_in_directory("D:\\CS\\Logic-studying\\Jack-Frost\\素材导出\\shapes\\images", "")
