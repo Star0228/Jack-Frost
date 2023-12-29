@@ -2,14 +2,18 @@
 module blue_show(
     input clk,
     input [31:0]ipcnt,
-    input [11:0]blue,
+    input [13:0]blue,
     input [2:0]blue_state,
     output reg [11:0]vga_blue
 );
 //000:stand&left 001:stand&right 010:run&left 011:run&right 100:jump&left 101:jump&right
 //last two bits: 00:stand 01:run 10:jump
 //first bit: 0:left 1:right
-reg blue_l<= (46-blue % 47)+(blue/47)*47;
+reg [13:0]blue_l;
+always@(posedge clk)begin
+blue_l[13:0]<=(14'd46-blue[13:0] % 14'd47)+(blue[13:0]/14'd47)*14'd47;
+end
+
 //蓝色小人向右静止的图片像素值  1 5 9 13
 wire [11:0]vga_blue_st_1,vga_blue_st_5,vga_blue_st_9,vga_blue_st_13;
 blue_static_1 blue_st_1f(.clka(clk),.addra(blue),.douta(vga_blue_st_1));

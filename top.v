@@ -17,8 +17,8 @@
     reg [3:0]health;
     initial begin
         isFinish=0;
-        score=32'b0;
-        health=4'b0000;
+        score=32'd0;
+        health=4'd5;
     end
 
 
@@ -46,9 +46,9 @@
     reg [2:0]blue_state;
 
     initial begin
-        x_blue=10'd0;
-        y_blue=9'd0;
-        blue_state=3'd0;
+        x_blue<=10'd0;
+        y_blue<=9'd0;
+        blue_state<=3'd1;
     end
    
     //Initialize the coordinate of the monsters with loop
@@ -57,18 +57,18 @@
     reg [8:0]y_slim[0:monster_num-1];
     initial begin
         for (integer i=0;i<monster_num;i=i+1)begin
-            x_slim[i]=10'd48*(i+1);
-            y_slim[i]=9'd0;
+            x_slim[i]<=10'd48*(i+1);
+            y_slim[i]<=9'd0;
         end
     end
     //Initialize snowflake's coordinate with loop
-    parameter snowflake_num = 15;
+    parameter snowflake_num <= 15;
     reg [9:0]x_snowf[0:snowflake_num-1];
     reg [8:0]y_snowf[0:snowflake_num-1];
     initial begin
         for (integer i=0;i<snowflake_num;i=i+1)begin
-            x_snowf[i]=10'd144;
-            y_snowf[i]=9'd26*i;
+            x_snowf[i]<=10'd144;
+            y_snowf[i]<=9'd26*i;
         end
     end
 
@@ -79,8 +79,8 @@
     reg [8:0]y_ground[0:ground_num-1];
     initial begin
         for (integer i=0;i<ground_num;i=i+1)begin
-            x_ground[i]=10'd28*i;
-            y_ground[i]=9'd374;
+            x_ground[i]<=10'd28*i;
+            y_ground[i]<=9'd374;
         end
     end
 ////////////////////////////////Initialize the coordinates of various objects//////////////////////////////
