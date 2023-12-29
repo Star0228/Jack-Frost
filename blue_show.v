@@ -6,9 +6,10 @@ module blue_show(
     input [2:0]blue_state,
     output reg [11:0]vga_blue
 );
-//000:stand&left 001:stand&right 010:run&left 011:run&right 100:jump&left 101:jump&right
-//last two bits: 00:stand 01:run 10:jump
+//record the state of Jack
 //first bit: 0:left 1:right
+//second bit: 0: on the ground 1: in the air
+//third bit: 0:stand 1:move
 reg [13:0]blue_l;
 always@(posedge clk)begin
 blue_l[13:0]<=(14'd46-blue[13:0] % 14'd47)+(blue[13:0]/14'd47)*14'd47;
@@ -50,55 +51,12 @@ always @(posedge clk )begin
     if(ipcnt == 6000000)begin
         ip_blue <=ip_blue+1;
     end
-    if(blue_state[0]==1)begin
-        if(blue_state[2:1]==2'b00)begin
-            case(ip_blue)
-                0:vga_blue <= vga_blue_st_1;
-                1:vga_blue <= vga_blue_st_1;
-                2:vga_blue <= vga_blue_st_1;
-                3:vga_blue <= vga_blue_st_1;
-                4:vga_blue <= vga_blue_st_5;
-                5:vga_blue <= vga_blue_st_5;
-                6:vga_blue <= vga_blue_st_5;
-                7:vga_blue <= vga_blue_st_5;
-                8:vga_blue <= vga_blue_st_9;
-                9:vga_blue <= vga_blue_st_9;
-                10:vga_blue <= vga_blue_st_9;
-                11:vga_blue <= vga_blue_st_9;
-                12:vga_blue <= vga_blue_st_13;
-                13:vga_blue <= vga_blue_st_13;
-                14:vga_blue <= vga_blue_st_13;
-                15:begin
-                    vga_blue <= vga_blue_st_1;
-                    ip_blue <= 0;
-                end
-            endcase
-        end
-        if(blue_state[2:1]==2'b01)begin
-            case(ip_blue)
-                 0:vga_blue <= vga_blue_rwk_1;
-                1:vga_blue <= vga_blue_rwk_1;
-                2:vga_blue <= vga_blue_rwk_1;
-                3:vga_blue <= vga_blue_rwk_1;
-                4:vga_blue <= vga_blue_rwk_5;
-                5:vga_blue <= vga_blue_rwk_5;
-                6:vga_blue <= vga_blue_rwk_5;
-                7:vga_blue <= vga_blue_rwk_5;
-                8:vga_blue <= vga_blue_rwk_9;
-                9:vga_blue <= vga_blue_rwk_9;
-                10:vga_blue <= vga_blue_rwk_9;
-                11:vga_blue <= vga_blue_rwk_9;
-                12:vga_blue <= vga_blue_rwk_13;
-                13:vga_blue <= vga_blue_rwk_13;
-                14:vga_blue <= vga_blue_rwk_13;
-                15:begin
-                    vga_blue <= vga_blue_rwk_1;
-                    ip_blue <= 0;
-                end
-            endcase
-        end
-        if(blue_state[2:1]==2'b10)begin
-            case(ip_blue)
+//record the state of Jack
+//first bit: 0:left 1:right
+//second bit: 0: on the ground 1: in the air
+//third bit: 0:stand 1:move
+    if(blue_state[1]==1)begin
+        case(ip_blue)
                 0:vga_blue <= vga_blue_jump;
                 1:vga_blue <= vga_blue_jump;
                 2:vga_blue <= vga_blue_jump;
@@ -118,80 +76,103 @@ always @(posedge clk )begin
                     vga_blue <= vga_blue_jump;
                     ip_blue <= 0;
                 end
-            endcase
-        end
-    end 
-    if(blue_state[0]==0)begin
-        if(blue_state[2:1]==2'b00)begin
-            case(ip_blue)
-                0:vga_blue <= vga_bl_st_l1;
-                1:vga_blue <= vga_bl_st_l1;
-                2:vga_blue <= vga_bl_st_l1;
-                3:vga_blue <= vga_bl_st_l1;
-                4:vga_blue <= vga_bl_st_l5;
-                5:vga_blue <= vga_bl_st_l5;
-                6:vga_blue <= vga_bl_st_l5;
-                7:vga_blue <= vga_bl_st_l5;
-                8:vga_blue <= vga_bl_st_l9;
-                9:vga_blue <= vga_bl_st_l9;
-                10:vga_blue <= vga_bl_st_l9;
-                11:vga_blue <= vga_bl_st_l9;
-                12:vga_blue <= vga_bl_st_l13;
-                13:vga_blue <= vga_bl_st_l13;
-                14:vga_blue <= vga_bl_st_l13;
-                15:begin
-                    vga_blue <= vga_bl_st_l1;
-                    ip_blue <= 0;
-                end
-            endcase
-        end
-        if(blue_state[2:1]==2'b01)begin
-            case(ip_blue)
-                 0:vga_blue <= vga_bl_lwk_1;
-                1:vga_blue <= vga_bl_lwk_1;
-                2:vga_blue <= vga_bl_lwk_1;
-                3:vga_blue <= vga_bl_lwk_1;
-                4:vga_blue <= vga_bl_lwk_5;
-                5:vga_blue <= vga_bl_lwk_5;
-                6:vga_blue <= vga_bl_lwk_5;
-                7:vga_blue <= vga_bl_lwk_5;
-                8:vga_blue <= vga_bl_lwk_9;
-                9:vga_blue <= vga_bl_lwk_9;
-                10:vga_blue <= vga_bl_lwk_9;
-                11:vga_blue <= vga_bl_lwk_9;
-                12:vga_blue <= vga_bl_lwk_13;
-                13:vga_blue <= vga_bl_lwk_13;
-                14:vga_blue <= vga_bl_lwk_13;
-                15:begin
-                    vga_blue <= vga_bl_lwk_1;
-                    ip_blue <= 0;
-                end
-            endcase
-        end
-        if(blue_state[2:1]==2'b10)begin
-            case(ip_blue)
-                0:vga_blue <= vga_bl_ljump;
-                1:vga_blue <= vga_bl_ljump;
-                2:vga_blue <= vga_bl_ljump;
-                3:vga_blue <= vga_bl_ljump;
-                4:vga_blue <= vga_bl_ljump;
-                5:vga_blue <= vga_bl_ljump;
-                6:vga_blue <= vga_bl_ljump;
-                7:vga_blue <= vga_bl_ljump;
-                8:vga_blue <= vga_bl_ljump;
-                9:vga_blue <= vga_bl_ljump;
-                10:vga_blue <= vga_bl_ljump;
-                11:vga_blue <= vga_bl_ljump;
-                12:vga_blue <= vga_bl_ljump;
-                13:vga_blue <= vga_bl_ljump;
-                14:vga_blue <= vga_bl_ljump;
-                15:begin
-                    vga_blue <= vga_bl_ljump;
-                    ip_blue <= 0;
-                end
-            endcase
-        end
+        endcase
     end
+    else if(blue_state[1]==0)begin
+        if(blue_state[0]==0&&blue_state[2]==0)begin
+            case(ip_blue)
+            0:vga_blue <= vga_bl_st_l1;
+            1:vga_blue <= vga_bl_st_l1;
+            2:vga_blue <= vga_bl_st_l1;
+            3:vga_blue <= vga_bl_st_l1;
+            4:vga_blue <= vga_bl_st_l5;
+            5:vga_blue <= vga_bl_st_l5;
+            6:vga_blue <= vga_bl_st_l5;
+            7:vga_blue <= vga_bl_st_l5;
+            8:vga_blue <= vga_bl_st_l9;
+            9:vga_blue <= vga_bl_st_l9;
+            10:vga_blue <= vga_bl_st_l9;
+            11:vga_blue <= vga_bl_st_l9;
+            12:vga_blue <= vga_bl_st_l13;
+            13:vga_blue <= vga_bl_st_l13;
+            14:vga_blue <= vga_bl_st_l13;
+            15:begin
+                vga_blue <= vga_bl_st_l1;
+                ip_blue <= 0;
+            end
+        endcase
+        end
+        if(blue_state[0]==0&&blue_state[2]==1)begin
+            case(ip_blue)
+            0:vga_blue <= vga_bl_lwk_1;
+            1:vga_blue <= vga_bl_lwk_1;
+            2:vga_blue <= vga_bl_lwk_1;
+            3:vga_blue <= vga_bl_lwk_1;
+            4:vga_blue <= vga_bl_lwk_5;
+            5:vga_blue <= vga_bl_lwk_5;
+            6:vga_blue <= vga_bl_lwk_5;
+            7:vga_blue <= vga_bl_lwk_5;
+            8:vga_blue <= vga_bl_lwk_9;
+            9:vga_blue <= vga_bl_lwk_9;
+            10:vga_blue <= vga_bl_lwk_9;
+            11:vga_blue <= vga_bl_lwk_9;
+            12:vga_blue <= vga_bl_lwk_13;
+            13:vga_blue <= vga_bl_lwk_13;
+            14:vga_blue <= vga_bl_lwk_13;
+            15:begin
+                vga_blue <= vga_bl_lwk_1;
+                ip_blue <= 0;
+            end
+            endcase
+        end
+        if(blue_state[0]==1&&blue_state[2]==0)begin
+            case(ip_blue)
+            0:vga_blue <= vga_blue_st_1;
+            1:vga_blue <= vga_blue_st_1;
+            2:vga_blue <= vga_blue_st_1;
+            3:vga_blue <= vga_blue_st_1;
+            4:vga_blue <= vga_blue_st_5;
+            5:vga_blue <= vga_blue_st_5;
+            6:vga_blue <= vga_blue_st_5;
+            7:vga_blue <= vga_blue_st_5;
+            8:vga_blue <= vga_blue_st_9;
+            9:vga_blue <= vga_blue_st_9;
+            10:vga_blue <= vga_blue_st_9;
+            11:vga_blue <= vga_blue_st_9;
+            12:vga_blue <= vga_blue_st_13;
+            13:vga_blue <= vga_blue_st_13;
+            14:vga_blue <= vga_blue_st_13;
+            15:begin
+                vga_blue <= vga_blue_st_1;
+                ip_blue <= 0;
+            end
+            endcase
+        end
+        if(blue_state[0]==1&&blue_state[2]==1)begin
+            case(ip_blue)
+                0:vga_blue <= vga_blue_rwk_1;
+            1:vga_blue <= vga_blue_rwk_1;
+            2:vga_blue <= vga_blue_rwk_1;
+            3:vga_blue <= vga_blue_rwk_1;
+            4:vga_blue <= vga_blue_rwk_5;
+            5:vga_blue <= vga_blue_rwk_5;
+            6:vga_blue <= vga_blue_rwk_5;
+            7:vga_blue <= vga_blue_rwk_5;
+            8:vga_blue <= vga_blue_rwk_9;
+            9:vga_blue <= vga_blue_rwk_9;
+            10:vga_blue <= vga_blue_rwk_9;
+            11:vga_blue <= vga_blue_rwk_9;
+            12:vga_blue <= vga_blue_rwk_13;
+            13:vga_blue <= vga_blue_rwk_13;
+            14:vga_blue <= vga_blue_rwk_13;
+            15:begin
+                vga_blue <= vga_blue_rwk_1;
+                ip_blue <= 0;
+            end
+        endcase
+        end
+       end
+        
 end
 endmodule
 

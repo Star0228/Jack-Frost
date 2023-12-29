@@ -295,15 +295,15 @@
             end
         end
 
-        //6.怪物62*36 028
-        if(col_addr_x>=x_slim[0]&&col_addr_x<=x_slim[0]+61&&row_addr_y>=y_slim[0]&&row_addr_y<=y_slim[0]+35)begin
+        //6.怪物34*33 028
+        if(col_addr_x>=x_slim[0]&&col_addr_x<=x_slim[0]+33&&row_addr_y>=y_slim[0]&&row_addr_y<=y_slim[0]+32)begin
             if(vga_slim[0]!=0*256+2*16+8)begin
                 vga_data<=vga_slim[0];   
             end
         end
-        if(col_addr_x>=x_slim[1]&&col_addr_x<=x_slim[1]+61&&row_addr_y>=y_slim[1]&&row_addr_y<=y_slim[1]+35)begin
+        if(col_addr_x>=x_slim[1]&&col_addr_x<=x_slim[1]+33&&row_addr_y>=y_slim[1]&&row_addr_y<=y_slim[1]+32)begin
             if(vga_slim[1]!=0*256+2*16+8)begin
-                vga_data<=vga_slim[0];   
+                vga_data<=vga_slim[1];   
             end
         end
 
