@@ -11,8 +11,8 @@
         output hs,vs
     );
 ////////////////Global Variables and Initialize//////////////////////////////
-    wire clk_total;
-    reg isFinish;
+    wire clk_total;//not used
+    reg isFinish;//not used
     reg [31:0]score;
     reg [3:0]health;
     initial begin
@@ -20,13 +20,10 @@
         score<=32'd0;
         health<=4'd5;
     end
-
-
     reg [31:0] clkdiv;
     always@(posedge clk)begin
         clkdiv <= clkdiv+1'b1;
     end
-
     //photo's size 551*401
     reg [11:0]vga_data;
     //vga's coordinate
@@ -214,17 +211,17 @@
         //蓝色小人静态图片47*41（x_blue,y_blue）图片自带428的背景色
         blue<= (col_addr_x>=x_blue&&col_addr_x<=x_blue+46&&row_addr_y>=y_blue&&row_addr_y<=y_blue+40)?(row_addr_y-y_blue)*47+col_addr_x-x_blue:0;
 
-        // //怪物1静止62*36（x_slim1,y_slim1）图片自带028的背景色34*33
+        // //怪物1静止62*36（x_slim1,y_slim1）图片自带428的背景色34*33
         for (integer i=0;i<monster_num;i=i+1)begin
             slim[i]<= (col_addr_x>=x_slim[i]&&col_addr_x<=x_slim[i]+33&&row_addr_y>=y_slim[i]&&row_addr_y<=y_slim[i]+32)?(row_addr_y-y_slim[i])*34+col_addr_x-x_slim[i]:0;
         end
 
-        //雪花1图片24*26（x_snowf1,y_snowf1）图片自带028的背景色
+        //雪花1图片24*26（x_snowf1,y_snowf1）图片自带428的背景色
         for (integer i=0;i<snowflake_num;i=i+1)begin
             snowf[i]<= (col_addr_x>=x_snowf[i]&&col_addr_x<=x_snowf[i]+23&&row_addr_y>=y_snowf[i]&&row_addr_y<=y_snowf[i]+25)?(row_addr_y-y_snowf[i])*24+col_addr_x-x_snowf[i]:0;
         end
 
-        //地面方块28*42（x_ground1,y_ground1）图片自带028的背景色
+        //地面方块28*42（x_ground1,y_ground1）图片自带428的背景色
         for (integer i=0;i<ground_num;i=i+1)begin
             ground[i]<= (col_addr_x>=x_ground[i]&&col_addr_x<=x_ground[i]+27&&row_addr_y>=y_ground[i]&&row_addr_y<=y_ground[i]+41)?(row_addr_y-y_ground[i])*28+col_addr_x-x_ground[i]:0;
         end
@@ -295,7 +292,7 @@
             end
         end
 
-        //6.怪物34*33 028
+        //6.怪物34*33 428
         if(col_addr_x>=x_slim[0]&&col_addr_x<=x_slim[0]+33&&row_addr_y>=y_slim[0]&&row_addr_y<=y_slim[0]+32)begin
             if(vga_slim[0]!=0*256+2*16+8)begin
                 vga_data<=vga_slim[0];   

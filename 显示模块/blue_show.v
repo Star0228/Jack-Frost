@@ -56,6 +56,7 @@ always @(posedge clk )begin
 //second bit: 0: on the ground 1: in the air
 //third bit: 0:stand 1:move
     if(blue_state[1]==1)begin
+        if(blue_state[0]==1)begin
         case(ip_blue)
                 0:vga_blue <= vga_blue_jump;
                 1:vga_blue <= vga_blue_jump;
@@ -77,6 +78,18 @@ always @(posedge clk )begin
                     ip_blue <= 0;
                 end
         endcase
+        end
+        if(blue_state[1]==0)begin
+            case(ip_blue)
+                15:begin
+                    vga_blue <= vga_bl_ljump;
+                    ip_blue <= 0;
+                end
+                default:begin
+                    vga_blue <= vga_bl_ljump;
+                end
+        endcase
+        end
     end
     else if(blue_state[1]==0)begin
         if(blue_state[0]==0&&blue_state[2]==0)begin
@@ -173,6 +186,7 @@ always @(posedge clk )begin
         end
        end
         
+    
 end
 endmodule
 
