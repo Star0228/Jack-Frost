@@ -23,3 +23,6 @@ clk100Mhz
 game_state   00->begin   01->ing   11->win  10->lose  
 gamestate模块差不多
 问题：reset后的变量全部重置包括，x_blue,y_blue,bk_touched,bk_touched_finish,health,score
+
+
+Sseg_Dev m7(.clk(clk),.rst(1'b0),.Start(div[20]),.flash(1),.Hexs({12'b0,displaynumber[15:8],4'b0,displaynumber[7:0]}),.point({8'b00100100}),.LES(8'b00100100),.seg_clk(seg_clk),.seg_clrn(seg_clrn),.seg_sout(seg_sout),.SEG_PEN(SEG_PEN));

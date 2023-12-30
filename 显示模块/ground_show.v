@@ -18,7 +18,7 @@ ground_6 ground_f4(.clka(clk),.addra(ground),.douta(vga_ground_4));
 reg bk_tc_finish;
 reg [4:0]ip_ground;
 always @(posedge clk )begin
-    if(ipcnt == 6000000&&bk_touched&& ~bk_tc_finish)begin
+    if(ipcnt == 6000000&&bk_touched&& !bk_tc_finish)begin
         ip_ground <=ip_ground+1;
     end
     case(ip_ground)
@@ -49,6 +49,9 @@ always @(posedge clk )begin
              bk_tc_finish <= 1;
         end
     endcase
+    if(bk_tc_finish&&bk_touched)begin
+        vga_ground <= vga_ground_4;
+    end
 end
 endmodule
 ///使用的时候直接调用ground_show模块，输入

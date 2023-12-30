@@ -3,10 +3,10 @@
         input clk,
         input rstn,
         input ps2_clk,ps2_data,
-        // output SEGLED_Clk,
-        // output SEGLED_CLR,
-        // output SEGLED_DO,
-        // output SEGLED_PEN,
+        output segled_clk,
+        output SEGLED_CLR,
+        output SEGLED_DO,
+        output SEGLED_PEN,
         output [3:0] r,g,b,
         output hs,vs
     );
@@ -24,6 +24,7 @@
     wire [9:0]col_addr_x;
     wire [8:0]row_addr_y;
     vgac v1(.vga_clk(clkdiv[1]),.clrn(1'b1),.d_in(vga_data),.row_addr(row_addr_y),.col_addr(col_addr_x),.hs(hs),.vs(vs),.r(r),.g(g),.b(b));
+    Sseg_Dev m7(.clk(clk),.rst(1'b0),.Start(clkdiv[20]),.flash(1),.Hexs({4'b0000,score,20'b0,health}),.point({8'b01000001}),.LES(8'b00000000),.seg_clk(segled_clk),.seg_clrn(SEGLED_CLR),.seg_sout(SEGLED_DO),.SEG_PEN(SEGLED_PEN));
 ////////////////Global Variables and Initialize//////////////////////////////
 
 ////////////////////////////////Initialize the coordinates of various objects//////////////////////////////
@@ -150,45 +151,41 @@
 
     always @(posedge clk) 
     begin
-        if (ready) 
+        blue_state[2]=1'b1;
+        // W key is pressed
+        if(instruction == W_KEY) 
         begin
-            blue_state[2]=1'b1;
-            // W key is pressed
-            if(instruction == W_KEY) 
-            begin
-                y_blue = y_blue - 10; 
-                direction = 2'b00;
-                blue_state[1] = 1'b1;
-            end
-            // S key is pressed
-            else if(instruction == S_KEY) 
-            begin
-                y_blue = y_blue + 10;
-                direction = 2'b01;
-            end
-            // A key is pressed
-            else if(instruction == A_KEY) 
-            begin 
-                x_blue = x_blue - 10;
-                direction = 2'b10;
-                blue_state[0]=1'b0;
-            end
-            // D key is pressed
-            else if(instruction == D_KEY) 
-            begin
-                x_blue = x_blue + 10;
-                direction = 2'b11;
-                blue_state[0]=1'b1;
-            end
-            else if(instruction == R_KEY)
-            begin
-                reset <= 1'b1;
-                #5000;
-                reset <= 1'b0;
-            end
+            y_blue = y_blue - 10; 
+            direction = 2'b00;
+            blue_state[1] = 1'b1;
         end
-        else
+        // S key is pressed
+        else if(instruction == S_KEY) 
         begin
+            y_blue = y_blue + 10;
+            direction = 2'b01;
+        end
+        // A key is pressed
+        else if(instruction == A_KEY) 
+        begin 
+            x_blue = x_blue - 10;
+            direction = 2'b10;
+            blue_state[0]=1'b0;
+        end
+        // D key is pressed
+        else if(instruction == D_KEY) 
+        begin
+            x_blue = x_blue + 10;
+            direction = 2'b11;
+            blue_state[0]=1'b1;
+        end
+        else if(instruction == R_KEY)
+        begin
+            reset <= 1'b1;
+            #5000;
+            reset <= 1'b0;
+        end
+        if(!ready)begin
             blue_state[2]=1'b0;
         end
     end
@@ -261,7 +258,7 @@
     genvar slim_show_i;
     generate
         for (slim_show_i=0;slim_show_i<monster_num;slim_show_i=slim_show_i+1)begin:slim_show
-            slim_show slim_show_i(.clk(clk),.ipcnt(ipcnt),.slim(slim[slim_show_i]),.vga_slim(vga_slim[slim_show_i]));
+            slim_show slim_show_i(.clk(clk),.ipcnt(ipcnt),.slim(slim[slim_show_i]),.slim_frozen(slim_frozen[slim_show_i]),.vga_slim(vga_slim[slim_show_i]));
         end
     endgenerate
     
@@ -324,7 +321,7 @@
             end
         end
         //begin background
-        if(game==0&&col_addr_x>=0&&col_addr_x<=550&&row_addr_y>=0&&row_addr_y<=400)begin
+        if(game==2'b00&&col_addr_x>=0&&col_addr_x<=550&&row_addr_y>=0&&row_addr_y<=400)begin
             vga_data<=vga_bg1[11:0];   
         end
     end
