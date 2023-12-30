@@ -17,8 +17,8 @@
     reg [3:0]health;
     initial begin
         isFinish=0;
-        score=32'b0;
-        health=4'b0000;
+        score=32'd0;
+        health=4'd5;
     end
 
 
@@ -36,7 +36,7 @@
 ////////////////Global Variables and Initialize//////////////////////////////
 
 ////////////////////////////////Initialize the coordinates of various objects//////////////////////////////
-    //蓝色小人坐标
+   //蓝色小人坐标
     reg [9:0]x_blue;
     reg [8:0]y_blue;
     //record the state of Jack
@@ -57,18 +57,18 @@
     reg [8:0]y_slim[0:monster_num-1];
     initial begin
         for (integer i=0;i<monster_num;i=i+1)begin
-            x_slim[i]=10'd48*(i+1);
-            y_slim[i]=9'd0;
+            x_slim[i]<=10'd48*(i+1);
+            y_slim[i]<=9'd0;
         end
     end
     //Initialize snowflake's coordinate with loop
-    parameter snowflake_num = 15;
+    parameter snowflake_num <= 15;
     reg [9:0]x_snowf[0:snowflake_num-1];
     reg [8:0]y_snowf[0:snowflake_num-1];
     initial begin
         for (integer i=0;i<snowflake_num;i=i+1)begin
-            x_snowf[i]=10'd144;
-            y_snowf[i]=9'd26*i;
+            x_snowf[i]<=10'd144;
+            y_snowf[i]<=9'd26*i;
         end
     end
 
@@ -79,8 +79,8 @@
     reg [8:0]y_ground[0:ground_num-1];
     initial begin
         for (integer i=0;i<ground_num;i=i+1)begin
-            x_ground[i]=10'd28*i;
-            y_ground[i]=9'd374;
+            x_ground[i]<=10'd28*i;
+            y_ground[i]<=9'd374;
         end
     end
 ////////////////////////////////Initialize the coordinates of various objects//////////////////////////////
@@ -191,8 +191,8 @@
     reg [18:0] bg;
     wire [11:0] vga_bg; 
     //蓝色小人静态图片的地址寄存器和vga输出
-    reg [13:0]blue_st;
-    reg [11:0]vga_blue_st;
+    reg [13:0]blue;
+    wire [11:0]vga_blue;
     
     //The address of the monsters and the output of vga
     reg [11:0] vga_slim_st[0:monster_num-1];
@@ -211,7 +211,7 @@
         //背景551*401
         bg<= (col_addr_x>=0&&col_addr_x<=550&&row_addr_y>=0&&row_addr_y<=400)?(row_addr_y)*551+col_addr_x:0;
         //蓝色小人静态图片47*41（x_blue,y_blue）图片自带428的背景色
-        blue_st<= (col_addr_x>=x_blue&&col_addr_x<=x_blue+46&&row_addr_y>=y_blue&&row_addr_y<=y_blue+40)?(row_addr_y-y_blue)*47+col_addr_x-x_blue:0;
+        blue<= (col_addr_x>=x_blue&&col_addr_x<=x_blue+46&&row_addr_y>=y_blue&&row_addr_y<=y_blue+40)?(row_addr_y-y_blue)*47+col_addr_x-x_blue:0;
 
         // //怪物1静止62*36（x_slim1,y_slim1）图片自带028的背景色
         for (integer i=0;i<monster_num;i=i+1)begin
@@ -245,6 +245,7 @@
         end
     end
     //assign the address to the vga
+    blue_show blue_show(.clk(clk),.ipcnt(ipcnt),.blue(blue),.blue_state(blue_state),.vga_blue(vga_blue));
     genvar ground_show_i;
     generate
         for (ground_show_i=0;ground_show_i<ground_num;ground_show_i=ground_show_i+1)begin:ground_show
@@ -300,8 +301,8 @@
 
         //7.蓝色小人 47*41 428
         if(col_addr_x>=x_blue&&col_addr_x<=x_blue+46&&row_addr_y>=y_blue&&row_addr_y<=y_blue+40)begin
-            if(vga_blue_st[11:0]!=4*256+2*16+8)begin
-                vga_data<=vga_blue_st[11:0];   
+            if(vga_blue[11:0]!=4*256+2*16+8)begin
+                vga_data<=vga_blue[11:0];   
             end
         end
     end

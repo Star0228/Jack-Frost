@@ -10,9 +10,11 @@ module ground_show(
 wire [11:0]vga_ground_1;
 wire [11:0]vga_ground_2;
 wire [11:0]vga_ground_3;
+wire [11:0]vga_ground_4;
 ground_1 ground_f1(.clka(clk),.addra(ground),.douta(vga_ground_1));//ip核
 ground_4 ground_f2(.clka(clk),.addra(ground),.douta(vga_ground_2));
-ground_6 ground_f3(.clka(clk),.addra(ground),.douta(vga_ground_3));
+ground_5 ground_f3(.clka(clk),.addra(ground),.douta(vga_ground_3));
+ground_6 ground_f4(.clka(clk),.addra(ground),.douta(vga_ground_4));
 reg bk_tc_finish;
 reg [4:0]ip_ground;
 always @(posedge clk )begin
@@ -21,9 +23,29 @@ always @(posedge clk )begin
     end
     case(ip_ground)
         0:vga_ground <= vga_ground_1;
-        13:vga_ground <= vga_ground_2;
-        31:begin
-            vga_ground <= vga_ground_3;
+        1:vga_ground <= vga_ground_1;
+        2:vga_ground <= vga_ground_1;
+        3:vga_ground <= vga_ground_1;
+        4:vga_ground <= vga_ground_1;
+        5:vga_ground <= vga_ground_1;
+        6:vga_ground <= vga_ground_1;
+        7:vga_ground <= vga_ground_1;
+        8:vga_ground <= vga_ground_1;
+        9:vga_ground <= vga_ground_1;
+        10:vga_ground <= vga_ground_1;
+        11:vga_ground <= vga_ground_1;
+        12:vga_ground <= vga_ground_1;
+        13:vga_ground <= vga_ground_1;
+        14:vga_ground <= vga_ground_1;
+        15:vga_ground <= vga_ground_2;
+        16:vga_ground <= vga_ground_2;
+        17:vga_ground <= vga_ground_2;
+        18:vga_ground <= vga_ground_3;
+        19:vga_ground <= vga_ground_3;
+        20:vga_ground <= vga_ground_3;
+        21:vga_ground <= vga_ground_3;
+        22:begin
+            vga_ground <= vga_ground_4;
              bk_tc_finish <= 1;
         end
     endcase
