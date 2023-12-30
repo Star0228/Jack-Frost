@@ -11,6 +11,7 @@
         output hs,vs
     );
 ////////////////Global Variables and Initialize//////////////////////////////
+<<<<<<< HEAD
     wire clk_total;
     reg isFinish;
     reg [31:0]score;
@@ -22,14 +23,18 @@
     end
 
 
+=======
+    wire clk_total;//not used
+    reg reset;
+    wire [3:0]score;
+    wire [3:0]health;
+>>>>>>> f7c4efa95798561bb05901d70aa09171a3142e11
     reg [31:0] clkdiv;
     always@(posedge clk)begin
         clkdiv <= clkdiv+1'b1;
     end
-
     //photo's size 551*401
     reg [11:0]vga_data;
-    //vga's coordinate
     wire [9:0]col_addr_x;
     wire [8:0]row_addr_y;
     vgac v1(.vga_clk(clkdiv[1]),.clrn(1'b1),.d_in(vga_data),.row_addr(row_addr_y),.col_addr(col_addr_x),.hs(hs),.vs(vs),.r(r),.g(g),.b(b));
@@ -44,11 +49,16 @@
     //second bit: 0: on the ground 1: in the air
     //third bit: 0:stand 1:move
     reg [2:0]blue_state;
-
     initial begin
+<<<<<<< HEAD
         x_blue=10'd0;
         y_blue=9'd0;
         blue_state=3'b001;
+=======
+        x_blue<=10'd0;
+        y_blue<=9'd0;
+        blue_state<=3'b001;
+>>>>>>> f7c4efa95798561bb05901d70aa09171a3142e11
     end
    
     //Initialize the coordinate of the monsters with loop
@@ -95,38 +105,107 @@
             dt_block_fz dt_block_fz_i(.clk(clk),.x_blue(x_blue),.y_blue(y_blue),.x_ground(x_ground[dt_block_fz_i]),.y_ground(y_ground[dt_block_fz_i]),.touched(bk_touched[dt_block_fz_i]));
         end
     endgenerate
+        wire [1:0]game;
+    //game   00->begin 01->ing   11->win  10->lose
+    game_state game_f(.clk(clk),.health(health),.bk_touched(bk_touched),.reset(reset),.game_state(game));
 
     //2. icing the monsters
-    wire [monster_num-1:0]bk_frozen;
+    wire [monster_num-1:0]slim_frozen;
     //update the signal with loop
     genvar dt_slim_fz_i;
     generate
         for (dt_slim_fz_i=0;dt_slim_fz_i<monster_num;dt_slim_fz_i=dt_slim_fz_i+1)begin:dt_slim_fz
-            dt_slim_fz dt_slim_fz_i(.clk(clk),.x_blue(x_blue),.y_blue(y_blue),.x_slim(x_slim[dt_slim_fz_i]),.y_slim(y_slim[dt_slim_fz_i]),.frozen(bk_frozen[dt_slim_fz_i]));
+            dt_slim_fz dt_slim_fz_i(.clk(clk),.x_blue(x_blue),.y_blue(y_blue),.x_slim(x_slim[dt_slim_fz_i]),.y_slim(y_slim[dt_slim_fz_i]),.frozen(slim_frozen[dt_slim_fz_i]));
         end
     endgenerate
-    
+  
     //3. damaged by the monsters
-    
-    wire [monster_num-1:0]bk_slim;
-    reg wudi;
+    wire [monster_num-1:0]slim_damage;
     //update the signal with loop
     genvar dt_slim_bk_i;
     generate
         for (dt_slim_bk_i=0;dt_slim_bk_i<monster_num;dt_slim_bk_i=dt_slim_bk_i+1)begin:dt_slim_bk
-            dt_slim_bk dt_slim_bk_i(.clk(clk),.x_blue(x_blue),.y_blue(y_blue),.x_slim(x_slim[dt_slim_bk_i]),.y_slim(y_slim[dt_slim_bk_i]),.isfrozen(bk_frozen[dt_slim_bk_i]),.broken(bk_slim[dt_slim_bk_i]));
+            dt_slim_bk dt_slim_bk_i(.clk(clk),.x_blue(x_blue),.y_blue(y_blue),.x_slim(x_slim[dt_slim_bk_i]),.y_slim(y_slim[dt_slim_bk_i]),.isfrozen(slim_frozen[dt_slim_bk_i]),.broken(slim_damage[dt_slim_bk_i]));
         end
     endgenerate
+    health_count health_f(.clk(clk),.slim_damage(slim_damage),.health(health));
+  
+    //4. get the snowflakes
+    wire [snowflake_num-1:0]snowf_get;    
+    //update the signal with loop
+    genvar dt_snowf_get_i;
+    generate
+        for (dt_snowf_get_i=0;dt_snowf_get_i<snowflake_num;dt_snowf_get_i=dt_snowf_get_i+1)begin:dt_snowf_get
+            dt_snowf_get dt_snowf_get_i(.clk(clk),.x_blue(x_blue),.y_blue(y_blue),.x_snowf(x_snowf[dt_snowf_get_i]),.y_snowf(y_snowf[dt_snowf_get_i]),.snowf_get(snowf_get[dt_snowf_get_i]));
+        end
+    endgenerate
+    score_count score_f(.clk(clk),.snowf_get(snowf_get),.score(score));
+////////////////////////////////Implement the detection logic of the game//////////////////////////////
 
-    always@(posedge clk)begin
-        if(bk_slim&&!wudi)begin
-            health<=health-4'd1;
-            wudi<=1'b1;
-            #3000;
-            wudi<=1'b0;
+////////////////////////////////Implement the moves of the game//////////////////////////////
+    // Instantiate the PS2 Keyboard module
+    wire [7:0] instruction;
+    wire ready, overflow;
+    reg rdn;
+    initial begin
+        rdn = 1'b0;
+    end
+    ps2_keyboard keyboard (.clk(clk), .clrn(1'b1), .ps2_clk(ps2_clk), .ps2_data(ps2_data), .rdn(rdn), .data(instruction), .ready(ready), .overflow(overflow));
+    reg [1:0] direction;
+
+    // Mapping WASD keys to specific scan codes
+    parameter W_KEY = 8'h1d; // Scan code for 'W' key
+    parameter A_KEY = 8'h1c; // Scan code for 'A' key
+    parameter S_KEY = 8'h1b; // Scan code for 'S' key
+    parameter D_KEY = 8'h23; // Scan code for 'D' key
+    parameter R_KEY = 8'h15; // Scan code for 'R' key
+
+    always @(posedge clk) 
+    begin
+        if (ready) 
+        begin
+            blue_state[2]=1'b1;
+            // W key is pressed
+            if(instruction == W_KEY) 
+            begin
+                y_blue = y_blue - 1; 
+                direction = 2'b00;
+                blue_state[1] = 1'b1;
+            end
+            // S key is pressed
+            else if(instruction == S_KEY) 
+            begin
+                y_blue = y_blue + 1;
+                direction = 2'b01;
+            end
+            // A key is pressed
+            else if(instruction == A_KEY) 
+            begin 
+                x_blue = x_blue - 1;
+                direction = 2'b10;
+                blue_state[0]=1'b0;
+            end
+            // D key is pressed
+            else if(instruction == D_KEY) 
+            begin
+                x_blue = x_blue + 1;
+                direction = 2'b11;
+                blue_state[0]=1'b1;
+            end
+            else if(instruction == R_KEY)
+            begin
+                reset <= 1'b1;
+                #5000;
+                reset <= 1'b0;
+            end
+        end
+        else
+        begin
+            blue_state[2]=1'b0;
         end
     end
-////////////////////////////////Implement the detection logic of the game//////////////////////////////
+////////////////////////////////Implement the moves of the game//////////////////////////////
+   
 
 ////////////////////////////////Implement the moves of the game//////////////////////////////
     // Instantiate the PS2 Keyboard module
@@ -188,15 +267,17 @@
 ////////////////////////////////Assign the address of the photo to the address register//////////////////////////////
     //The address of the photo and the output of vga
     //背景1的地址寄存器和vga输出
-    reg [18:0] bg;
     wire [11:0] vga_bg; 
-    //蓝色小人静态图片的地址寄存器和vga输出
-    reg [13:0]blue;
-    wire [11:0]vga_blue;
+    wire [11:0] vga_bg1;
+    reg [18:0] bg;
     
+    //蓝色小人静态图片的地址寄存器和vga输出
+    wire [11:0]vga_blue;
+    reg [13:0]blue;
+
     //The address of the monsters and the output of vga
-    reg [11:0] vga_slim_st[0:monster_num-1];
-    reg [13:0] slim_st[0:monster_num-1];
+    wire [11:0] vga_slim[0:monster_num-1];
+    reg [13:0] slim[0:monster_num-1];
 
     //The address of the snowflakes and the output of vga
     wire [11:0] vga_snowf[0:snowflake_num-1];
@@ -213,26 +294,22 @@
         //蓝色小人静态图片47*41（x_blue,y_blue）图片自带428的背景色
         blue<= (col_addr_x>=x_blue&&col_addr_x<=x_blue+46&&row_addr_y>=y_blue&&row_addr_y<=y_blue+40)?(row_addr_y-y_blue)*47+col_addr_x-x_blue:0;
 
-        // //怪物1静止62*36（x_slim1,y_slim1）图片自带028的背景色
+        // //怪物1静止34*33（x_slim1,y_slim1）图片自带428的背景色
         for (integer i=0;i<monster_num;i=i+1)begin
-            slim_st[i]<= (col_addr_x>=x_slim[i]&&col_addr_x<=x_slim[i]+61&&row_addr_y>=y_slim[i]&&row_addr_y<=y_slim[i]+35)?(row_addr_y-y_slim[i])*62+col_addr_x-x_slim[i]:0;
+            slim[i]<= (col_addr_x>=x_slim[i]&&col_addr_x<=x_slim[i]+33&&row_addr_y>=y_slim[i]&&row_addr_y<=y_slim[i]+32)?(row_addr_y-y_slim[i])*34+col_addr_x-x_slim[i]:0;
         end
 
-        //雪花1图片24*26（x_snowf1,y_snowf1）图片自带028的背景色
+        //雪花1图片24*26（x_snowf1,y_snowf1）图片自带428的背景色
         for (integer i=0;i<snowflake_num;i=i+1)begin
             snowf[i]<= (col_addr_x>=x_snowf[i]&&col_addr_x<=x_snowf[i]+23&&row_addr_y>=y_snowf[i]&&row_addr_y<=y_snowf[i]+25)?(row_addr_y-y_snowf[i])*24+col_addr_x-x_snowf[i]:0;
         end
 
-        //地面方块28*42（x_ground1,y_ground1）图片自带028的背景色
+        //地面方块28*42（x_ground1,y_ground1）图片自带428的背景色
         for (integer i=0;i<ground_num;i=i+1)begin
             ground[i]<= (col_addr_x>=x_ground[i]&&col_addr_x<=x_ground[i]+27&&row_addr_y>=y_ground[i]&&row_addr_y<=y_ground[i]+41)?(row_addr_y-y_ground[i])*28+col_addr_x-x_ground[i]:0;
         end
     end
 
-    //调用ip核输出背景像素值
-    background bg2(.clka(clk),.addra(bg),.douta(vga_bg));
-
-    //update the signal with loop
     //renew the image
     reg [31:0]ipcnt;
     //这里便能控制单次刷新后保持不变
@@ -245,18 +322,29 @@
         end
     end
     //assign the address to the vga
-    blue_show blue_show(.clk(clk),.ipcnt(ipcnt),.blue(blue),.blue_state(blue_state),.vga_blue(vga_blue));
+    begin_bg bg1(.clka(clk),.addra(bg),.douta(vga_bg1));
+    background bg2(.clka(clk),.addra(bg),.douta(vga_bg));
+
+    blue_show blue_show1(.clk(clk),.ipcnt(ipcnt),.blue(blue),.blue_state(blue_state),.vga_blue(vga_blue));
+    
+    genvar slim_show_i;
+    generate
+        for (slim_show_i=0;slim_show_i<monster_num;slim_show_i=slim_show_i+1)begin:slim_show
+            slim_show slim_show_i(.clk(clk),.ipcnt(ipcnt),.slim(slim[slim_show_i]),.vga_slim(vga_slim[slim_show_i]));
+        end
+    endgenerate
+    
     genvar ground_show_i;
     generate
         for (ground_show_i=0;ground_show_i<ground_num;ground_show_i=ground_show_i+1)begin:ground_show
             ground_show ground_show_i(.clk(clk),.ipcnt(ipcnt),.ground(ground[ground_show_i]),.bk_touched(bk_touched[ground_show_i]),.vga_ground(vga_ground[ground_show_i]));
         end
     endgenerate
-    //assign the address to the vga
+
     genvar snow_show_i;
     generate
         for (snow_show_i=0;snow_show_i<snowflake_num;snow_show_i=snow_show_i+1)begin:snow_show
-            snow_show snow_show_i(.clk(clk),.ipcnt(ipcnt),.snow(snowf[snow_show_i]),.vga_snow(vga_snowf[snow_show_i]));
+            snow_show snow_show_i(.clk(clk),.ipcnt(ipcnt),.snow(snowf[snow_show_i]),.snowf_get(snowf_get[snow_show_i]),.vga_snow(vga_snowf[snow_show_i]));
         end
     endgenerate
 ////////////////////////////////Assign the address of the photo to the address register//////////////////////////////
@@ -265,37 +353,36 @@
     always@(posedge clk)begin
         //The rendering order is as follows:
         //1.背景
-        if(col_addr_x>=0&&col_addr_x<=639&&row_addr_y>=0&&row_addr_y<=600)begin
+        if(col_addr_x>=0&&col_addr_x<=550&&row_addr_y>=0&&row_addr_y<=400)begin
             vga_data<=vga_bg[11:0];   
         end
         //2.方块
         for(integer i=0;i<ground_num;i=i+1)begin
             if(col_addr_x>=x_ground[i]&&col_addr_x<=x_ground[i]+27&&row_addr_y>=y_ground[i]&&row_addr_y<=y_ground[i]+41)begin
-                if(vga_ground[i][11:0]!=0*256+2*16+8)begin
+                if(vga_ground[i][11:0]!=4*256+2*16+8)begin
                     vga_data<=vga_ground[i][11:0];   
                 end
             end
         end
-        //3.树
-        //4.小石块
         //5. snowflakes
         for(integer i=0;i<snowflake_num;i=i+1)begin
             if(col_addr_x>=x_snowf[i]&&col_addr_x<=x_snowf[i]+23&&row_addr_y>=y_snowf[i]&&row_addr_y<=y_snowf[i]+25)begin
-                if(vga_snowf[i][11:0]!=0*256+2*16+8)begin
+                if(vga_snowf[i][11:0]!=4*256+2*16+8)begin
                     vga_data<=vga_snowf[i][11:0];   
                 end
             end
         end
 
-        //6.怪物62*36 028
-        if(col_addr_x>=x_slim[0]&&col_addr_x<=x_slim[0]+61&&row_addr_y>=y_slim[0]&&row_addr_y<=y_slim[0]+35)begin
-            if(vga_slim_st[0]!=0*256+2*16+8)begin
-                vga_data<=vga_slim_st[0];   
+        //6.怪物34*33 428
+        if(col_addr_x>=x_slim[0]&&col_addr_x<=x_slim[0]+33&&row_addr_y>=y_slim[0]&&row_addr_y<=y_slim[0]+32)begin
+            if(vga_slim[0]!=4*256+2*16+8)begin
+                vga_data<=vga_slim[0];   
             end
         end
-        if(col_addr_x>=x_slim[1]&&col_addr_x<=x_slim[1]+61&&row_addr_y>=y_slim[1]&&row_addr_y<=y_slim[1]+35)begin
-            if(vga_slim_st[1]!=0*256+2*16+8)begin
-                vga_data<=vga_slim_st[0];   
+
+        if(col_addr_x>=x_slim[1]&&col_addr_x<=x_slim[1]+33&&row_addr_y>=y_slim[1]&&row_addr_y<=y_slim[1]+32)begin
+            if(vga_slim[1]!=4*256+2*16+8)begin
+                vga_data<=vga_slim[1];   
             end
         end
 
@@ -304,6 +391,10 @@
             if(vga_blue[11:0]!=4*256+2*16+8)begin
                 vga_data<=vga_blue[11:0];   
             end
+        end
+        //begin background
+        if(game==0&&col_addr_x>=0&&col_addr_x<=550&&row_addr_y>=0&&row_addr_y<=400)begin
+            vga_data<=vga_bg1[11:0];   
         end
     end
 ////////////////////////////////Image processing//////////////////////////////
