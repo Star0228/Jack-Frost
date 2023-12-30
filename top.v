@@ -123,67 +123,19 @@
 ////////////////////////////////Implement the detection logic of the game//////////////////////////////
 
 ////////////////////////////////Implement the moves of the game//////////////////////////////
-    // Instantiate the PS2 Keyboard module
-    wire [7:0] instruction;
-    wire ready, overflow;
-    reg rdn;
-    initial begin
-        rdn = 1'b0;
-    end
-    ps2_keyboard keyboard (.clk(clk), .clrn(1'b1), .ps2_clk(ps2_clk), .ps2_data(ps2_data), .rdn(rdn), .data(instruction), .ready(ready), .overflow(overflow));
-    reg [1:0] direction;
-
-    // Mapping WASD keys to specific scan codes
-    parameter W_KEY = 8'h1d; // Scan code for 'W' key
-    parameter A_KEY = 8'h1c; // Scan code for 'A' key
-    parameter S_KEY = 8'h1b; // Scan code for 'S' key
-    parameter D_KEY = 8'h23; // Scan code for 'D' key
-    parameter R_KEY = 8'h15; // Scan code for 'R' key
-
-    always @(posedge clk) 
-    begin
-        if (ready) 
-        begin
-            blue_state[2]=1'b1;
-            // W key is pressed
-            if(instruction == W_KEY) 
-            begin
-                y_blue = y_blue - 1; 
-                direction = 2'b00;
-                blue_state[1] = 1'b1;
-            end
-            // S key is pressed
-            else if(instruction == S_KEY) 
-            begin
-                y_blue = y_blue + 1;
-                direction = 2'b01;
-            end
-            // A key is pressed
-            else if(instruction == A_KEY) 
-            begin 
-                x_blue = x_blue - 1;
-                direction = 2'b10;
-                blue_state[0]=1'b0;
-            end
-            // D key is pressed
-            else if(instruction == D_KEY) 
-            begin
-                x_blue = x_blue + 1;
-                direction = 2'b11;
-                blue_state[0]=1'b1;
-            end
-            else if(instruction == R_KEY)
-            begin
-                reset <= 1'b1;
-                #5000;
-                reset <= 1'b0;
-            end
+    reg [9:0] current_x_reg;
+    reg [8:0] current_y_reg;
+    assign current_x_reg = x_blue;
+    assign current_y_reg = y_blue;
+    reg [1:0] collision_state;
+    genvar is_Collision_i;
+    generate
+        for (is_Collision_i=0;is_Collision_i<ground_num;is_Collision_i=is_Collision_i+1)begin:is_Collision
+            is_Collision is_Collision_i(.clk(clk),.x_blue(current_x_reg),.y_blue(current_y_reg),.x_ground(x_ground[is_Collision_i]),.y_ground(y_ground[is_Collision_i]),.is_Collision(collision_state));
         end
-        else
-        begin
-            blue_state[2]=1'b0;
-        end
-    end
+    endgenerate
+    move_blue move_blue1(.clk(clk),.ps2_clk(ps2_clk),.ps2_data(ps2_data),.current_x(current_x_reg),.current_y(current_y_reg),.collision_state(collision_state),.ready(ready),.x_blue(x_blue),.y_blue(y_blue),.blue_state(blue_state),.reset(reset));
+    
 ////////////////////////////////Implement the moves of the game//////////////////////////////
    
 
