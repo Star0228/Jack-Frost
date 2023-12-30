@@ -27,14 +27,14 @@ wire [11:0]vga_smw_r3;
 slim_l_walk_1 smw_r1f(.clka(clk),.addra(slim_r),.douta(vga_smw_r1));
 slim_l_walk_3 smw_r2f(.clka(clk),.addra(slim_r),.douta(vga_smw_r2));
 slim_l_walk_7 smw_r3f(.clka(clk),.addra(slim_r),.douta(vga_smw_r3));
-//slim 左冰冻1 3 9   冰冻的大小还没改变
+//slim 左冰冻1 3 9  
 wire [11:0]vga_smf_l1;
 wire [11:0]vga_smf_l2;
 wire [11:0]vga_smf_l3;
 slim_frozen_1 smf_l1f(.clka(clk),.addra(slim),.douta(vga_smf_l1));
 slim_frozen_3 smf_l2f(.clka(clk),.addra(slim),.douta(vga_smf_l2));
 slim_frozen_9 smf_l3f(.clka(clk),.addra(slim),.douta(vga_smf_l3));
-//slim 右冰冻1 3 9  冰冻的大小还没改变
+//slim 右冰冻1 3 9  
 wire [11:0]vga_smf_r1;
 wire [11:0]vga_smf_r2;
 wire [11:0]vga_smf_r3;
