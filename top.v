@@ -68,9 +68,17 @@
     reg [9:0]x_ground[0:ground_num-1];
     reg [8:0]y_ground[0:ground_num-1];
     initial begin
-        for (integer i=0;i<ground_num;i=i+1)begin
+        for (integer i=0;i<20;i=i+1)begin
             x_ground[i]<=10'd28*i;
             y_ground[i]<=9'd374;
+        end
+        for (integer i=20;i<40;i=i+1)begin
+            x_ground[i]<=10'd28*i;
+            y_ground[i]<=9'd330;
+        end
+        for (integer i=40;i<ground_num;i=i+1)begin
+            x_ground[i]<=10'd28*i;
+            y_ground[i]<=9'd300;
         end
     end
 ////////////////////////////////Initialize the coordinates of various objects//////////////////////////////
@@ -148,27 +156,27 @@
             // W key is pressed
             if(instruction == W_KEY) 
             begin
-                y_blue = y_blue - 1; 
+                y_blue = y_blue - 10; 
                 direction = 2'b00;
                 blue_state[1] = 1'b1;
             end
             // S key is pressed
             else if(instruction == S_KEY) 
             begin
-                y_blue = y_blue + 1;
+                y_blue = y_blue + 10;
                 direction = 2'b01;
             end
             // A key is pressed
             else if(instruction == A_KEY) 
             begin 
-                x_blue = x_blue - 1;
+                x_blue = x_blue - 10;
                 direction = 2'b10;
                 blue_state[0]=1'b0;
             end
             // D key is pressed
             else if(instruction == D_KEY) 
             begin
-                x_blue = x_blue + 1;
+                x_blue = x_blue + 10;
                 direction = 2'b11;
                 blue_state[0]=1'b1;
             end
