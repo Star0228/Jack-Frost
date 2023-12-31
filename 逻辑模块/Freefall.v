@@ -12,5 +12,10 @@ module FreeFall(
         y <= yInit + vInit - (g / 2);
         // calculate next v: v = vInit - g*t
         v <= vInit - g;
+        // if y became negative, set y to 0 and invert velocity (simple bounce)
+        if (y[8]) begin 
+            y <= 0;
+            v <= -v;
+        end
     end
 endmodule

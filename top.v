@@ -123,6 +123,10 @@
 ////////////////////////////////Implement the detection logic of the game//////////////////////////////
 
 ////////////////////////////////Implement the moves of the game//////////////////////////////
+    // Instantiate the 1ms clock module
+    wire clk_total;
+    clk_1ms clk_1ms1(.clk(clk),.clk_1ms(clk_total));
+
     // Instantiate the PS2 Keyboard module
     wire [9:0] instruction;
     wire ready, overflow;
@@ -134,10 +138,19 @@
 
     ps2_keyboard keyboard (.clk(clk), .clrn(1'b1), .ps2_clk(ps2_clk), .ps2_data(ps2_data), .rdn(rdn), .data(instruction), .ready(ready), .overflow(overflow), .wsad_down(wsad_down));
 
+    reg [8:0] vertical_speed;
+    initial begin
+        vertical_speed = 9'd0;
+    end
+    reg [8:0] vertical_speed_reg;
     reg [9:0] current_x_reg;
     reg [8:0] current_y_reg;
-    assign current_x_reg = x_blue;
-    assign current_y_reg = y_blue;
+    always@(posedge clk)begin
+        vertical_speed_reg <= vertical_speed;
+        current_x_reg <= x_blue;
+        current_y_reg <= y_blue;
+    end
+
 
     reg [1:0] collision_state;
     genvar is_Collision_i;
@@ -146,7 +159,8 @@
             is_Collision is_Collision_i(.clk(clk),.x_blue(current_x_reg),.y_blue(current_y_reg),.x_ground(x_ground[is_Collision_i]),.y_ground(y_ground[is_Collision_i]),.is_Collision(collision_state));
         end
     endgenerate
-    
+
+    move_blue blue_move(.clk(clk_total),.wsad_down(wsad_down),.current_x(current_x_reg),.current_y(current_y_reg),.current_speed(vertical_speed_reg),.collision_state(collision_state),.ready(ready),.x_blue(x_blue),.y_blue(y_blue),.blue_state(blue_state),.vertical_speed(vertical_speed),.reset(reset));
     
 ////////////////////////////////Implement the moves of the game//////////////////////////////
    
