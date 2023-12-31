@@ -123,10 +123,22 @@
 ////////////////////////////////Implement the detection logic of the game//////////////////////////////
 
 ////////////////////////////////Implement the moves of the game//////////////////////////////
+    // Instantiate the PS2 Keyboard module
+    wire [9:0] instruction;
+    wire ready, overflow;
+    wire [3:0] wsad_down;
+    reg rdn;
+    initial begin
+        rdn = 1'b0;
+    end
+
+    ps2_keyboard keyboard (.clk(clk), .clrn(1'b1), .ps2_clk(ps2_clk), .ps2_data(ps2_data), .rdn(rdn), .data(instruction), .ready(ready), .overflow(overflow), .wsad_down(wsad_down));
+
     reg [9:0] current_x_reg;
     reg [8:0] current_y_reg;
     assign current_x_reg = x_blue;
     assign current_y_reg = y_blue;
+
     reg [1:0] collision_state;
     genvar is_Collision_i;
     generate
@@ -134,7 +146,7 @@
             is_Collision is_Collision_i(.clk(clk),.x_blue(current_x_reg),.y_blue(current_y_reg),.x_ground(x_ground[is_Collision_i]),.y_ground(y_ground[is_Collision_i]),.is_Collision(collision_state));
         end
     endgenerate
-    move_blue move_blue1(.clk(clk),.ps2_clk(ps2_clk),.ps2_data(ps2_data),.current_x(current_x_reg),.current_y(current_y_reg),.collision_state(collision_state),.ready(ready),.x_blue(x_blue),.y_blue(y_blue),.blue_state(blue_state),.reset(reset));
+    
     
 ////////////////////////////////Implement the moves of the game//////////////////////////////
    
