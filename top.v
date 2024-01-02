@@ -11,10 +11,17 @@
         output hs,vs
     );
 ////////////////Global Variables and Initialize//////////////////////////////
-    wire clk_total;//not used
-    reg reset;
-    wire [3:0]score;
-    wire [3:0]health;
+    wire clk_total;
+    reg isFinish;
+    reg [31:0]score;
+    reg [3:0]health;
+    initial begin
+        isFinish=0;
+        score=32'd0;
+        health=4'd5;
+    end
+
+
     reg [31:0] clkdiv;
     always@(posedge clk)begin
         clkdiv <= clkdiv+1'b1;
@@ -37,9 +44,9 @@
     //third bit: 0:stand 1:move
     reg [2:0]blue_state;
     initial begin
-        x_blue<=10'd0;
-        y_blue<=9'd0;
-        blue_state<=3'b001;
+        x_blue=10'd0;
+        y_blue=9'd0;
+        blue_state=3'b001;
     end
    
     //Initialize the coordinate of the monsters with loop
@@ -132,63 +139,44 @@
 ////////////////////////////////Implement the detection logic of the game//////////////////////////////
 
 ////////////////////////////////Implement the moves of the game//////////////////////////////
+    // Instantiate the 1ms clock module
+    wire clk_total;
+    clk_1ms clk_1ms1(.clk(clk),.clk_1ms(clk_total));
+
     // Instantiate the PS2 Keyboard module
-    wire [7:0] instruction;
+    wire [9:0] instruction;
     wire ready, overflow;
+    wire [3:0] wsad_down;
     reg rdn;
     initial begin
         rdn = 1'b0;
     end
-    ps2_keyboard keyboard (.clk(clk), .clrn(1'b1), .ps2_clk(ps2_clk), .ps2_data(ps2_data), .rdn(rdn), .data(instruction), .ready(ready), .overflow(overflow));
-    reg [1:0] direction;
 
-    // Mapping WASD keys to specific scan codes
-    parameter W_KEY = 8'h1d; // Scan code for 'W' key
-    parameter A_KEY = 8'h1c; // Scan code for 'A' key
-    parameter S_KEY = 8'h1b; // Scan code for 'S' key
-    parameter D_KEY = 8'h23; // Scan code for 'D' key
-    parameter R_KEY = 8'h15; // Scan code for 'R' key
+    ps2_keyboard keyboard (.clk(clk), .clrn(1'b1), .ps2_clk(ps2_clk), .ps2_data(ps2_data), .rdn(rdn), .data(instruction), .ready(ready), .overflow(overflow), .wsad_down(wsad_down));
 
-    always @(posedge clk) 
-    begin
-        blue_state[2]=1'b1;
-        // W key is pressed
-        if(instruction == W_KEY) 
-        begin
-            y_blue = y_blue - 10; 
-            direction = 2'b00;
-            blue_state[1] = 1'b1;
-        end
-        // S key is pressed
-        else if(instruction == S_KEY) 
-        begin
-            y_blue = y_blue + 10;
-            direction = 2'b01;
-        end
-        // A key is pressed
-        else if(instruction == A_KEY) 
-        begin 
-            x_blue = x_blue - 10;
-            direction = 2'b10;
-            blue_state[0]=1'b0;
-        end
-        // D key is pressed
-        else if(instruction == D_KEY) 
-        begin
-            x_blue = x_blue + 10;
-            direction = 2'b11;
-            blue_state[0]=1'b1;
-        end
-        else if(instruction == R_KEY)
-        begin
-            reset <= 1'b1;
-            #5000;
-            reset <= 1'b0;
-        end
-        if(!ready)begin
-            blue_state[2]=1'b0;
-        end
+    reg [8:0] vertical_speed;
+    initial begin
+        vertical_speed = 9'd0;
     end
+    reg [8:0] vertical_speed_reg;
+    reg [9:0] current_x_reg;
+    reg [8:0] current_y_reg;
+    always@(posedge clk)begin
+        vertical_speed_reg <= vertical_speed;
+        current_x_reg <= x_blue;
+        current_y_reg <= y_blue;
+    end
+
+
+    reg [1:0] collision_state;
+    genvar is_Collision_i;
+    generate
+        for (is_Collision_i=0;is_Collision_i<ground_num;is_Collision_i=is_Collision_i+1)begin:is_Collision
+            is_Collision is_Collision_i(.clk(clk),.x_blue(current_x_reg),.y_blue(current_y_reg),.x_ground(x_ground[is_Collision_i]),.y_ground(y_ground[is_Collision_i]),.is_Collision(collision_state));
+        end
+    endgenerate
+
+    move_blue blue_move(.clk(clk_total),.wsad_down(wsad_down),.current_x(current_x_reg),.current_y(current_y_reg),.current_speed(vertical_speed_reg),.collision_state(collision_state),.ready(ready),.x_blue(x_blue),.y_blue(y_blue),.blue_state(blue_state),.vertical_speed(vertical_speed),.reset(reset));
 ////////////////////////////////Implement the moves of the game//////////////////////////////
    
 
