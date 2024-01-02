@@ -11,10 +11,24 @@
         output hs,vs
     );
 ////////////////Global Variables and Initialize//////////////////////////////
+<<<<<<< HEAD
+    wire clk_total;
+    reg isFinish;
+    reg [31:0]score;
+    reg [3:0]health;
+    initial begin
+        isFinish=0;
+        score=32'd0;
+        health=4'd5;
+    end
+
+
+=======
     wire clk_total;//not used
     reg reset;
     wire [3:0]score;
     wire [3:0]health;
+>>>>>>> f7c4efa95798561bb05901d70aa09171a3142e11
     reg [31:0] clkdiv;
     always@(posedge clk)begin
         clkdiv <= clkdiv+1'b1;
@@ -28,7 +42,7 @@
 ////////////////Global Variables and Initialize//////////////////////////////
 
 ////////////////////////////////Initialize the coordinates of various objects//////////////////////////////
-    //蓝色小人坐标
+   //蓝色小人坐标
     reg [9:0]x_blue;
     reg [8:0]y_blue;
     //record the state of Jack
@@ -37,9 +51,15 @@
     //third bit: 0:stand 1:move
     reg [2:0]blue_state;
     initial begin
+<<<<<<< HEAD
+        x_blue=10'd0;
+        y_blue=9'd0;
+        blue_state=3'b001;
+=======
         x_blue<=10'd0;
         y_blue<=9'd0;
         blue_state<=3'b001;
+>>>>>>> f7c4efa95798561bb05901d70aa09171a3142e11
     end
    
     //Initialize the coordinate of the monsters with loop
@@ -53,7 +73,7 @@
         end
     end
     //Initialize snowflake's coordinate with loop
-    parameter snowflake_num = 15;
+    parameter snowflake_num <= 15;
     reg [9:0]x_snowf[0:snowflake_num-1];
     reg [8:0]y_snowf[0:snowflake_num-1];
     initial begin
@@ -186,6 +206,63 @@
             reset <= 1'b0;
         end
         if(!ready)begin
+            blue_state[2]=1'b0;
+        end
+    end
+////////////////////////////////Implement the moves of the game//////////////////////////////
+   
+
+////////////////////////////////Implement the moves of the game//////////////////////////////
+    // Instantiate the PS2 Keyboard module
+    wire [7:0] instruction;
+    wire ready, overflow, rdn;
+    initial begin
+        rdn = 1'b0;
+    end
+    ps2_keyboard keyboard (.clk(clk), .clrn(1'b1), .ps2_clk(ps2_clk), .ps2_data(ps2_data), .rdn(rdn), .data(instruction), .ready(ready), .overflow(overflow));
+    reg [1:0] direction;
+
+    // Mapping WASD keys to specific scan codes
+    parameter W_KEY = 8'h1d; // Scan code for 'W' key
+    parameter A_KEY = 8'h1c; // Scan code for 'A' key
+    parameter S_KEY = 8'h1b; // Scan code for 'S' key
+    parameter D_KEY = 8'h23; // Scan code for 'D' key
+
+    always @(posedge clk) 
+    begin
+        if (ready) 
+        begin
+            blue_state[2]=1'b1;
+            // W key is pressed
+            if(instruction == W_KEY) 
+            begin
+                y_blue = y_blue - 1; 
+                direction = 2'b00;
+                blue_state[1] = 1'b1;
+            end
+            // S key is pressed
+            else if(instruction == S_KEY) 
+            begin
+                y_blue = y_blue + 1;
+                direction = 2'b01;
+            end
+            // A key is pressed
+            else if(instruction == A_KEY) 
+            begin 
+                x_blue = x_blue - 1;
+                direction = 2'b10;
+                blue_state[0]=1'b0;
+            end
+            // D key is pressed
+            else if(instruction == D_KEY) 
+            begin
+                x_blue = x_blue + 1;
+                direction = 2'b11;
+                blue_state[0]=1'b1;
+            end
+        end
+        else
+        begin
             blue_state[2]=1'b0;
         end
     end
