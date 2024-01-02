@@ -3,24 +3,17 @@
         input clk,
         input rstn,
         input ps2_clk,ps2_data,
-        // output SEGLED_Clk,
-        // output SEGLED_CLR,
-        // output SEGLED_DO,
-        // output SEGLED_PEN,
+        output segled_clk,
+        output SEGLED_CLR,
+        output SEGLED_DO,
+        output SEGLED_PEN,
         output [3:0] r,g,b,
         output hs,vs
     );
 ////////////////Global Variables and Initialize//////////////////////////////
     wire clk_total;
-    reg isFinish;
-    reg [31:0]score;
-    reg [3:0]health;
-    initial begin
-        isFinish=0;
-        score=32'd0;
-        health=4'd5;
-    end
-
+    wire [3:0]score;
+    wire [3:0]health;
 
     reg [31:0] clkdiv;
     always@(posedge clk)begin
@@ -31,10 +24,11 @@
     wire [9:0]col_addr_x;
     wire [8:0]row_addr_y;
     vgac v1(.vga_clk(clkdiv[1]),.clrn(1'b1),.d_in(vga_data),.row_addr(row_addr_y),.col_addr(col_addr_x),.hs(hs),.vs(vs),.r(r),.g(g),.b(b));
+    Sseg_Dev m7(.clk(clk),.rst(1'b0),.Start(clkdiv[20]),.flash(1),.Hexs({4'b0000,score,20'b0,health}),.point({8'b01000001}),.LES(8'b00000000),.seg_clk(segled_clk),.seg_clrn(SEGLED_CLR),.seg_sout(SEGLED_DO),.SEG_PEN(SEGLED_PEN));
 ////////////////Global Variables and Initialize//////////////////////////////
 
 ////////////////////////////////Initialize the coordinates of various objects//////////////////////////////
-   //蓝色小人坐标
+    //蓝色小人坐标
     reg [9:0]x_blue;
     reg [8:0]y_blue;
     //record the state of Jack
@@ -58,7 +52,7 @@
         end
     end
     //Initialize snowflake's coordinate with loop
-    parameter snowflake_num <= 15;
+    parameter snowflake_num = 15;
     reg [9:0]x_snowf[0:snowflake_num-1];
     reg [8:0]y_snowf[0:snowflake_num-1];
     initial begin
@@ -74,9 +68,17 @@
     reg [9:0]x_ground[0:ground_num-1];
     reg [8:0]y_ground[0:ground_num-1];
     initial begin
-        for (integer i=0;i<ground_num;i=i+1)begin
+        for (integer i=0;i<20;i=i+1)begin
             x_ground[i]<=10'd28*i;
             y_ground[i]<=9'd374;
+        end
+        for (integer i=20;i<40;i=i+1)begin
+            x_ground[i]<=10'd28*i;
+            y_ground[i]<=9'd330;
+        end
+        for (integer i=40;i<ground_num;i=i+1)begin
+            x_ground[i]<=10'd28*i;
+            y_ground[i]<=9'd300;
         end
     end
 ////////////////////////////////Initialize the coordinates of various objects//////////////////////////////
@@ -91,6 +93,7 @@
             dt_block_fz dt_block_fz_i(.clk(clk),.x_blue(x_blue),.y_blue(y_blue),.x_ground(x_ground[dt_block_fz_i]),.y_ground(y_ground[dt_block_fz_i]),.touched(bk_touched[dt_block_fz_i]));
         end
     endgenerate
+
         wire [1:0]game;
     //game   00->begin 01->ing   11->win  10->lose
     game_state game_f(.clk(clk),.health(health),.bk_touched(bk_touched),.reset(reset),.game_state(game));
@@ -143,10 +146,8 @@
 
     ps2_keyboard keyboard (.clk(clk), .clrn(1'b1), .ps2_clk(ps2_clk), .ps2_data(ps2_data), .rdn(rdn), .data(instruction), .ready(ready), .overflow(overflow), .wsad_down(wsad_down));
 
-    reg [8:0] vertical_speed;
-    initial begin
-        vertical_speed = 9'd0;
-    end
+    wire [8:0] vertical_speed;
+
     reg [8:0] vertical_speed_reg;
     reg [9:0] current_x_reg;
     reg [8:0] current_y_reg;
@@ -161,7 +162,7 @@
     genvar is_Collision_i;
     generate
         for (is_Collision_i=0;is_Collision_i<ground_num;is_Collision_i=is_Collision_i+1)begin:is_Collision
-            is_Collision is_Collision_i(.clk(clk),.x_blue(current_x_reg),.y_blue(current_y_reg),.x_ground(x_ground[is_Collision_i]),.y_ground(y_ground[is_Collision_i]),.is_Collision(collision_state));
+            collision is_Collision_i(.clk(clk),.x_blue(current_x_reg),.y_blue(current_y_reg),.x_ground(x_ground[is_Collision_i]),.y_ground(y_ground[is_Collision_i]),.is_Collision(collision_state));
         end
     endgenerate
 
@@ -173,17 +174,6 @@
     end
 
     move_blue blue_move(.clk(clk_total),.wsad_down(wsad_down),.current_x(current_x_reg),.current_y(current_y_reg),.current_speed(vertical_speed_reg),.collision_state(collision_state),.x_blue(x_temp),.y_blue(y_temp),.blue_state(blue_state),.vertical_speed(vertical_speed));
-
-    //reset the game
-    reg reset;
-    parameter R_KEY = 8'h15; // Scan code for 'R' key
-    always @(posedge clk) begin
-        if(ready && instruction == R_KEY) begin
-            reset <= 1'b1;
-            #5000;
-            reset <= 1'b0;
-        end
-    end
 ////////////////////////////////Implement the moves of the game//////////////////////////////
    
 
@@ -253,7 +243,7 @@
     genvar slim_show_i;
     generate
         for (slim_show_i=0;slim_show_i<monster_num;slim_show_i=slim_show_i+1)begin:slim_show
-            slim_show slim_show_i(.clk(clk),.ipcnt(ipcnt),.slim(slim[slim_show_i]),.vga_slim(vga_slim[slim_show_i]));
+            slim_show slim_show_i(.clk(clk),.ipcnt(ipcnt),.slim(slim[slim_show_i]),.slim_frozen(slim_frozen[slim_show_i]),.vga_slim(vga_slim[slim_show_i]));
         end
     endgenerate
     
@@ -276,7 +266,7 @@
     always@(posedge clk)begin
         //The rendering order is as follows:
         //1.背景
-        if(col_addr_x>=0&&col_addr_x<=550&&row_addr_y>=0&&row_addr_y<=400)begin
+        if(game ==2'b01&&col_addr_x>=0&&col_addr_x<=550&&row_addr_y>=0&&row_addr_y<=400)begin
             vga_data<=vga_bg[11:0];   
         end
         //2.方块
@@ -316,7 +306,7 @@
             end
         end
         //begin background
-        if(game==0&&col_addr_x>=0&&col_addr_x<=550&&row_addr_y>=0&&row_addr_y<=400)begin
+        if(game==2'b00&&col_addr_x>=0&&col_addr_x<=550&&row_addr_y>=0&&row_addr_y<=400)begin
             vga_data<=vga_bg1[11:0];   
         end
     end

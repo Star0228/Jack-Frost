@@ -19,8 +19,6 @@ always@(posedge clk)begin
     else begin
         game_state<=2'b01;
     end
-    
-
 end
 
 
