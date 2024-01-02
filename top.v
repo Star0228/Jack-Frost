@@ -11,24 +11,10 @@
         output hs,vs
     );
 ////////////////Global Variables and Initialize//////////////////////////////
-<<<<<<< HEAD
     wire clk_total;
-    reg isFinish;
-    reg [31:0]score;
-    reg [3:0]health;
-    initial begin
-        isFinish=0;
-        score=32'd0;
-        health=4'd5;
-    end
-
-
-=======
-    wire clk_total;//not used
-    reg reset;
     wire [3:0]score;
     wire [3:0]health;
->>>>>>> f7c4efa95798561bb05901d70aa09171a3142e11
+
     reg [31:0] clkdiv;
     always@(posedge clk)begin
         clkdiv <= clkdiv+1'b1;
@@ -42,24 +28,17 @@
 ////////////////Global Variables and Initialize//////////////////////////////
 
 ////////////////////////////////Initialize the coordinates of various objects//////////////////////////////
-   //蓝色小人坐标
+    //蓝色小人坐标
     reg [9:0]x_blue;
     reg [8:0]y_blue;
     //record the state of Jack
     //first bit: 0:left 1:right
     //second bit: 0: on the ground 1: in the air
     //third bit: 0:stand 1:move
-    reg [2:0]blue_state;
+    wire [2:0]blue_state;
     initial begin
-<<<<<<< HEAD
         x_blue=10'd0;
         y_blue=9'd0;
-        blue_state=3'b001;
-=======
-        x_blue<=10'd0;
-        y_blue<=9'd0;
-        blue_state<=3'b001;
->>>>>>> f7c4efa95798561bb05901d70aa09171a3142e11
     end
    
     //Initialize the coordinate of the monsters with loop
@@ -73,7 +52,7 @@
         end
     end
     //Initialize snowflake's coordinate with loop
-    parameter snowflake_num <= 15;
+    parameter snowflake_num = 15;
     reg [9:0]x_snowf[0:snowflake_num-1];
     reg [8:0]y_snowf[0:snowflake_num-1];
     initial begin
@@ -114,6 +93,7 @@
             dt_block_fz dt_block_fz_i(.clk(clk),.x_blue(x_blue),.y_blue(y_blue),.x_ground(x_ground[dt_block_fz_i]),.y_ground(y_ground[dt_block_fz_i]),.touched(bk_touched[dt_block_fz_i]));
         end
     endgenerate
+
         wire [1:0]game;
     //game   00->begin 01->ing   11->win  10->lose
     game_state game_f(.clk(clk),.health(health),.bk_touched(bk_touched),.reset(reset),.game_state(game));
@@ -152,120 +132,48 @@
 ////////////////////////////////Implement the detection logic of the game//////////////////////////////
 
 ////////////////////////////////Implement the moves of the game//////////////////////////////
+    // Instantiate the 1ms clock module
+    clk_1ms clk_1ms1(.clk(clk),.clk_1ms(clk_total));
+
     // Instantiate the PS2 Keyboard module
-    wire [7:0] instruction;
+    wire [9:0] instruction;
     wire ready, overflow;
+    wire [3:0] wsad_down;
     reg rdn;
     initial begin
         rdn = 1'b0;
     end
-    ps2_keyboard keyboard (.clk(clk), .clrn(1'b1), .ps2_clk(ps2_clk), .ps2_data(ps2_data), .rdn(rdn), .data(instruction), .ready(ready), .overflow(overflow));
-    reg [1:0] direction;
 
-    // Mapping WASD keys to specific scan codes
-    parameter W_KEY = 8'h1d; // Scan code for 'W' key
-    parameter A_KEY = 8'h1c; // Scan code for 'A' key
-    parameter S_KEY = 8'h1b; // Scan code for 'S' key
-    parameter D_KEY = 8'h23; // Scan code for 'D' key
-    parameter R_KEY = 8'h15; // Scan code for 'R' key
+    ps2_keyboard keyboard (.clk(clk), .clrn(1'b1), .ps2_clk(ps2_clk), .ps2_data(ps2_data), .rdn(rdn), .data(instruction), .ready(ready), .overflow(overflow), .wsad_down(wsad_down));
 
-    always @(posedge clk) 
-    begin
-        blue_state[2]=1'b1;
-        // W key is pressed
-        if(instruction == W_KEY) 
-        begin
-            y_blue = y_blue - 10; 
-            direction = 2'b00;
-            blue_state[1] = 1'b1;
-        end
-        // S key is pressed
-        else if(instruction == S_KEY) 
-        begin
-            y_blue = y_blue + 10;
-            direction = 2'b01;
-        end
-        // A key is pressed
-        else if(instruction == A_KEY) 
-        begin 
-            x_blue = x_blue - 10;
-            direction = 2'b10;
-            blue_state[0]=1'b0;
-        end
-        // D key is pressed
-        else if(instruction == D_KEY) 
-        begin
-            x_blue = x_blue + 10;
-            direction = 2'b11;
-            blue_state[0]=1'b1;
-        end
-        else if(instruction == R_KEY)
-        begin
-            reset <= 1'b1;
-            #5000;
-            reset <= 1'b0;
-        end
-        if(!ready)begin
-            blue_state[2]=1'b0;
-        end
+    wire [8:0] vertical_speed;
+
+    reg [8:0] vertical_speed_reg;
+    reg [9:0] current_x_reg;
+    reg [8:0] current_y_reg;
+    always@(posedge clk)begin
+        vertical_speed_reg <= vertical_speed;
+        current_x_reg <= x_blue;
+        current_y_reg <= y_blue;
     end
-////////////////////////////////Implement the moves of the game//////////////////////////////
-   
 
-////////////////////////////////Implement the moves of the game//////////////////////////////
-    // Instantiate the PS2 Keyboard module
-    wire [7:0] instruction;
-    wire ready, overflow, rdn;
-    initial begin
-        rdn = 1'b0;
-    end
-    ps2_keyboard keyboard (.clk(clk), .clrn(1'b1), .ps2_clk(ps2_clk), .ps2_data(ps2_data), .rdn(rdn), .data(instruction), .ready(ready), .overflow(overflow));
-    reg [1:0] direction;
 
-    // Mapping WASD keys to specific scan codes
-    parameter W_KEY = 8'h1d; // Scan code for 'W' key
-    parameter A_KEY = 8'h1c; // Scan code for 'A' key
-    parameter S_KEY = 8'h1b; // Scan code for 'S' key
-    parameter D_KEY = 8'h23; // Scan code for 'D' key
-
-    always @(posedge clk) 
-    begin
-        if (ready) 
-        begin
-            blue_state[2]=1'b1;
-            // W key is pressed
-            if(instruction == W_KEY) 
-            begin
-                y_blue = y_blue - 1; 
-                direction = 2'b00;
-                blue_state[1] = 1'b1;
-            end
-            // S key is pressed
-            else if(instruction == S_KEY) 
-            begin
-                y_blue = y_blue + 1;
-                direction = 2'b01;
-            end
-            // A key is pressed
-            else if(instruction == A_KEY) 
-            begin 
-                x_blue = x_blue - 1;
-                direction = 2'b10;
-                blue_state[0]=1'b0;
-            end
-            // D key is pressed
-            else if(instruction == D_KEY) 
-            begin
-                x_blue = x_blue + 1;
-                direction = 2'b11;
-                blue_state[0]=1'b1;
-            end
+    wire [3:0] collision_state;
+    genvar is_Collision_i;
+    generate
+        for (is_Collision_i=0;is_Collision_i<ground_num;is_Collision_i=is_Collision_i+1)begin:is_Collision
+            collision is_Collision_i(.clk(clk),.x_blue(current_x_reg),.y_blue(current_y_reg),.x_ground(x_ground[is_Collision_i]),.y_ground(y_ground[is_Collision_i]),.is_Collision(collision_state));
         end
-        else
-        begin
-            blue_state[2]=1'b0;
-        end
+    endgenerate
+
+    wire [9:0] x_temp;
+    wire [8:0] y_temp;
+    always@(posedge clk)begin
+        x_blue <= x_temp;
+        y_blue <= y_temp;
     end
+
+    move_blue blue_move(.clk(clk_total),.wsad_down(wsad_down),.current_x(current_x_reg),.current_y(current_y_reg),.current_speed(vertical_speed_reg),.collision_state(collision_state),.x_blue(x_temp),.y_blue(y_temp),.blue_state(blue_state),.vertical_speed(vertical_speed));
 ////////////////////////////////Implement the moves of the game//////////////////////////////
    
 
@@ -358,7 +266,7 @@
     always@(posedge clk)begin
         //The rendering order is as follows:
         //1.背景
-        if(col_addr_x>=0&&col_addr_x<=550&&row_addr_y>=0&&row_addr_y<=400)begin
+        if(game ==2'b01&&col_addr_x>=0&&col_addr_x<=550&&row_addr_y>=0&&row_addr_y<=400)begin
             vga_data<=vga_bg[11:0];   
         end
         //2.方块
