@@ -11,7 +11,7 @@ module move_blue(
     output reg[8:0] vertical_speed
 );
     parameter g = 9'd14;
-    parameter max_speed = 9'd14;
+    parameter max_speed = 9'd6;
     always @ (posedge clk) begin
         //update x_blue
         if (wsad_down[1] == 1'b1) begin

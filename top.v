@@ -144,7 +144,40 @@
         rdn = 1'b0;
     end
 
-    ps2_keyboard keyboard (.clk(clk), .clrn(1'b1), .ps2_clk(ps2_clk), .ps2_data(ps2_data), .rdn(rdn), .data(instruction), .ready(ready), .overflow(overflow), .wsad_down(wsad_down));
+    ps2_keyboard ps2_keyboard1(.clk(clk),.clrn(rstn),.ps2_clk(ps2_clk),.ps2_data(ps2_data),.rdn(rdn),.data(instruction),.ready(ready),.overflow(overflow));
+    parameter W_KEY = 10'h1D;
+    parameter S_KEY = 10'h1B;
+    parameter A_KEY = 10'h1C;
+    parameter D_KEY = 10'h23;
+    parameter R_KEY = 10'h15;
+    always@(posedge clk)begin
+        if(ready)begin
+            if(instruction == W_KEY)begin
+                wsad_down[0] <= 1'b1;
+            end else if(instruction == S_KEY)begin
+                wsad_down[2] <= 1'b1;
+            end else if(instruction == A_KEY)begin
+                wsad_down[1] <= 1'b1;
+            end else if(instruction == D_KEY)begin
+                wsad_down[3] <= 1'b1;
+            end else begin
+                wsad_down[0] <= 1'b0;
+                wsad_down[1] <= 1'b0;
+                wsad_down[2] <= 1'b0;
+                wsad_down[3] <= 1'b0;
+            end
+            if(instruction == R_KEY)begin
+                reset <= 1'b1;
+                #5000;
+                reset <= 1'b0;
+            end else begin
+                reset <= 1'b0;
+            end
+            rdn <= 1'b0;
+        end else begin
+            rdn <= 1'b1;
+        end
+    end
 
     wire [8:0] vertical_speed;
 
@@ -158,13 +191,27 @@
     end
 
 
-    wire [3:0] collision_state;
+    reg [3:0] collision_state;
+    wire [3:0] collision_state_single[0:ground_num-1];
     genvar is_Collision_i;
     generate
         for (is_Collision_i=0;is_Collision_i<ground_num;is_Collision_i=is_Collision_i+1)begin:is_Collision
-            collision is_Collision_i(.clk(clk),.x_blue(current_x_reg),.y_blue(current_y_reg),.x_ground(x_ground[is_Collision_i]),.y_ground(y_ground[is_Collision_i]),.is_Collision(collision_state));
+            collision is_Collision_i(.clk(clk),.x_blue(current_x_reg),.y_blue(current_y_reg),.x_ground(x_ground[is_Collision_i]),.y_ground(y_ground[is_Collision_i]),.is_Collision(collision_state_single[is_Collision_i]));
         end
     endgenerate
+    //combine the collision state of the ground
+    always@(posedge clk)begin
+        collision_state[0] <= collision_state_single[0][0];
+        collision_state[1] <= collision_state_single[0][1];
+        collision_state[2] <= collision_state_single[0][2];
+        collision_state[3] <= collision_state_single[0][3];
+        for (integer i=1;i<ground_num;i=i+1)begin
+            collision_state[0] <= collision_state[0] | collision_state_single[i][0];
+            collision_state[1] <= collision_state[1] | collision_state_single[i][1];
+            collision_state[2] <= collision_state[2] | collision_state_single[i][2];
+            collision_state[3] <= collision_state[3] | collision_state_single[i][3];
+        end
+    end
 
     wire [9:0] x_temp;
     wire [8:0] y_temp;
