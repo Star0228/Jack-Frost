@@ -5,7 +5,7 @@ module collision(
     output reg [3:0] is_Collision
 );
 initial begin
-    is_Collision <= 2'b0;
+    is_Collision = 4'b0000;
 end
 always @(posedge clk) begin
     //the size of the blue block is 23*45

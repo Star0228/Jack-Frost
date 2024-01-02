@@ -158,7 +158,7 @@
     end
 
 
-    wire [1:0] collision_state;
+    wire [3:0] collision_state;
     genvar is_Collision_i;
     generate
         for (is_Collision_i=0;is_Collision_i<ground_num;is_Collision_i=is_Collision_i+1)begin:is_Collision
