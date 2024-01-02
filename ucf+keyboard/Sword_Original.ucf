@@ -52,10 +52,14 @@
     NET"ps2_clk" LOC = N18 | IOSTANDARD = LVCMOS33 | PULLUP; 
 	NET"ps2_data" LOC = M19 | IOSTANDARD = LVCMOS33 | PULLUP;
 
-    # NET "segled_clk"                               LOC = M24       | IOSTANDARD = LVCMOS33 ;
-    # NET "SEGLED_CLR"                               LOC = M20       | IOSTANDARD = LVCMOS33 ;
-    # NET "SEGLED_DO"                                LOC = L24       | IOSTANDARD = LVCMOS33 ;      
-    # NET "SEGLED_PEN"                               LOC = R18       | IOSTANDARD = LVCMOS33 ;      
+    NET "segled_clk"                               LOC = M24       | IOSTANDARD = LVCMOS33 ;
+    NET "SEGLED_CLR"                               LOC = M20       | IOSTANDARD = LVCMOS33 ;
+    NET "SEGLED_DO"                                LOC = L24       | IOSTANDARD = LVCMOS33 ;      
+    NET "SEGLED_PEN"                               LOC = R18       | IOSTANDARD = LVCMOS33 ;      
+    # NET"seg_clk"    LOC = M24   | IOSTANDARD=LVCMOS33;
+    # NET"seg_clrn"   LOC = M20   | IOSTANDARD=LVCMOS33;
+    # NET"seg_sout"   LOC = L24   | IOSTANDARD=LVCMOS33;
+    # NET"SEG_PEN"    LOC = R18   | IOSTANDARD=LVCMOS33;
 
     # NET "LED_CLK"                                  LOC = N26       | IOSTANDARD = LVCMOS33 ;
     # NET "LED_CLR"                                  LOC = N24       | IOSTANDARD = LVCMOS33 ;
