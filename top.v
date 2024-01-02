@@ -90,7 +90,6 @@
         end
     end
 ////////////////////////////////Initialize the coordinates of various objects//////////////////////////////
-
 ////////////////////////////////Implement the detection logic of the game//////////////////////////////
     //1. icing the ground
     wire [ground_num-1:0]bk_touched;
