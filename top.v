@@ -167,7 +167,18 @@
         end
     endgenerate
 
-    move_blue blue_move(.clk(clk_total),.wsad_down(wsad_down),.current_x(current_x_reg),.current_y(current_y_reg),.current_speed(vertical_speed_reg),.collision_state(collision_state),.ready(ready),.x_blue(x_blue),.y_blue(y_blue),.blue_state(blue_state),.vertical_speed(vertical_speed),.reset(reset));
+    move_blue blue_move(.clk(clk_total),.wsad_down(wsad_down),.current_x(current_x_reg),.current_y(current_y_reg),.current_speed(vertical_speed_reg),.collision_state(collision_state),.x_blue(x_blue),.y_blue(y_blue),.blue_state(blue_state),.vertical_speed(vertical_speed));
+
+    //reset the game
+    reg reset;
+    parameter R_KEY = 8'h15; // Scan code for 'R' key
+    always @(posedge clk) begin
+        if(ready && instruction == R_KEY) begin
+            reset <= 1'b1;
+            #5000;
+            reset <= 1'b0;
+        end
+    end
 ////////////////////////////////Implement the moves of the game//////////////////////////////
    
 

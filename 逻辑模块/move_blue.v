@@ -5,12 +5,10 @@ module move_blue(
     input [8:0] current_y,
     input [8:0] current_speed,
     input [1:0] collision_state,//collision_state[0] = up, collision_state[1] = down, collision_state[2] = right, collision_state[3] = left
-    output ready,
     output reg[9:0] x_blue,
     output reg[8:0] y_blue,
     output reg[2:0] blue_state,
-    output reg[8:0] vertical_speed,
-    output reset
+    output reg[8:0] vertical_speed
 );
     wire [8:0] y_temp;
     parameter g = 9'd14;
