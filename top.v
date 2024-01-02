@@ -69,15 +69,15 @@
     reg [8:0]y_ground[0:ground_num-1];
     initial begin
         for (integer i=0;i<20;i=i+1)begin
-            x_ground[i]<=10'd28*i;
+            x_ground[i]<=10'd25*i;
             y_ground[i]<=9'd374;
         end
         for (integer i=20;i<40;i=i+1)begin
-            x_ground[i]<=10'd28*i;
-            y_ground[i]<=9'd330;
+            x_ground[i]<=10'd25*i-20*25;
+            y_ground[i]<=9'd30;
         end
         for (integer i=40;i<ground_num;i=i+1)begin
-            x_ground[i]<=10'd28*i;
+            x_ground[i]<=10'd28*i-40*28;
             y_ground[i]<=9'd300;
         end
     end
@@ -157,14 +157,28 @@
         current_y_reg <= y_blue;
     end
 
-
-    wire [3:0] collision_state;
+    reg [3:0] collision_state;
+    wire [3:0] collision_state_single[0:ground_num-1];
     genvar is_Collision_i;
     generate
         for (is_Collision_i=0;is_Collision_i<ground_num;is_Collision_i=is_Collision_i+1)begin:is_Collision
-            collision is_Collision_i(.clk(clk),.x_blue(current_x_reg),.y_blue(current_y_reg),.x_ground(x_ground[is_Collision_i]),.y_ground(y_ground[is_Collision_i]),.is_Collision(collision_state));
+            collision is_Collision_i(.clk(clk),.x_blue(current_x_reg),.y_blue(current_y_reg),.x_ground(x_ground[is_Collision_i]),.y_ground(y_ground[is_Collision_i]),.is_Collision(collision_state_single[is_Collision_i]));
         end
     endgenerate
+    //combine the collision state of the ground
+    always@(posedge clk)begin
+        collision_state[0] <= collision_state_single[0][0];
+        collision_state[1] <= collision_state_single[0][1];
+        collision_state[2] <= collision_state_single[0][2];
+        collision_state[3] <= collision_state_single[0][3];
+        for (integer i=1;i<ground_num;i=i+1)begin
+            collision_state[0] <= collision_state[0] | collision_state_single[i][0];
+            collision_state[1] <= collision_state[1] | collision_state_single[i][1];
+            collision_state[2] <= collision_state[2] | collision_state_single[i][2];
+            collision_state[3] <= collision_state[3] | collision_state_single[i][3];
+        end
+    end
+
 
     wire [9:0] x_temp;
     wire [8:0] y_temp;

@@ -4,14 +4,13 @@ module collision(
     input [8:0] y_blue, y_ground,
     output reg [3:0] is_Collision
 );
-initial begin
-    is_Collision = 4'b0000;
-end
+
 always @(posedge clk) begin
     //the size of the blue block is 23*45
     //the size of the ground is 25*24
     //detect whether the blue has collided with the block
     //the down side of the blue block
+    is_Collision <= 4'b0000;
     if (x_blue+10'd23 > x_ground+10'd2&&x_blue+10'd23<x_ground+10'd26&& y_blue == y_ground-9'd45) begin
         is_Collision[0] <= 1;
     end

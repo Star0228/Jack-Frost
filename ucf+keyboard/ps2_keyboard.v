@@ -66,7 +66,7 @@ module ps2_keyboard (
                    buffer[count] <= ps2_data;   // store ps2_data
                    count <= count + 3'b1;   // count ps2_data bits
                    // 在此处增加 WASD键检测
-                   if (buffer[0:1] == 2'b10) begin
+                   if (buffer[1:0] == 2'b10) begin
                        case (buffer[9:1])
                            8'h1D: wsad_keys_released[0] <= 1; // W键释放
                            8'h1C: wsad_keys_released[1] <= 1; // A键释放
