@@ -14,7 +14,7 @@
     wire clk_total;
     wire [3:0]score;
     wire [3:0]health;
-
+    reg reset;
     reg [31:0] clkdiv;
     always@(posedge clk)begin
         clkdiv <= clkdiv+1'b1;
@@ -69,15 +69,15 @@
     reg [8:0]y_ground[0:ground_num-1];
     initial begin
         for (integer i=0;i<20;i=i+1)begin
-            x_ground[i]<=10'd28*i;
+            x_ground[i]<=10'd25*i;
             y_ground[i]<=9'd374;
         end
         for (integer i=20;i<40;i=i+1)begin
-            x_ground[i]<=10'd28*i;
-            y_ground[i]<=9'd330;
+            x_ground[i]<=10'd25*i-20*25;
+            y_ground[i]<=9'd30;
         end
         for (integer i=40;i<ground_num;i=i+1)begin
-            x_ground[i]<=10'd28*i;
+            x_ground[i]<=10'd28*i-40*28;
             y_ground[i]<=9'd300;
         end
     end
