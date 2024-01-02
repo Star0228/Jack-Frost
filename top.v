@@ -11,10 +11,17 @@
         output hs,vs
     );
 ////////////////Global Variables and Initialize//////////////////////////////
-    wire clk_total;//not used
-    reg reset;
-    wire [3:0]score;
-    wire [3:0]health;
+    wire clk_total;
+    reg isFinish;
+    reg [31:0]score;
+    reg [3:0]health;
+    initial begin
+        isFinish=0;
+        score=32'd0;
+        health=4'd5;
+    end
+
+
     reg [31:0] clkdiv;
     always@(posedge clk)begin
         clkdiv <= clkdiv+1'b1;
@@ -27,7 +34,7 @@
 ////////////////Global Variables and Initialize//////////////////////////////
 
 ////////////////////////////////Initialize the coordinates of various objects//////////////////////////////
-    //蓝色小人坐标
+   //蓝色小人坐标
     reg [9:0]x_blue;
     reg [8:0]y_blue;
     //record the state of Jack
@@ -36,9 +43,9 @@
     //third bit: 0:stand 1:move
     reg [2:0]blue_state;
     initial begin
-        x_blue<=10'd0;
-        y_blue<=9'd0;
-        blue_state<=3'b001;
+        x_blue=10'd0;
+        y_blue=9'd0;
+        blue_state=3'b001;
     end
    
     //Initialize the coordinate of the monsters with loop
@@ -52,7 +59,7 @@
         end
     end
     //Initialize snowflake's coordinate with loop
-    parameter snowflake_num = 15;
+    parameter snowflake_num <= 15;
     reg [9:0]x_snowf[0:snowflake_num-1];
     reg [8:0]y_snowf[0:snowflake_num-1];
     initial begin
@@ -161,7 +168,6 @@
     endgenerate
 
     move_blue blue_move(.clk(clk_total),.wsad_down(wsad_down),.current_x(current_x_reg),.current_y(current_y_reg),.current_speed(vertical_speed_reg),.collision_state(collision_state),.ready(ready),.x_blue(x_blue),.y_blue(y_blue),.blue_state(blue_state),.vertical_speed(vertical_speed),.reset(reset));
-    
 ////////////////////////////////Implement the moves of the game//////////////////////////////
    
 
