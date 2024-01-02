@@ -5,14 +5,11 @@ module move_blue(
     input [8:0] current_y,
     input [8:0] current_speed,
     input [1:0] collision_state,//collision_state[0] = up, collision_state[1] = down, collision_state[2] = right, collision_state[3] = left
-    output ready,
     output reg[9:0] x_blue,
     output reg[8:0] y_blue,
     output reg[2:0] blue_state,
-    output reg[8:0] vertical_speed,
-    output reset
+    output reg[8:0] vertical_speed
 );
-    wire [8:0] y_temp;
     parameter g = 9'd14;
     parameter max_speed = 9'd14;
     always @ (posedge clk) begin
@@ -42,7 +39,7 @@ module move_blue(
             vertical_speed <= -g;
         end else if (wsad_down[0] == 1'b1 && collision_state[0] == 1'b1) begin
             vertical_speed <= max_speed;
-        end else if(wsad_down[0] == 0'b1 && collision_state[0] == 1'b0 && vertical_speed <0) begin
+        end else if(wsad_down[0] == 1'b0 && collision_state[0] == 1'b0 && vertical_speed <0) begin
             vertical_speed <= 0;
         end else begin
             vertical_speed <= vertical_speed - g;
@@ -52,7 +49,7 @@ module move_blue(
         end else begin
             blue_state[1] <= 1'b0;
         end
-        y_temp <= current_y - vertical_speed;
+        y_blue <= current_y - vertical_speed;
     end
     
 endmodule
