@@ -41,11 +41,10 @@
     //first bit: 0:left 1:right
     //second bit: 0: on the ground 1: in the air
     //third bit: 0:stand 1:move
-    reg [2:0]blue_state;
+    wire [2:0]blue_state;
     initial begin
         x_blue=10'd0;
         y_blue=9'd0;
-        blue_state=3'b001;
     end
    
     //Initialize the coordinate of the monsters with loop
@@ -131,7 +130,6 @@
 
 ////////////////////////////////Implement the moves of the game//////////////////////////////
     // Instantiate the 1ms clock module
-    wire clk_total;
     clk_1ms clk_1ms1(.clk(clk),.clk_1ms(clk_total));
 
     // Instantiate the PS2 Keyboard module
@@ -159,7 +157,7 @@
     end
 
 
-    reg [1:0] collision_state;
+    wire [1:0] collision_state;
     genvar is_Collision_i;
     generate
         for (is_Collision_i=0;is_Collision_i<ground_num;is_Collision_i=is_Collision_i+1)begin:is_Collision
@@ -167,7 +165,14 @@
         end
     endgenerate
 
-    move_blue blue_move(.clk(clk_total),.wsad_down(wsad_down),.current_x(current_x_reg),.current_y(current_y_reg),.current_speed(vertical_speed_reg),.collision_state(collision_state),.x_blue(x_blue),.y_blue(y_blue),.blue_state(blue_state),.vertical_speed(vertical_speed));
+    wire [9:0] x_temp;
+    wire [8:0] y_temp;
+    always@(posedge clk)begin
+        x_blue <= x_temp;
+        y_blue <= y_temp;
+    end
+
+    move_blue blue_move(.clk(clk_total),.wsad_down(wsad_down),.current_x(current_x_reg),.current_y(current_y_reg),.current_speed(vertical_speed_reg),.collision_state(collision_state),.x_blue(x_temp),.y_blue(y_temp),.blue_state(blue_state),.vertical_speed(vertical_speed));
 
     //reset the game
     reg reset;
