@@ -133,12 +133,12 @@
 
 ////////////////////////////////Implement the moves of the game//////////////////////////////
     // Instantiate the 1ms clock module
-    clk_1ms clk_1ms1(.clk(clk),.clk_1ms(clk_total));
+    clk_10ms clk_10ms1(.clk(clk),.clk_10ms(clk_total));
 
     // Instantiate the PS2 Keyboard module
     wire [9:0] instruction;
     wire ready, overflow;
-    wire [3:0] wsad_down;
+    reg [3:0] wsad_down;
     reg rdn;
     initial begin
         rdn = 1'b0;
@@ -173,23 +173,19 @@
             end else begin
                 reset <= 1'b0;
             end
-            rdn <= 1'b0;
-        end else begin
-            rdn <= 1'b1;
         end
     end
 
     wire [8:0] vertical_speed;
 
     reg [8:0] vertical_speed_reg;
-    reg [9:0] current_x_reg;
-    reg [8:0] current_y_reg;
+    wire [9:0] x_temp;
+    wire [8:0] y_temp;
     always@(posedge clk)begin
         vertical_speed_reg <= vertical_speed;
-        current_x_reg <= x_blue;
-        current_y_reg <= y_blue;
+        x_blue <= x_temp;
+        y_blue <= y_temp;
     end
-
 
     reg [3:0] collision_state;
     wire [3:0] collision_state_single[0:ground_num-1];
@@ -213,14 +209,7 @@
         end
     end
 
-    wire [9:0] x_temp;
-    wire [8:0] y_temp;
-    always@(posedge clk)begin
-        x_blue <= x_temp;
-        y_blue <= y_temp;
-    end
-
-    move_blue blue_move(.clk(clk_total),.wsad_down(wsad_down),.current_x(current_x_reg),.current_y(current_y_reg),.current_speed(vertical_speed_reg),.collision_state(collision_state),.x_blue(x_temp),.y_blue(y_temp),.blue_state(blue_state),.vertical_speed(vertical_speed));
+    move_blue blue_move(.clk(clk_total),.wsad_down(wsad_down),.current_x(x_blue),.current_y(y_blue),.current_speed(vertical_speed_reg),.collision_state(collision_state),.x_blue(x_temp),.y_blue(y_temp),.blue_state(blue_state),.vertical_speed(vertical_speed));
 ////////////////////////////////Implement the moves of the game//////////////////////////////
    
 
