@@ -77,8 +77,8 @@
             y_ground[i]<=9'd24*i-20*24;
         end
         for (integer i=40;i<ground_num;i=i+1)begin
-            x_ground[i]<=10'd28*i-40*28;
-            y_ground[i]<=9'd300;
+            x_ground[i]<=10'd26*i-30*26;
+            y_ground[i]<=9'd284;
         end
     end
 ////////////////////////////////Initialize the coordinates of various objects//////////////////////////////
@@ -217,7 +217,8 @@
 //coll    0人物下   1 上  2 右  3 左
 //wasd    0w  1a  2s  3d
     parameter gravity = 9'd1;
-    parameter max_speed = 9'b111111001;
+    reg [1:0] cnt;
+    parameter max_speed = 9'b111111010;
     always @ (posedge clk_total) begin
         //update x_blue
         if (wsad_down[1] == 1'b1) begin
@@ -241,16 +242,24 @@
             y_blue <= y_blue + vertical_speed;
         end else if (wsad_down[0] == 1'b1 && collision_state[0] == 1'b1) begin //jump from the ground
             vertical_speed <= max_speed;
-            y_blue <= y_blue + vertical_speed;
+            y_blue<= y_blue / 90 * 90 + 9'd64 + vertical_speed;
         end else if((wsad_down[0] == 1'b0 && collision_state[0] == 1'b1)||vertical_speed>9'b001000000 ) begin //touch the ground  && vertical_speed >9'b111111100
             vertical_speed <= 0;
-            y_blue <= y_blue + vertical_speed;
+            y_blue<= y_blue / 90 * 90 + 9'd64;
         end 
         else begin //fall
+            cnt <= cnt + 1'b1;
+            if(cnt == 2'b11) begin
+                vertical_speed <= vertical_speed + gravity;
+                cnt <= 0;
+            end
             vertical_speed <= vertical_speed + gravity;
             y_blue <= y_blue + vertical_speed;
         end
-        
+        if(y_blue > 9'd344) begin
+            y_blue <= 9'd334;
+            x_blue <= 10'd250;
+        end
         if (collision_state[0] == 1'b0) begin 
             blue_state[1] <= 1'b1; //in the air
         end else begin
