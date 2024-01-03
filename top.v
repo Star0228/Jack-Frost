@@ -134,66 +134,47 @@
 ////////////////////////////////Implement the moves of the game//////////////////////////////
     // Instantiate the 1ms clock module
     clk_1ms clk_1ms1(.clk(clk),.clk_1ms(clk_total));
-
+    parameter W_KEY = 8'h1D;
+    parameter S_KEY = 8'h1B;
+    parameter A_KEY = 8'h1C;
+    parameter D_KEY = 8'h23;
+    parameter R_KEY = 8'h2D;
     // Instantiate the PS2 Keyboard module
     wire [9:0] instruction;
-    wire ready, overflow;
-    reg [3:0] wsad_down;
-    reg rdn;
-    initial begin
-        rdn = 1'b0;
-    end
+    wire ready;
+    reg [3:0] wsad_down;//0:W 1:A 2:S 3:D
 
-    ps2_keyboard ps2_keyboard1(.clk(clk),.clrn(rstn),.ps2_clk(ps2_clk),.ps2_data(ps2_data),.rdn(rdn),.data(instruction),.ready(ready),.overflow(overflow));
-    // wire [9:0] instruction;
-    // wire ready, overflow;
-    // wire [3:0] wsad_down;
-    // reg rdn;
-    // initial begin
-    //     rdn = 1'b0;
-    // end
+    ps2_ver2 ps2_ver21(.clk(clk),.rst(1'b0),.ps2_clk(ps2_clk),.ps2_data(ps2_data),.data_out(instruction),.ready(ready));
 
-    // ps2_keyboard ps2_keyboard1(.clk(clk),.clrn(rstn),.ps2_clk(ps2_clk),.ps2_data(ps2_data),.rdn(rdn),.data(instruction),.ready(ready),.overflow(overflow), .wsad_down(wsad_down));
-
-    parameter W_KEY = 10'h1D;
-    parameter S_KEY = 10'h1B;
-    parameter A_KEY = 10'h1C;
-    parameter D_KEY = 10'h23;
-    parameter R_KEY = 10'h2D;
     always@(posedge clk)begin
         if(ready)begin
-            if(instruction == W_KEY)begin
+            if(instruction[7:0] == W_KEY && instruction[8] == 1'b0)begin
                 wsad_down[0] <= 1'b1;
             end else begin
                 wsad_down[0] <= 1'b0;
             end 
-            if(instruction == S_KEY)begin
+            if(instruction[7:0] == A_KEY && instruction[8] == 1'b0)begin
+                wsad_down[1] <= 1'b1;
+            end else begin
+                wsad_down[1] <= 1'b0;
+            end
+            if(instruction[7:0] == S_KEY && instruction[8] == 1'b0)begin
                 wsad_down[2] <= 1'b1;
             end else begin
                 wsad_down[2] <= 1'b0;
             end
-            if(instruction == A_KEY)begin
-                wsad_down[1] <= 1'b1;
-            end else begin
-                wsad_down[1] <= 1'b0;
-            end 
-            if(instruction == D_KEY)begin
+            if(instruction[7:0] == D_KEY && instruction[8] == 1'b0)begin
                 wsad_down[3] <= 1'b1;
             end else begin
                 wsad_down[3] <= 1'b0;
-            end 
-            if(instruction == R_KEY)begin
-                reset <= 1'b1;
-            end 
-            rdn <= 1'b0;
-        end 
-        else begin
-            rdn <= 1'b1;
+            end
+            if(instruction[7:0] == R_KEY && instruction[8] == 1'b0)begin
+                reset <= ~reset;
+            end
         end
     end
 
-    reg [8:0] vertical_speed;
-    reg [3:0] collision_state;
+    reg [3:0] collision_state;//0 down 1 up 2 right 3 left
     wire [3:0] collision_state_single[0:ground_num-1];
     genvar is_Collision_i;
     generate
@@ -209,64 +190,68 @@
             collision_state[3] <= collision_state_single[0][3]|collision_state_single[1][3]|collision_state_single[2][3]|collision_state_single[3][3]|collision_state_single[4][3]|collision_state_single[5][3]|collision_state_single[6][3]|collision_state_single[7][3]|collision_state_single[8][3]|collision_state_single[9][3]|collision_state_single[10][3]|collision_state_single[11][3]|collision_state_single[12][3]|collision_state_single[13][3]|collision_state_single[14][3]|collision_state_single[15][3]|collision_state_single[16][3]|collision_state_single[17][3]|collision_state_single[18][3]|collision_state_single[19][3]|collision_state_single[20][3]|collision_state_single[21][3]|collision_state_single[22][3]|collision_state_single[23][3]|collision_state_single[24][3]|collision_state_single[25][3]|collision_state_single[26][3]|collision_state_single[27][3]|collision_state_single[28][3]|collision_state_single[29][3]|collision_state_single[30][3]|collision_state_single[31][3]|collision_state_single[32][3]|collision_state_single[33][3]|collision_state_single[34][3]|collision_state_single[35][3]|collision_state_single[36][3]|collision_state_single[37][3]|collision_state_single[38][3]|collision_state_single[39][3]|collision_state_single[40][3]|collision_state_single[41][3]|collision_state_single[42][3]|collision_state_single[43][3]|collision_state_single[44][3]|collision_state_single[45][3]|collision_state_single[46][3]|collision_state_single[47][3]|collision_state_single[48][3]|collision_state_single[49][3];
     end
 
-
-
-////first bit: 0:left 1:right
-//second bit: 0: on the ground 1: in the air
-//third bit: 0:stand 1:move
-//coll    0人物下   1 上  2 右  3 左
-//wasd    0w  1a  2s  3d
-    parameter gravity = 9'd1;
-    reg [1:0] cnt;
-    parameter max_speed = 9'b111111010;
-    always @ (posedge clk_total) begin
-        //update x_blue
-        if (wsad_down[1] == 1'b1) begin
-            blue_state[0] <= 1'b0;
-            blue_state[2] <= 1'b1;
-            x_blue <= x_blue - 10'd2;
-        end else begin
-            blue_state[2] <= 1'b0;
+    ////first bit: 0:left 1:right
+    //second bit: 0: on the ground 1: in the air
+    //third bit: 0:stand 1:move
+    //coll    0人物下   1 上  2 右  3 左
+    //wasd    0w  1a  2s  3d
+        reg [31:0] left_cnt, right_cnt, up_cnt, down_cnt, threshold;
+        initial begin
+            left_cnt <= 0;
+            right_cnt <= 0;
+            up_cnt <= 0;
+            down_cnt <= 0;
+            threshold <= 31'd1250000;
         end
-        if (wsad_down[3] == 1'b1) begin
-            blue_state[0] <= 1'b1;
-            blue_state[2] <= 1'b1;
-            x_blue <= x_blue + 10'd2;
-        end 
-        else begin
-            blue_state[2] <= 1'b0;
+        always @ (posedge clk) begin
+            //update x_blue
+                if (wsad_down[1] == 1'b1 && wsad_down[3] == 1'b0 && collision_state[3] == 1'b0) begin
+                    blue_state[0] <= 1'b0;
+                    blue_state[2] <= 1'b1;
+                    if(left_cnt < 12_500_00)begin
+                        left_cnt <= left_cnt + 1;
+                    end else begin
+                        left_cnt <= 0;
+                        x_blue <= x_blue - 10'd1;
+                    end
+                end 
+                else if (wsad_down[3] == 1'b1 && collision_state[2] == 1'b0) begin
+                    blue_state[0] <= 1'b1;
+                    blue_state[2] <= 1'b1;
+                    if(right_cnt < 12_500_00)begin
+                        right_cnt <= right_cnt + 1;
+                    end else begin
+                        right_cnt <= 0;
+                        x_blue <= x_blue + 10'd1;
+                    end
+                end 
+                else begin
+                    blue_state[2] <= 1'b0;
+                end
+            //update y_blue
+                if(wasd_down[0] == 1'b1 && wasd_down[2] == 1'b0 && collision_state[1] == 1'b0) begin //jump from the ground
+                    if(up_cnt < 12_500_00)begin
+                        up_cnt <= up_cnt + 1;
+                    end else begin
+                        up_cnt <= 0;
+                        y_blue <= y_blue + 9'd1;
+                    end
+                end
+                else if(wasd_down[2] == 1'b1 && collision_state[0] == 1'b0) begin //fall from the air
+                    if(down_cnt < 12_500_00)begin
+                        down_cnt <= down_cnt + 1;
+                    end else begin
+                        down_cnt <= 0;
+                        y_blue <= y_blue - 9'd1;
+                    end
+                end
+            //update the state of Jack
+                if (collision_state[0] == 1'b0) begin 
+                    blue_state[1] <= 1'b1; //in the air
+                end else begin
+                    blue_state[1] <= 1'b0; //on the ground
+                end
         end
-        //update y_blue
-        if(collision_state[1] == 1'b1) begin //touch the ceiling
-            vertical_speed <= 9'd1;
-            y_blue <= y_blue + vertical_speed;
-        end else if (wsad_down[0] == 1'b1 && collision_state[0] == 1'b1) begin //jump from the ground
-            vertical_speed <= max_speed;
-            y_blue<= y_blue / 90 * 90 + 9'd64 + vertical_speed;
-        end else if((wsad_down[0] == 1'b0 && collision_state[0] == 1'b1)||vertical_speed>9'b001000000 ) begin //touch the ground  && vertical_speed >9'b111111100
-            vertical_speed <= 0;
-            y_blue<= y_blue / 90 * 90 + 9'd64;
-        end 
-        else begin //fall
-            cnt <= cnt + 1'b1;
-            if(cnt == 2'b11) begin
-                vertical_speed <= vertical_speed + gravity;
-                cnt <= 0;
-            end
-            vertical_speed <= vertical_speed + gravity;
-            y_blue <= y_blue + vertical_speed;
-        end
-        if(y_blue > 9'd344) begin
-            y_blue <= 9'd334;
-            x_blue <= 10'd250;
-        end
-        if (collision_state[0] == 1'b0) begin 
-            blue_state[1] <= 1'b1; //in the air
-        end else begin
-            blue_state[1] <= 1'b0; //on the ground
-        end
-    end
-
 ////////////////////////////////Implement the moves of the game//////////////////////////////
    
 
