@@ -4,7 +4,7 @@ module clk_1ms(
 );
     reg [31:0] cnt = 0;
     always @(posedge clk) begin
-        if (cnt < 5000_000) begin
+        if (cnt < 1000_000) begin
             cnt <= cnt + 1;
         end else begin
             clk_1ms <= ~clk_1ms;
