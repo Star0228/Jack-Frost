@@ -35,10 +35,10 @@
     //first bit: 0:left 1:right
     //second bit: 0: on the ground 1: in the air
     //third bit: 0:stand 1:move
-    wire [2:0]blue_state;
+    reg [2:0]blue_state;
     initial begin
-        x_blue=10'd0;
-        y_blue=9'd0;
+        x_blue=10'd250;
+        y_blue=9'd250;
     end
    
     //Initialize the coordinate of the monsters with loop
@@ -179,17 +179,7 @@
         end
     end
 
-    wire [8:0] vertical_speed;
-
-    reg [8:0] vertical_speed_reg;
-    reg [9:0] current_x_reg;
-    reg [8:0] current_y_reg;
-    always@(posedge clk)begin
-        vertical_speed_reg <= vertical_speed;
-        current_x_reg <= x_blue;
-        current_y_reg <= y_blue;
-    end
-
+    reg [8:0] vertical_speed;
 
     reg [3:0] collision_state;
     wire [3:0] collision_state_single[0:ground_num-1];
@@ -213,14 +203,53 @@
         end
     end
 
-    wire [9:0] x_temp;
-    wire [8:0] y_temp;
-    always@(posedge clk)begin
-        x_blue <= x_temp;
-        y_blue <= y_temp;
+
+
+
+
+    parameter gravity = 9'd2;
+    parameter max_speed = 9'd111111100;
+    always @ (posedge clk_total) begin
+        //update x_blue
+        if (wsad_down[1] == 1'b1) begin
+            blue_state[0] <= 1'b0;
+            blue_state[2] <= 1'b1;
+            if(collision_state[3] != 1'b1) begin
+                x_blue <= x_blue - 10'd1;
+            end
+        end else if (wsad_down[3] == 1'b1) begin
+            blue_state[0] <= 1'b1;
+            blue_state[2] <= 1'b1;
+            if(collision_state[2] != 1'b1) begin
+                x_blue <= x_blue + 10'd1;
+            end
+        end 
+        else begin
+            blue_state[2] <= 1'b0;
+        end
+        //update y_blue
+        if(collision_state[1] == 1'b1) begin //touch the ceiling
+            vertical_speed <= 9'd1;
+        end else if (wsad_down[0] == 1'b1 && collision_state[0] == 1'b1) begin //jump from the ground
+            vertical_speed <= max_speed;
+        end else if(wsad_down[0] == 1'b0 && collision_state[0] == 1'b0 && vertical_speed <0) begin //touch the ground
+            vertical_speed <= 0;
+        end else begin //fall
+            vertical_speed <= vertical_speed + gravity;
+        end
+        if (collision_state[0] == 1'b0) begin 
+            blue_state[1] <= 1'b1; //in the air
+        end else begin
+            blue_state[1] <= 1'b0; //on the ground
+        end
+        y_blue <= y_blue + vertical_speed;
     end
 
-    move_blue blue_move(.clk(clk_total),.wsad_down(wsad_down),.current_x(current_x_reg),.current_y(current_y_reg),.current_speed(vertical_speed_reg),.collision_state(collision_state),.x_blue(x_temp),.y_blue(y_temp),.blue_state(blue_state),.vertical_speed(vertical_speed));
+
+
+
+
+
 ////////////////////////////////Implement the moves of the game//////////////////////////////
    
 
