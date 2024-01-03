@@ -15,6 +15,9 @@
     wire [3:0]score;
     wire [3:0]health;
     reg reset;
+    initial begin
+        reset = 1'b0;
+    end
     reg [31:0] clkdiv;
     always@(posedge clk)begin
         clkdiv <= clkdiv+1'b1;
@@ -37,8 +40,8 @@
     //third bit: 0:stand 1:move
     reg [2:0]blue_state;
     initial begin
-        x_blue=10'd250;
-        y_blue=9'd334;
+        x_blue=10'd10;
+        y_blue=9'd267;
     end
    
     //Initialize the coordinate of the monsters with loop
@@ -46,11 +49,12 @@
     reg [9:0]x_slim[0:monster_num-1];
     reg [8:0]y_slim[0:monster_num-1];
     initial begin
-        for (integer i=0;i<monster_num;i=i+1)begin
-            x_slim[i]<=10'd48*(i+1);
-            y_slim[i]<=9'd0;
-        end
+        x_slim[1]<=10'd300;
+        y_slim[1]<=9'd367;
+        x_slim[0]<=10'd250;
+        y_slim[0]<=9'd197;
     end
+            
     //Initialize snowflake's coordinate with loop
     parameter snowflake_num = 15;
     reg [9:0]x_snowf[0:snowflake_num-1];
@@ -68,17 +72,21 @@
     reg [9:0]x_ground[0:ground_num-1];
     reg [8:0]y_ground[0:ground_num-1];
     initial begin
-        for (integer i=0;i<20;i=i+1)begin
+        for (integer i=0;i<22;i=i+1)begin
             x_ground[i]<=10'd25*i;
-            y_ground[i]<=9'd374;
+            y_ground[i]<=9'd400;
         end
-        for(integer i=20;i<40;i=i+1)begin
-            x_ground[i]<=10'd0;
-            y_ground[i]<=9'd24*i-20*24;
+        for(integer i=22;i<29;i=i+1)begin
+            x_ground[i]<=100+10'd25*(i-22);
+            y_ground[i]<=310;
         end
-        for (integer i=40;i<ground_num;i=i+1)begin
-            x_ground[i]<=10'd26*i-30*26;
-            y_ground[i]<=9'd284;
+        for (integer i=29;i<36;i=i+1)begin
+            x_ground[i]<=300+10'd25*(i-29);
+            y_ground[i]<=9'd310;
+        end
+        for (integer i=36;i<ground_num;i=i+1)begin
+            x_ground[i]<=200+10'd25*(i-36);
+            y_ground[i]<=9'd230;
         end
     end
 ////////////////////////////////Initialize the coordinates of various objects//////////////////////////////
@@ -150,22 +158,17 @@
         if(ready)begin
             if(instruction[7:0] == W_KEY && instruction[8] == 1'b0)begin
                 wsad_down[0] <= 1'b1;
-            end else begin
+                #500;
                 wsad_down[0] <= 1'b0;
             end 
-            if(instruction[7:0] == A_KEY && instruction[8] == 1'b0)begin
-                wsad_down[1] <= 1'b1;
-            end else begin
-                wsad_down[1] <= 1'b0;
-            end
-            if(instruction[7:0] == S_KEY && instruction[8] == 1'b0)begin
+            if(instruction == S_KEY)begin
                 wsad_down[2] <= 1'b1;
             end else begin
                 wsad_down[2] <= 1'b0;
             end
             if(instruction[7:0] == D_KEY && instruction[8] == 1'b0)begin
                 wsad_down[3] <= 1'b1;
-            end else begin
+                #500;
                 wsad_down[3] <= 1'b0;
             end
             if(instruction[7:0] == R_KEY && instruction[8] == 1'b0)begin
@@ -346,6 +349,9 @@
         //1.背景
         if(game ==2'b01&&col_addr_x>=0&&col_addr_x<=550&&row_addr_y>=0&&row_addr_y<=400)begin
             vga_data<=vga_bg[11:0];   
+        end
+        if(col_addr_x>550||row_addr_y>440)begin
+            vga_data<=12'h000;
         end
         //2.方块
         for(integer i=0;i<ground_num;i=i+1)begin

@@ -62,13 +62,13 @@ module vgac (vga_clk,clrn,d_in,row_addr,col_addr,rdn,r,g,b,hs,vs); // vgac
                          (v_count < 10'd515);   //        480 lines
     // vga signals
     always @ (posedge vga_clk) begin
-        row_addr <=  row[8:0]; // pixel ram row address
-        col_addr <=  col;      // pixel ram col address
+        row_addr <=  row[8:0]-9'd20; // pixel ram row address
+        col_addr <=  col-10'd45;      // pixel ram col address
         rdn      <= ~read;     // read pixel (active low)
         hs       <=  h_sync;   // horizontal synchronization
         vs       <=  v_sync;   // vertical   synchronization
-        r        <=  rdn ? 4'h0 : d_in[3:0]; // 3-bit red
+        b        <=  rdn ? 4'h0 : d_in[3:0]; // 3-bit red
         g        <=  rdn ? 4'h0 : d_in[7:4]; // 3-bit green
-        b        <=  rdn ? 4'h0 : d_in[11:8]; // 2-bit blue
+        r        <=  rdn ? 4'h0 : d_in[11:8]; // 2-bit blue
     end
 endmodule
