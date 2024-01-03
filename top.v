@@ -150,26 +150,26 @@
     // Instantiate the PS2 Keyboard module
     wire [9:0] instruction;
     wire ready;
-    reg [3:0] wsad_down;//0:W 1:A 2:S 3:D
+    reg [3:0] wasd_down;//0:W 1:A 2:S 3:D
 
     ps2_ver2 ps2_ver21(.clk(clk),.rst(1'b0),.ps2_clk(ps2_clk),.ps2_data(ps2_data),.data_out(instruction),.ready(ready));
 
     always@(posedge clk)begin
         if(ready)begin
             if(instruction[7:0] == W_KEY && instruction[8] == 1'b0)begin
-                wsad_down[0] <= 1'b1;
+                wasd_down[0] <= 1'b1;
                 #500;
-                wsad_down[0] <= 1'b0;
+                wasd_down[0] <= 1'b0;
             end 
             if(instruction == S_KEY)begin
-                wsad_down[2] <= 1'b1;
+                wasd_down[2] <= 1'b1;
             end else begin
-                wsad_down[2] <= 1'b0;
+                wasd_down[2] <= 1'b0;
             end
             if(instruction[7:0] == D_KEY && instruction[8] == 1'b0)begin
-                wsad_down[3] <= 1'b1;
+                wasd_down[3] <= 1'b1;
                 #500;
-                wsad_down[3] <= 1'b0;
+                wasd_down[3] <= 1'b0;
             end
             if(instruction[7:0] == R_KEY && instruction[8] == 1'b0)begin
                 reset <= ~reset;
@@ -208,7 +208,7 @@
         end
         always @ (posedge clk) begin
             //update x_blue
-                if (wsad_down[1] == 1'b1 && wsad_down[3] == 1'b0 && collision_state[3] == 1'b0) begin
+                if (wasd_down[1] == 1'b1 && wasd_down[3] == 1'b0 && collision_state[3] == 1'b0) begin
                     blue_state[0] <= 1'b0;
                     blue_state[2] <= 1'b1;
                     if(left_cnt < 12_500_00)begin
@@ -218,7 +218,7 @@
                         x_blue <= x_blue - 10'd1;
                     end
                 end 
-                else if (wsad_down[3] == 1'b1 && collision_state[2] == 1'b0) begin
+                else if (wasd_down[3] == 1'b1 && collision_state[2] == 1'b0) begin
                     blue_state[0] <= 1'b1;
                     blue_state[2] <= 1'b1;
                     if(right_cnt < 12_500_00)begin
