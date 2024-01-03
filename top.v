@@ -205,10 +205,8 @@
 
 
 
-
-
     parameter gravity = 9'd2;
-    parameter max_speed = 9'd111111100;
+    parameter max_speed = 9'b111111100;
     always @ (posedge clk_total) begin
         //update x_blue
         if (wsad_down[1] == 1'b1) begin
