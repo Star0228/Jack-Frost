@@ -38,7 +38,7 @@
     reg [2:0]blue_state;
     initial begin
         x_blue=10'd250;
-        y_blue=9'd250;
+        y_blue=9'd334;
     end
    
     //Initialize the coordinate of the monsters with loop
@@ -72,9 +72,9 @@
             x_ground[i]<=10'd25*i;
             y_ground[i]<=9'd374;
         end
-        for (integer i=20;i<40;i=i+1)begin
-            x_ground[i]<=10'd25*i-20*25;
-            y_ground[i]<=9'd30;
+        for(integer i=20;i<40;i=i+1)begin
+            x_ground[i]<=10'd0;
+            y_ground[i]<=9'd24*i-20*24;
         end
         for (integer i=40;i<ground_num;i=i+1)begin
             x_ground[i]<=10'd28*i-40*28;
@@ -145,11 +145,21 @@
     end
 
     ps2_keyboard ps2_keyboard1(.clk(clk),.clrn(rstn),.ps2_clk(ps2_clk),.ps2_data(ps2_data),.rdn(rdn),.data(instruction),.ready(ready),.overflow(overflow));
+    // wire [9:0] instruction;
+    // wire ready, overflow;
+    // wire [3:0] wsad_down;
+    // reg rdn;
+    // initial begin
+    //     rdn = 1'b0;
+    // end
+
+    // ps2_keyboard ps2_keyboard1(.clk(clk),.clrn(rstn),.ps2_clk(ps2_clk),.ps2_data(ps2_data),.rdn(rdn),.data(instruction),.ready(ready),.overflow(overflow), .wsad_down(wsad_down));
+
     parameter W_KEY = 10'h1D;
     parameter S_KEY = 10'h1B;
     parameter A_KEY = 10'h1C;
     parameter D_KEY = 10'h23;
-    parameter R_KEY = 10'h15;
+    parameter R_KEY = 10'h2D;
     always@(posedge clk)begin
         if(ready)begin
             if(instruction == W_KEY)begin
@@ -174,8 +184,6 @@
             end 
             if(instruction == R_KEY)begin
                 reset <= 1'b1;
-                #5000;
-                reset <= 1'b0;
             end 
             rdn <= 1'b0;
         end 
@@ -208,8 +216,8 @@
 //third bit: 0:stand 1:move
 //coll    0人物下   1 上  2 右  3 左
 //wasd    0w  1a  2s  3d
-    parameter gravity = 9'd3;
-    parameter max_speed = 9'd6;
+    parameter gravity = 9'd1;
+    parameter max_speed = 9'b111111001;
     always @ (posedge clk_total) begin
         //update x_blue
         if (wsad_down[1] == 1'b1) begin
@@ -230,22 +238,24 @@
         //update y_blue
         if(collision_state[1] == 1'b1) begin //touch the ceiling
             vertical_speed <= 9'd1;
+            y_blue <= y_blue + vertical_speed;
         end else if (wsad_down[0] == 1'b1 && collision_state[0] == 1'b1) begin //jump from the ground
             vertical_speed <= max_speed;
-            vertical_speed <= vertical_speed + gravity;
+            y_blue <= y_blue + vertical_speed;
         end else if((wsad_down[0] == 1'b0 && collision_state[0] == 1'b1)||vertical_speed>9'b001000000 ) begin //touch the ground  && vertical_speed >9'b111111100
             vertical_speed <= 0;
+            y_blue <= y_blue + vertical_speed;
         end 
-        // else begin //fall
-        //     vertical_speed <= vertical_speed + gravity;
-        // end
+        else begin //fall
+            vertical_speed <= vertical_speed + gravity;
+            y_blue <= y_blue + vertical_speed;
+        end
         
         if (collision_state[0] == 1'b0) begin 
             blue_state[1] <= 1'b1; //in the air
         end else begin
             blue_state[1] <= 1'b0; //on the ground
         end
-        y_blue <= y_blue + vertical_speed;
     end
 
 ////////////////////////////////Implement the moves of the game//////////////////////////////
