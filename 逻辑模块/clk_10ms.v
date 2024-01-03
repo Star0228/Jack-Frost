@@ -1,6 +1,6 @@
 module clk_10ms(
     input wire clk,
-    output reg clk_10ms = 0
+    output reg clk_10ms
 );
     reg [31:0] cnt = 0;
     always @(posedge clk) begin

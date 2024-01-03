@@ -210,6 +210,8 @@
     end
 
     move_blue blue_move(.clk(clk_total),.wsad_down(wsad_down),.current_x(x_blue),.current_y(y_blue),.current_speed(vertical_speed_reg),.collision_state(collision_state),.x_blue(x_temp),.y_blue(y_temp),.blue_state(blue_state),.vertical_speed(vertical_speed));
+
+
 ////////////////////////////////Implement the moves of the game//////////////////////////////
    
 
@@ -303,7 +305,7 @@
         //The rendering order is as follows:
         //1.背景
         if(game ==2'b01&&col_addr_x>=0&&col_addr_x<=550&&row_addr_y>=0&&row_addr_y<=400)begin
-            vga_data<=vga_bg[11:0];   
+            vga_data<=vga_bg[11:0]; 
         end
         //2.方块
         for(integer i=0;i<ground_num;i=i+1)begin

@@ -10,7 +10,7 @@ module move_blue(
     output reg[2:0] blue_state,
     output reg[8:0] vertical_speed
 );
-    parameter g = 9'd14;
+    parameter g = 9'd2;
     parameter max_speed = 9'd6;
     always @ (posedge clk) begin
         //update x_blue
@@ -36,7 +36,7 @@ module move_blue(
         end
         //update y_blue
         if(collision_state[1] == 1'b1) begin //touch the ceiling
-            vertical_speed <= -9'd1;
+            vertical_speed <= 9'd1;
         end else if (wsad_down[0] == 1'b1 && collision_state[0] == 1'b1) begin //jump from the ground
             vertical_speed <= max_speed;
         end else if(wsad_down[0] == 1'b0 && collision_state[0] == 1'b0 && vertical_speed <0) begin //touch the ground
