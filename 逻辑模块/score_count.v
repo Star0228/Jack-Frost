@@ -5,13 +5,15 @@ module score_count(
 );
 ///the number of snowflakes is 15,if needed ,it can be changed
 integer i;
+reg [3:0]tem;
 always @(posedge clk) begin
-    score<= 0;  // 初始的"1"的数量是0
+    tem <= 4'd0;
     for (i = 0; i < 15; i = i+1) begin
         // 如果寄存器的某个位是"1"，那么我们增加一比特
         if (snowf_get[i]) begin
-            score <= score + 4'd1;
+           tem <=tem + 4'd1;
         end
     end
+    score <= tem;
 end
 endmodule
