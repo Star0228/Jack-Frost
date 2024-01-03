@@ -154,73 +154,75 @@
         if(ready)begin
             if(instruction == W_KEY)begin
                 wsad_down[0] <= 1'b1;
-            end else if(instruction == S_KEY)begin
-                wsad_down[2] <= 1'b1;
-            end else if(instruction == A_KEY)begin
-                wsad_down[1] <= 1'b1;
-            end else if(instruction == D_KEY)begin
-                wsad_down[3] <= 1'b1;
             end else begin
                 wsad_down[0] <= 1'b0;
-                wsad_down[1] <= 1'b0;
+            end 
+            if(instruction == S_KEY)begin
+                wsad_down[2] <= 1'b1;
+            end else begin
                 wsad_down[2] <= 1'b0;
-                wsad_down[3] <= 1'b0;
             end
+            if(instruction == A_KEY)begin
+                wsad_down[1] <= 1'b1;
+            end else begin
+                wsad_down[1] <= 1'b0;
+            end 
+            if(instruction == D_KEY)begin
+                wsad_down[3] <= 1'b1;
+            end else begin
+                wsad_down[3] <= 1'b0;
+            end 
             if(instruction == R_KEY)begin
                 reset <= 1'b1;
                 #5000;
                 reset <= 1'b0;
-            end else begin
-                reset <= 1'b0;
-            end
+            end 
             rdn <= 1'b0;
-        end else begin
+        end 
+        else begin
             rdn <= 1'b1;
         end
     end
 
     reg [8:0] vertical_speed;
-
     reg [3:0] collision_state;
     wire [3:0] collision_state_single[0:ground_num-1];
     genvar is_Collision_i;
     generate
         for (is_Collision_i=0;is_Collision_i<ground_num;is_Collision_i=is_Collision_i+1)begin:is_Collision
-            collision is_Collision_i(.clk(clk),.x_blue(current_x_reg),.y_blue(current_y_reg),.x_ground(x_ground[is_Collision_i]),.y_ground(y_ground[is_Collision_i]),.is_Collision(collision_state_single[is_Collision_i]));
+            collision is_Collision_i(.clk(clk),.x_blue(x_blue),.y_blue(y_blue),.x_ground(x_ground[is_Collision_i]),.y_ground(y_ground[is_Collision_i]),.is_Collision(collision_state_single[is_Collision_i]));
         end
     endgenerate
     //combine the collision state of the ground
     always@(posedge clk)begin
-        collision_state[0] <= collision_state_single[0][0];
-        collision_state[1] <= collision_state_single[0][1];
-        collision_state[2] <= collision_state_single[0][2];
-        collision_state[3] <= collision_state_single[0][3];
-        for (integer i=1;i<ground_num;i=i+1)begin
-            collision_state[0] <= collision_state[0] | collision_state_single[i][0];
-            collision_state[1] <= collision_state[1] | collision_state_single[i][1];
-            collision_state[2] <= collision_state[2] | collision_state_single[i][2];
-            collision_state[3] <= collision_state[3] | collision_state_single[i][3];
-        end
+            collision_state[0] <=  collision_state_single[0][0]|collision_state_single[1][0]|collision_state_single[2][0]|collision_state_single[3][0]|collision_state_single[4][0]|collision_state_single[5][0]|collision_state_single[6][0]|collision_state_single[7][0]|collision_state_single[8][0]|collision_state_single[9][0]|collision_state_single[10][0]|collision_state_single[11][0]|collision_state_single[12][0]|collision_state_single[13][0]|collision_state_single[14][0]|collision_state_single[15][0]|collision_state_single[16][0]|collision_state_single[17][0]|collision_state_single[18][0]|collision_state_single[19][0]|collision_state_single[20][0]|collision_state_single[21][0]|collision_state_single[22][0]|collision_state_single[23][0]|collision_state_single[24][0]|collision_state_single[25][0]|collision_state_single[26][0]|collision_state_single[27][0]|collision_state_single[28][0]|collision_state_single[29][0]|collision_state_single[30][0]|collision_state_single[31][0]|collision_state_single[32][0]|collision_state_single[33][0]|collision_state_single[34][0]|collision_state_single[35][0]|collision_state_single[36][0]|collision_state_single[37][0]|collision_state_single[38][0]|collision_state_single[39][0]|collision_state_single[40][0]|collision_state_single[41][0]|collision_state_single[42][0]|collision_state_single[43][0]|collision_state_single[44][0]|collision_state_single[45][0]|collision_state_single[46][0]|collision_state_single[47][0]|collision_state_single[48][0]|collision_state_single[49][0];
+            collision_state[1] <=  collision_state_single[0][1]|collision_state_single[1][1]|collision_state_single[2][1]|collision_state_single[3][1]|collision_state_single[4][1]|collision_state_single[5][1]|collision_state_single[6][1]|collision_state_single[7][1]|collision_state_single[8][1]|collision_state_single[9][1]|collision_state_single[10][1]|collision_state_single[11][1]|collision_state_single[12][1]|collision_state_single[13][1]|collision_state_single[14][1]|collision_state_single[15][1]|collision_state_single[16][1]|collision_state_single[17][1]|collision_state_single[18][1]|collision_state_single[19][1]|collision_state_single[20][1]|collision_state_single[21][1]|collision_state_single[22][1]|collision_state_single[23][1]|collision_state_single[24][1]|collision_state_single[25][1]|collision_state_single[26][1]|collision_state_single[27][1]|collision_state_single[28][1]|collision_state_single[29][1]|collision_state_single[30][1]|collision_state_single[31][1]|collision_state_single[32][1]|collision_state_single[33][1]|collision_state_single[34][1]|collision_state_single[35][1]|collision_state_single[36][1]|collision_state_single[37][1]|collision_state_single[38][1]|collision_state_single[39][1]|collision_state_single[40][1]|collision_state_single[41][1]|collision_state_single[42][1]|collision_state_single[43][1]|collision_state_single[44][1]|collision_state_single[45][1]|collision_state_single[46][1]|collision_state_single[47][1]|collision_state_single[48][1]|collision_state_single[49][1];
+            collision_state[2] <= collision_state_single[0][2]|collision_state_single[1][2]|collision_state_single[2][2]|collision_state_single[3][2]|collision_state_single[4][2]|collision_state_single[5][2]|collision_state_single[6][2]|collision_state_single[7][2]|collision_state_single[8][2]|collision_state_single[9][2]|collision_state_single[10][2]|collision_state_single[11][2]|collision_state_single[12][2]|collision_state_single[13][2]|collision_state_single[14][2]|collision_state_single[15][2]|collision_state_single[16][2]|collision_state_single[17][2]|collision_state_single[18][2]|collision_state_single[19][2]|collision_state_single[20][2]|collision_state_single[21][2]|collision_state_single[22][2]|collision_state_single[23][2]|collision_state_single[24][2]|collision_state_single[25][2]|collision_state_single[26][2]|collision_state_single[27][2]|collision_state_single[28][2]|collision_state_single[29][2]|collision_state_single[30][2]|collision_state_single[31][2]|collision_state_single[32][2]|collision_state_single[33][2]|collision_state_single[34][2]|collision_state_single[35][2]|collision_state_single[36][2]|collision_state_single[37][2]|collision_state_single[38][2]|collision_state_single[39][2]|collision_state_single[40][2]|collision_state_single[41][2]|collision_state_single[42][2]|collision_state_single[43][2]|collision_state_single[44][2]|collision_state_single[45][2]|collision_state_single[46][2]|collision_state_single[47][2]|collision_state_single[48][2]|collision_state_single[49][2];
+            collision_state[3] <= collision_state_single[0][3]|collision_state_single[1][3]|collision_state_single[2][3]|collision_state_single[3][3]|collision_state_single[4][3]|collision_state_single[5][3]|collision_state_single[6][3]|collision_state_single[7][3]|collision_state_single[8][3]|collision_state_single[9][3]|collision_state_single[10][3]|collision_state_single[11][3]|collision_state_single[12][3]|collision_state_single[13][3]|collision_state_single[14][3]|collision_state_single[15][3]|collision_state_single[16][3]|collision_state_single[17][3]|collision_state_single[18][3]|collision_state_single[19][3]|collision_state_single[20][3]|collision_state_single[21][3]|collision_state_single[22][3]|collision_state_single[23][3]|collision_state_single[24][3]|collision_state_single[25][3]|collision_state_single[26][3]|collision_state_single[27][3]|collision_state_single[28][3]|collision_state_single[29][3]|collision_state_single[30][3]|collision_state_single[31][3]|collision_state_single[32][3]|collision_state_single[33][3]|collision_state_single[34][3]|collision_state_single[35][3]|collision_state_single[36][3]|collision_state_single[37][3]|collision_state_single[38][3]|collision_state_single[39][3]|collision_state_single[40][3]|collision_state_single[41][3]|collision_state_single[42][3]|collision_state_single[43][3]|collision_state_single[44][3]|collision_state_single[45][3]|collision_state_single[46][3]|collision_state_single[47][3]|collision_state_single[48][3]|collision_state_single[49][3];
     end
 
 
 
-    parameter gravity = 9'd2;
-    parameter max_speed = 9'b111111100;
+////first bit: 0:left 1:right
+//second bit: 0: on the ground 1: in the air
+//third bit: 0:stand 1:move
+//coll    0人物下   1 上  2 右  3 左
+//wasd    0w  1a  2s  3d
+    parameter gravity = 9'd3;
+    parameter max_speed = 9'd6;
     always @ (posedge clk_total) begin
         //update x_blue
         if (wsad_down[1] == 1'b1) begin
             blue_state[0] <= 1'b0;
             blue_state[2] <= 1'b1;
-            if(collision_state[3] != 1'b1) begin
-                x_blue <= x_blue - 10'd1;
-            end
-        end else if (wsad_down[3] == 1'b1) begin
+            x_blue <= x_blue - 10'd2;
+        end else begin
+            blue_state[2] <= 1'b0;
+        end
+        if (wsad_down[3] == 1'b1) begin
             blue_state[0] <= 1'b1;
             blue_state[2] <= 1'b1;
-            if(collision_state[2] != 1'b1) begin
-                x_blue <= x_blue + 10'd1;
-            end
+            x_blue <= x_blue + 10'd2;
         end 
         else begin
             blue_state[2] <= 1'b0;
@@ -230,11 +232,14 @@
             vertical_speed <= 9'd1;
         end else if (wsad_down[0] == 1'b1 && collision_state[0] == 1'b1) begin //jump from the ground
             vertical_speed <= max_speed;
-        end else if(wsad_down[0] == 1'b0 && collision_state[0] == 1'b0 && vertical_speed <0) begin //touch the ground
-            vertical_speed <= 0;
-        end else begin //fall
             vertical_speed <= vertical_speed + gravity;
-        end
+        end else if((wsad_down[0] == 1'b0 && collision_state[0] == 1'b1)||vertical_speed>9'b001000000 ) begin //touch the ground  && vertical_speed >9'b111111100
+            vertical_speed <= 0;
+        end 
+        // else begin //fall
+        //     vertical_speed <= vertical_speed + gravity;
+        // end
+        
         if (collision_state[0] == 1'b0) begin 
             blue_state[1] <= 1'b1; //in the air
         end else begin
@@ -242,11 +247,6 @@
         end
         y_blue <= y_blue + vertical_speed;
     end
-
-
-
-
-
 
 ////////////////////////////////Implement the moves of the game//////////////////////////////
    
