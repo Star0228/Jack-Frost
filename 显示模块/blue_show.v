@@ -40,10 +40,10 @@ blue_r_walk_5 blue_lwk_5f(.clka(clk),.addra(blue_l),.douta(vga_bl_lwk_5));
 blue_r_walk_9 blue_lwk_9f(.clka(clk),.addra(blue_l),.douta(vga_bl_lwk_9));
 blue_r_walk_13 blue_lwk_13f(.clka(clk),.addra(blue_l),.douta(vga_bl_lwk_13));
 //蓝色小人向右跳跃的图片像素值  1 5 9 13
-wire vga_blue_jump;
+wire [11:0]vga_blue_jump;
 blue_jump blue_jumpf(.clka(clk),.addra(blue),.douta(vga_blue_jump));
 //蓝色小人向左跳跃的图片像素值  1 5 9 13
-wire vga_bl_ljump;
+wire [11:0]vga_bl_ljump;
 blue_jump blue_ljumpf(.clka(clk),.addra(blue_l),.douta(vga_bl_ljump));
 //ip帧率ip_blue
 reg [3:0]ip_blue;
@@ -81,12 +81,24 @@ always @(posedge clk )begin
         end
         if(blue_state[1]==0)begin
             case(ip_blue)
+                 0:vga_blue <= vga_blue_jump;
+                1:vga_blue <= vga_blue_jump;
+                2:vga_blue <= vga_blue_jump;
+                3:vga_blue <= vga_blue_jump;
+                4:vga_blue <= vga_blue_jump;
+                5:vga_blue <= vga_blue_jump;
+                6:vga_blue <= vga_blue_jump;
+                7:vga_blue <= vga_blue_jump;
+                8:vga_blue <= vga_blue_jump;
+                9:vga_blue <= vga_blue_jump;
+                10:vga_blue <= vga_blue_jump;
+                11:vga_blue <= vga_blue_jump;
+                12:vga_blue <= vga_blue_jump;
+                13:vga_blue <= vga_blue_jump;
+                14:vga_blue <= vga_blue_jump;
                 15:begin
-                    vga_blue <= vga_bl_ljump;
+                    vga_blue <= vga_blue_jump;
                     ip_blue <= 0;
-                end
-                default:begin
-                    vga_blue <= vga_bl_ljump;
                 end
         endcase
         end
