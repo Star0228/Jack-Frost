@@ -47,6 +47,7 @@ reg [3:0]ip_slim;
 always @(posedge clk )begin
     if(ipcnt == 6000000)begin
         ip_slim <=ip_slim+1;
+        
     end
     if(slim_frozen)begin
         case(ip_slim)

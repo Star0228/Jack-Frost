@@ -232,7 +232,7 @@
                     if (wasd_down[1] == 1'b1 && wasd_down[3] == 1'b0 && collision_state[3] == 1'b0) begin//left
                         blue_state[0] <= 1'b0;
                         blue_state[2] <= 1'b1;
-                        if(left_cnt < 125)begin
+                        if(left_cnt < 75)begin
                             left_cnt <= left_cnt + 1;
                         end else begin
                             left_cnt <= 0;
@@ -242,7 +242,7 @@
                     else if (wasd_down[3] == 1'b1 && collision_state[2] == 1'b0) begin
                         blue_state[0] <= 1'b1;
                         blue_state[2] <= 1'b1;
-                        if(right_cnt < 125)begin
+                        if(right_cnt < 75)begin
                             right_cnt <= right_cnt + 1;
                         end else begin
                             right_cnt <= 0;
