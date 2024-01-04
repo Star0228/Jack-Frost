@@ -40,8 +40,8 @@
     //third bit: 0:stand 1:move
     reg [2:0]blue_state;
     initial begin
-        x_blue=10'd10;
-        y_blue=9'd267;
+        x_blue=10'd0;
+        y_blue=9'd367;
     end
    
     //Initialize the coordinate of the monsters with loop
@@ -162,25 +162,26 @@
             else begin
                 wasd_down[0] <= 1'b0;
             end
-            if(instruction == S_KEY)begin
+            if(instruction == S_KEY && instruction[8] == 1'b0)begin
                 wasd_down[2] <= 1'b1;
             end else begin
                 wasd_down[2] <= 1'b0;
             end
-            if(instruction[7:0] == D_KEY)begin
+            if(instruction[7:0] == D_KEY && instruction[8] == 1'b0)begin
                 wasd_down[3] <= 1'b1;
             end
             else begin
                 wasd_down[3] <= 1'b0;
             end
-            if(instruction[7:0] == A_KEY)begin
+            if(instruction[7:0] == A_KEY && instruction[8] == 1'b0)begin
                 wasd_down[1] <= 1'b1;
             end
             else begin
                 wasd_down[1] <= 1'b0;
             end
             if(instruction[7:0] == R_KEY && instruction[8] == 1'b0)begin
-                reset <= ~reset;
+                x_blue <= 10'd0;
+                y_blue <= 9'd367;
             end
         end
     end
@@ -206,17 +207,23 @@
     //third bit: 0:stand 1:move
     //coll    0人物下   1 上  2 右  3 左
     //wasd    0w  1a  2s  3d
-        reg [31:0] left_cnt, right_cnt, up_cnt, down_cnt, threshold;
+        reg [31:0] left_cnt, right_cnt, up_cnt, down_cnt;
+        reg isJump;
+        reg [31:0] JumpTimer, FallTimer, JumpTimerUpdate, FallTimerUpdate;
         initial begin
             left_cnt <= 0;
             right_cnt <= 0;
             up_cnt <= 0;
             down_cnt <= 0;
-            threshold <= 31'd1250000;
+            isJump <= 1'b0;
+            JumpTimer <= 31'd250000;
+            FallTimer <= 31'd500000;
+            JumpTimerUpdate <= 0;
+            FallTimerUpdate <= 0;
         end
         always @ (posedge clk) begin
             //update x_blue
-                if (wasd_down[1] == 1'b1 && wasd_down[3] == 1'b0 && collision_state[3] == 1'b0) begin
+                if (wasd_down[1] == 1'b1 && wasd_down[3] == 1'b0 && collision_state[3] == 1'b0) begin//left
                     blue_state[0] <= 1'b0;
                     blue_state[2] <= 1'b1;
                     if(left_cnt < 12_500_00)begin
@@ -240,20 +247,47 @@
                     blue_state[2] <= 1'b0;
                 end
             //update y_blue
-                if(wasd_down[0] == 1'b1 && wasd_down[2] == 1'b0 && collision_state[1] == 1'b0) begin //jump from the ground
-                    if(up_cnt < 12_500_00)begin
+            //update the isJump
+                if(collision_state[1] == 1'b1 || JumpTimer >= 31'd500000) begin//touch the ceiling
+                    isJump = 1'b0;
+                end
+                else if(wasd_down[0] == 1'b1 && collision_state[0] == 1'b1) begin //jump from the ground
+                    isJump = 1'b1;
+                end
+            //implement the jump and fall
+                if(isJump == 1'b0)begin
+                    JumpTimer <= 31'd250000;
+                    JumpTimerUpdate <= 0;
+                    if(collision_state[0] == 1'b0) begin //fall from the air with increasing speed
+                        if(FallTimerUpdate == 24) begin// decrease the timer to control the speed of the fall
+                            if(FallTimer > 31'd200000)
+                                FallTimer <= FallTimer - 31'd50000;
+                            else//the max speed of the fall
+                                FallTimer <= 31'd200000;
+                            FallTimerUpdate <= 0;
+                        end else if(down_cnt < FallTimer)begin
+                            down_cnt <= down_cnt + 1;
+                        end else begin
+                            down_cnt <= 0;
+                            y_blue <= y_blue + 9'd1;
+                            FallTimerUpdate <= FallTimerUpdate + 1;
+                        end
+                    end else begin
+                        FallTimer <= 31'd500000;
+                        FallTimerUpdate <= 0;
+                    end
+                end else begin//jump in the air with decreasing speed
+                    FallTimer <= 31'd500000;
+                    FallTimerUpdate <= 0;
+                    if(JumpTimerUpdate == 24) begin// increase the timer to control the speed of the jump
+                        JumpTimer <= JumpTimer + 31'd50000;
+                        JumpTimerUpdate <= 0;
+                    end else if(up_cnt < JumpTimer)begin
                         up_cnt <= up_cnt + 1;
                     end else begin
                         up_cnt <= 0;
                         y_blue <= y_blue - 9'd1;
-                    end
-                end
-                else if(wasd_down[2] == 1'b1 && collision_state[0] == 1'b0) begin //fall from the air
-                    if(down_cnt < 12_500_00)begin
-                        down_cnt <= down_cnt + 1;
-                    end else begin
-                        down_cnt <= 0;
-                        y_blue <= y_blue + 9'd1;
+                        JumpTimerUpdate <= JumpTimerUpdate + 1;
                     end
                 end
             //update the state of Jack
@@ -270,7 +304,7 @@
     //The address of the photo and the output of vga
     //背景1的地址寄存器和vga输出
     wire [11:0] vga_bg; 
-    wire [11:0] vga_bg1;
+    // wire [11:0] vga_bg1;
     reg [18:0] bg;
     
     //蓝色小人静态图片的地址寄存器和vga输出
@@ -324,7 +358,7 @@
         end
     end
     //assign the address to the vga
-    begin_bg bg1(.clka(clk),.addra(bg),.douta(vga_bg1));
+    // begin_bg bg1(.clka(clk),.addra(bg),.douta(vga_bg1));
     background bg2(.clka(clk),.addra(bg),.douta(vga_bg));
 
     blue_show blue_show1(.clk(clk),.ipcnt(ipcnt),.blue(blue),.blue_state(blue_state),.vga_blue(vga_blue));
@@ -356,7 +390,7 @@
         //The rendering order is as follows:
         //1.背景
         if(game ==2'b01&&col_addr_x>=0&&col_addr_x<=550&&row_addr_y>=0&&row_addr_y<=400)begin
-            vga_data<=vga_bg[11:0]; 
+            vga_data<=vga_bg[11:0];   
         end
         if(col_addr_x>550||row_addr_y>440)begin
             vga_data<=12'h000;
@@ -398,9 +432,9 @@
             end
         end
         //begin background
-        if(game==2'b00&&col_addr_x>=0&&col_addr_x<=550&&row_addr_y>=0&&row_addr_y<=400)begin
-            vga_data<=vga_bg1[11:0];   
-        end
+        // if(game==2'b00&&col_addr_x>=0&&col_addr_x<=550&&row_addr_y>=0&&row_addr_y<=400)begin
+            // vga_data<=vga_bg1[11:0];   
+        // end
     end
 ////////////////////////////////Image processing//////////////////////////////
 
