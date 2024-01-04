@@ -159,22 +159,22 @@
         if(ready)begin
             if(instruction[7:0] == W_KEY && instruction[8] == 1'b0)begin
                 wasd_down[0] <= 1'b1;
-            end else if(instruction[7:0] != W_KEY && instruction[8] == 1'b1)begin
+            end else if(instruction[8] == 1'b1)begin
                 wasd_down[0] <= 1'b0;
             end
             if(instruction == S_KEY && instruction[8] == 1'b0)begin
                 wasd_down[2] <= 1'b1;
-            end else if(instruction[7:0] != S_KEY && instruction[8] == 1'b1)begin
+            end else if(instruction[8] == 1'b1)begin
                 wasd_down[2] <= 1'b0;
             end
             if(instruction[7:0] == D_KEY && instruction[8] == 1'b0)begin
                 wasd_down[3] <= 1'b1;
-            end else if(instruction[7:0] != D_KEY && instruction[8] == 1'b1)begin
+            end else if(instruction[8] == 1'b1)begin
                 wasd_down[3] <= 1'b0;
             end
             if(instruction[7:0] == A_KEY && instruction[8] == 1'b0)begin
                 wasd_down[1] <= 1'b1;
-            end else if(instruction[7:0] != A_KEY && instruction[8] == 1'b1)begin
+            end else if(instruction[8] == 1'b1)begin
                 wasd_down[1] <= 1'b0;
             end
             // if(instruction[7:0] == R_KEY && instruction[8] == 1'b0)begin

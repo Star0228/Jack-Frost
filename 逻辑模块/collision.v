@@ -10,27 +10,27 @@ always @(posedge clk) begin
     //detect whether the blue has collided with the block
     
     //the down side of the blue
-    if(x_blue + 10'd6 >= x_ground && x_blue + 10'd35 <= x_ground+10'd25 && y_blue + 9'd41 >= y_ground && y_blue + 9'd41 <= y_ground + 9'd3) begin
+    if(x_blue + 10'd30 >= x_ground && x_blue + 10'd10 <= x_ground+10'd25 && y_blue + 9'd41 >= y_ground && y_blue + 9'd41 <= y_ground + 9'd3) begin
         is_Collision[0] <= 1;
     end else begin
         is_Collision[0] <= 0;
     end
     //the up side of the blue
-    if(x_blue + 10'd6 >= x_ground && x_blue + 10'd35 <= x_ground+10'd25 &&  y_blue >= y_ground+9'd24  && y_blue <= y_ground + 9'd25) begin
+    if(x_blue + 10'd30 >= x_ground && x_blue + 10'd10 <= x_ground+10'd25 &&  y_blue >= y_ground+9'd24  && y_blue <= y_ground + 9'd25) begin
         is_Collision[1] <= 1;
     end else begin
         is_Collision[1] <= 0;
     end
 
     //the right side of the blue
-    if(x_blue + 10'd45 >= x_ground-10'd3 && x_blue + 10'd45 <= x_ground+10'd3 && y_blue + 9'd41 <= y_ground+9'd24 && y_blue - 9'd30 >= y_ground ) begin
+    if(x_blue + 10'd45 >= x_ground && x_blue + 10'd45 <= x_ground+10'd3 && y_blue + 9'd36 >= y_ground && y_blue <= y_ground + 9'd23) begin
         is_Collision[2] <= 1;
     end else begin
         is_Collision[2] <= 0;
     end
     
     //the left side of the blue
-    if(x_blue >= x_ground+10'd23 && x_blue <= x_ground+10'd28 && y_blue + 9'd41 <= y_ground+9'd24 && y_blue - 9'd30 >= y_ground ) begin
+    if(x_blue >= x_ground+10'd23 && x_blue <= x_ground+10'd25 && y_blue + 9'd36 >= y_ground && y_blue <= y_ground + 9'd23) begin
         is_Collision[3] <= 1;
     end else begin
         is_Collision[3] <= 0;

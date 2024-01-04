@@ -13,7 +13,7 @@ always@(posedge clk)begin
     if(slim_damage&&!wudi)begin
         health<=health-4'd1;
         wudi<=1'b1;
-        #3000;
+        #300000000;
         wudi<=1'b0;
     end
 end
