@@ -158,18 +158,26 @@
         if(ready)begin
             if(instruction[7:0] == W_KEY && instruction[8] == 1'b0)begin
                 wasd_down[0] <= 1'b1;
-                #500;
-                wasd_down[0] <= 1'b0;
             end 
+            else begin
+                wasd_down[0] <= 1'b0;
+            end
             if(instruction == S_KEY)begin
                 wasd_down[2] <= 1'b1;
             end else begin
                 wasd_down[2] <= 1'b0;
             end
-            if(instruction[7:0] == D_KEY && instruction[8] == 1'b0)begin
+            if(instruction[7:0] == D_KEY)begin
                 wasd_down[3] <= 1'b1;
-                #500;
+            end
+            else begin
                 wasd_down[3] <= 1'b0;
+            end
+            if(instruction[7:0] == A_KEY)begin
+                wasd_down[1] <= 1'b1;
+            end
+            else begin
+                wasd_down[1] <= 1'b0;
             end
             if(instruction[7:0] == R_KEY && instruction[8] == 1'b0)begin
                 reset <= ~reset;
@@ -237,7 +245,7 @@
                         up_cnt <= up_cnt + 1;
                     end else begin
                         up_cnt <= 0;
-                        y_blue <= y_blue + 9'd1;
+                        y_blue <= y_blue - 9'd1;
                     end
                 end
                 else if(wasd_down[2] == 1'b1 && collision_state[0] == 1'b0) begin //fall from the air
@@ -245,7 +253,7 @@
                         down_cnt <= down_cnt + 1;
                     end else begin
                         down_cnt <= 0;
-                        y_blue <= y_blue - 9'd1;
+                        y_blue <= y_blue + 9'd1;
                     end
                 end
             //update the state of Jack
