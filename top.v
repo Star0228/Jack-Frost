@@ -46,23 +46,26 @@
    
     //Initialize the coordinate of the monsters with loop
     parameter monster_num = 2;
-    reg [9:0]x_slim[0:monster_num-1];
-    reg [8:0]y_slim[0:monster_num-1];
-    initial begin
-        x_slim[1]<=10'd300;
-        y_slim[1]<=9'd367;
-        x_slim[0]<=10'd250;
-        y_slim[0]<=9'd197;
-    end
+    wire [9:0]x_slim1,x_slim2;
+    wire [8:0]y_slim1,y_slim2;
+
             
     //Initialize snowflake's coordinate with loop
     parameter snowflake_num = 15;
     reg [9:0]x_snowf[0:snowflake_num-1];
     reg [8:0]y_snowf[0:snowflake_num-1];
     initial begin
-        for (integer i=0;i<snowflake_num;i=i+1)begin
-            x_snowf[i]<=10'd144;
-            y_snowf[i]<=9'd26*i;
+        for (integer i=0;i<5;i=i+1)begin
+            x_snowf[i]<=10'd28*i+10'd50;
+            y_snowf[i]<=9'd370;
+        end
+        for (integer i=5;i<10;i=i+1)begin
+            x_snowf[i]<=10'd28*(i-5)+10'd350;
+            y_snowf[i]<=9'd370;
+        end
+        for (integer i=10;i<14;i=i+1)begin
+            x_snowf[i]<=10'd28*(i-10);
+            y_snowf[i]<=9'd105;
         end
     end
 
@@ -76,18 +79,23 @@
             x_ground[i]<=10'd25*i;
             y_ground[i]<=9'd400;
         end
-        for(integer i=22;i<29;i=i+1)begin
-            x_ground[i]<=100+10'd25*(i-22);
+        for(integer i=22;i<27;i=i+1)begin
+            x_ground[i]<=10'd25*(i-22);
             y_ground[i]<=310;
         end
-        for (integer i=29;i<36;i=i+1)begin
-            x_ground[i]<=300+10'd25*(i-29);
+        for (integer i=27;i<32;i=i+1)begin
+            x_ground[i]<=425+10'd25*(i-27);
             y_ground[i]<=9'd310;
         end
-        for (integer i=36;i<ground_num;i=i+1)begin
-            x_ground[i]<=200+10'd25*(i-36);
-            y_ground[i]<=9'd230;
+        for (integer i=36;i<44;i=i+1)begin
+            x_ground[i]<=150+10'd25*(i-36);
+            y_ground[i]<=9'd225;
         end
+        for (integer i=44;i<49;i=i+1)begin
+            x_ground[i]<=10'd25*(i-44);
+            y_ground[i]<=9'd135;
+        end
+
     end
 ////////////////////////////////Initialize the coordinates of various objects//////////////////////////////
 
@@ -98,10 +106,9 @@
     genvar dt_block_fz_i;
     generate
         for (dt_block_fz_i=0;dt_block_fz_i<ground_num;dt_block_fz_i=dt_block_fz_i+1)begin:dt_block_fz
-            dt_block_fz dt_block_fz_i(.clk(clk),.x_blue(x_blue),.y_blue(y_blue),.x_ground(x_ground[dt_block_fz_i]),.y_ground(y_ground[dt_block_fz_i]),.touched(bk_touched[dt_block_fz_i]));
+            dt_block_fz dt_block_fz_i(.reset(reset),.clk(clk),.x_blue(x_blue),.y_blue(y_blue),.x_ground(x_ground[dt_block_fz_i]),.y_ground(y_ground[dt_block_fz_i]),.touched(bk_touched[dt_block_fz_i]));
         end
     endgenerate
-
         wire [1:0]game;
     //game   00->begin 01->ing   11->win  10->lose
     game_state game_f(.clk(clk),.health(health),.bk_touched(bk_touched),.reset(reset),.game_state(game));
@@ -109,23 +116,15 @@
     //2. icing the monsters
     wire [monster_num-1:0]slim_frozen;
     //update the signal with loop
-    genvar dt_slim_fz_i;
-    generate
-        for (dt_slim_fz_i=0;dt_slim_fz_i<monster_num;dt_slim_fz_i=dt_slim_fz_i+1)begin:dt_slim_fz
-            dt_slim_fz dt_slim_fz_i(.clk(clk),.x_blue(x_blue),.y_blue(y_blue),.x_slim(x_slim[dt_slim_fz_i]),.y_slim(y_slim[dt_slim_fz_i]),.frozen(slim_frozen[dt_slim_fz_i]));
-        end
-    endgenerate
-  
+    dt_slim_fz dt_slim_fz1(.clk(clk),.x_blue(x_blue),.y_blue(y_blue),.x_slim(x_slim1),.y_slim(y_slim1),.frozen(slim_frozen[0]));
+    dt_slim_fz dt_slim_fz2(.clk(clk),.x_blue(x_blue),.y_blue(y_blue),.x_slim(x_slim2),.y_slim(y_slim2),.frozen(slim_frozen[1]));
+
     //3. damaged by the monsters
     wire [monster_num-1:0]slim_damage;
     //update the signal with loop
-    genvar dt_slim_bk_i;
-    generate
-        for (dt_slim_bk_i=0;dt_slim_bk_i<monster_num;dt_slim_bk_i=dt_slim_bk_i+1)begin:dt_slim_bk
-            dt_slim_bk dt_slim_bk_i(.clk(clk),.x_blue(x_blue),.y_blue(y_blue),.x_slim(x_slim[dt_slim_bk_i]),.y_slim(y_slim[dt_slim_bk_i]),.isfrozen(slim_frozen[dt_slim_bk_i]),.broken(slim_damage[dt_slim_bk_i]));
-        end
-    endgenerate
-    health_count health_f(.clk(clk),.slim_damage(slim_damage),.health(health));
+    dt_slim_bk dt_slim_bk1(.clk(clk),.x_blue(x_blue),.y_blue(y_blue),.x_slim(x_slim1),.y_slim(y_slim1),.isfrozen(slim_frozen[0]),.broken(slim_damage[0]));
+    dt_slim_bk dt_slim_bk2(.clk(clk),.x_blue(x_blue),.y_blue(y_blue),.x_slim(x_slim2),.y_slim(y_slim2),.isfrozen(slim_frozen[1]),.broken(slim_damage[1]));
+    health_count health_f(.reset(reset),.clk(clk),.slim_damage(slim_damage),.health(health));
   
     //4. get the snowflakes
     wire [snowflake_num-1:0]snowf_get;    
@@ -147,7 +146,6 @@
     parameter A_KEY = 8'h1C;
     parameter D_KEY = 8'h23;
     parameter R_KEY = 8'h2D;
-    parameter Q_KEY = 8'h15;
     // Instantiate the PS2 Keyboard module
     wire [9:0] instruction;
     wire ready;
@@ -177,11 +175,7 @@
             end else if(instruction[8] == 1'b1)begin
                 wasd_down[1] <= 1'b0;
             end
-            // if(instruction[7:0] == R_KEY && instruction[8] == 1'b0)begin
-            //     x_blue <= 10'd0;
-            //     y_blue <= 9'd367;
-            // end
-             if(instruction[7:0] == Q_KEY && instruction[8] == 1'b0)begin
+             if(instruction[7:0] == R_KEY && instruction[8] == 1'b0)begin
                 reset = ~reset;
             end
         end
@@ -225,7 +219,7 @@
         always @ (posedge clk_total) begin
             if(instruction[7:0] == R_KEY && instruction[8] == 1'b0)begin
                 x_blue <= 10'd0;
-                y_blue <= 9'd367;
+                y_blue <= 9'd357;
             end
             else begin
                 //update x_blue
@@ -319,8 +313,10 @@
     reg [13:0]blue;
 
     //The address of the monsters and the output of vga
-    wire [11:0] vga_slim[0:monster_num-1];
-    reg [13:0] slim[0:monster_num-1];
+    wire [11:0] vga_slim1;
+    wire [11:0] vga_slim2;
+    reg [13:0] slim1;
+    reg [13:0] slim2;
 
     //The address of the snowflakes and the output of vga
     wire [11:0] vga_snowf[0:snowflake_num-1];
@@ -338,9 +334,8 @@
         blue<= (col_addr_x>=x_blue&&col_addr_x<=x_blue+46&&row_addr_y>=y_blue&&row_addr_y<=y_blue+40)?(row_addr_y-y_blue)*47+col_addr_x-x_blue:0;
 
         // //怪物1静止34*33（x_slim1,y_slim1）图片自带428的背景色
-        for (integer i=0;i<monster_num;i=i+1)begin
-            slim[i]<= (col_addr_x>=x_slim[i]&&col_addr_x<=x_slim[i]+33&&row_addr_y>=y_slim[i]&&row_addr_y<=y_slim[i]+32)?(row_addr_y-y_slim[i])*34+col_addr_x-x_slim[i]:0;
-        end
+        slim1<= (col_addr_x>=x_slim1&&col_addr_x<=x_slim1+33&&row_addr_y>=y_slim1&&row_addr_y<=y_slim1+32)?(row_addr_y-y_slim1)*34+col_addr_x-x_slim1:0;
+        slim2<= (col_addr_x>=x_slim2&&col_addr_x<=x_slim2+33&&row_addr_y>=y_slim2&&row_addr_y<=y_slim2+32)?(row_addr_y-y_slim2)*34+col_addr_x-x_slim2:0;
 
         //雪花1图片24*26（x_snowf1,y_snowf1）图片自带428的背景色
         for (integer i=0;i<snowflake_num;i=i+1)begin
@@ -369,14 +364,8 @@
     background bg2(.clka(clk),.addra(bg),.douta(vga_bg));
 
     blue_show blue_show1(.clk(clk),.ipcnt(ipcnt),.blue(blue),.blue_state(blue_state),.vga_blue(vga_blue));
-    
-    genvar slim_show_i;
-    generate
-        for (slim_show_i=0;slim_show_i<monster_num;slim_show_i=slim_show_i+1)begin:slim_show
-            slim_show slim_show_i(.clk(clk),.ipcnt(ipcnt),.slim(slim[slim_show_i]),.slim_frozen(slim_frozen[slim_show_i]),.vga_slim(vga_slim[slim_show_i]));
-        end
-    endgenerate
-    
+    slim_show slim_show_1(.col_addr_x(col_addr_x),.row_addr_y(row_addr_y),.clk(clk),.ipcnt(ipcnt),.slim_frozen(slim_frozen[0]),.vga_slim(vga_slim1),.x_slim(x_slim1),.y_slim(y_slim1),.num(0));
+    slim_show slim_show_2(.col_addr_x(col_addr_x),.row_addr_y(row_addr_y),.clk(clk),.ipcnt(ipcnt),.slim_frozen(slim_frozen[1]),.vga_slim(vga_slim2),.x_slim(x_slim2),.y_slim(y_slim2),.num(1));
     genvar ground_show_i;
     generate
         for (ground_show_i=0;ground_show_i<ground_num;ground_show_i=ground_show_i+1)begin:ground_show
@@ -396,7 +385,7 @@
     always@(posedge clk)begin
         //The rendering order is as follows:
         //1.背景
-        if(game ==2'b01&&col_addr_x>=0&&col_addr_x<=550&&row_addr_y>=0&&row_addr_y<=400)begin
+        if(col_addr_x>=0&&col_addr_x<=550&&row_addr_y>=0&&row_addr_y<=400)begin
             vga_data<=vga_bg[11:0];   
         end
         if(col_addr_x>550||row_addr_y>440)begin
@@ -420,15 +409,15 @@
         end
 
         //6.怪物34*33 428
-        if(col_addr_x>=x_slim[0]&&col_addr_x<=x_slim[0]+33&&row_addr_y>=y_slim[0]&&row_addr_y<=y_slim[0]+32)begin
-            if(vga_slim[0]!=4*256+2*16+8)begin
-                vga_data<=vga_slim[0];   
+        if(col_addr_x>=x_slim1&&col_addr_x<=x_slim1+33&&row_addr_y>=y_slim1&&row_addr_y<=y_slim1+32)begin
+            if(vga_slim1!=4*256+2*16+8)begin
+                vga_data<=vga_slim1;   
             end
         end
 
-        if(col_addr_x>=x_slim[1]&&col_addr_x<=x_slim[1]+33&&row_addr_y>=y_slim[1]&&row_addr_y<=y_slim[1]+32)begin
-            if(vga_slim[1]!=4*256+2*16+8)begin
-                vga_data<=vga_slim[1];   
+        if(col_addr_x>=x_slim2&&col_addr_x<=x_slim2+33&&row_addr_y>=y_slim2&&row_addr_y<=y_slim2+32)begin
+            if(vga_slim2!=4*256+2*16+8)begin
+                vga_data<=vga_slim2;   
             end
         end
 

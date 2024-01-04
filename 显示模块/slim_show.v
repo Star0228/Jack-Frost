@@ -2,16 +2,33 @@
 module slim_show(
     input clk,
     input [31:0]ipcnt,
-    input [13:0]slim,
     input slim_frozen,
-    output reg [11:0]vga_slim
+    input [9:0]col_addr_x,
+    input [8:0]row_addr_y,
+    input wire num,
+    output reg [11:0]vga_slim,
+    output reg [9:0]x_slim,
+    output reg [8:0]y_slim
     );
 //3帧  1  3   7    1
 //34*33
 //slim state
-
+// if(num==1'b1)begin
+//     assign x_slim <= 10'd240;
+//     assign y_slim <= 9'd277;
+// end
+// else begin
+//     assign x_slim <= 10'd300;
+//     assign y_slim <= 9'd367;
+// end
+initial begin
+    x_slim <= (num==1'b1)?10'd240:10'd300;
+    y_slim <= (num==1'b1)?9'd277:9'd367;
+end
+reg [13:0]slim;
 reg [13:0]slim_r;
 always@(posedge clk)begin
+slim = (col_addr_x>=x_slim&&col_addr_x<=x_slim+33&&row_addr_y>=y_slim&&row_addr_y<=y_slim+32)?(row_addr_y-y_slim)*34+col_addr_x-x_slim:0;
 slim_r[13:0]<=(14'd33-slim[13:0] % 14'd34)+(slim[13:0]/14'd34)*14'd34;
 end
 //slim 向左移动
@@ -43,14 +60,30 @@ slim_frozen_1 smf_r1f(.clka(clk),.addra(slim_r),.douta(vga_smf_r1));
 slim_frozen_3 smf_r2f(.clka(clk),.addra(slim_r),.douta(vga_smf_r2));
 slim_frozen_9 smf_r3f(.clka(clk),.addra(slim_r),.douta(vga_smf_r3));
 
-reg [3:0]ip_slim;
+reg [6:0]ip_slim;//127
+reg [6:0]ip_slim_fz;
+reg slim_state;
+//0: left  1:right
 always @(posedge clk )begin
-    if(ipcnt == 6000000)begin
-        ip_slim <=ip_slim+1;
-        
+    if(ipcnt == 6000000&&!slim_frozen)begin
+        ip_slim_fz <=0;
+        ip_slim <=(ip_slim+1)%127;
+        if(slim_state==0)begin
+            x_slim <= x_slim-10'd1;
+        end
+        else begin
+            x_slim <= x_slim+10'd1;
+        end        
+        if(ip_slim==63)begin
+            slim_state <= ~slim_state;
+        end
+    end
+    if(ipcnt == 6000000&&slim_frozen)begin
+        ip_slim_fz <=ip_slim_fz+1;
     end
     if(slim_frozen)begin
-        case(ip_slim)
+        if(slim_state==0)begin
+        case(ip_slim_fz)
         0:vga_slim <= vga_smf_l1;
         1:vga_slim <= vga_smf_l1;
         2:vga_slim <= vga_smf_l2;
@@ -59,21 +92,34 @@ always @(posedge clk )begin
         5:vga_slim <= vga_smf_l2;
         6:vga_slim <= vga_smf_l2;
         7:vga_slim <= vga_smf_l2;
-        8:vga_slim <= vga_smf_l3;
-        9:vga_slim <= vga_smf_l3;
-        10:vga_slim <= vga_smf_l3;
-        11:vga_slim <= vga_smf_l3;
-        12:vga_slim <= vga_smf_l3;
-        13:vga_slim <= vga_smf_l3;
-        14:vga_slim <= vga_smf_l3;
-        15:begin
+        127:begin
             vga_slim <=vga_smf_l1 ;
-            ip_slim <= 0;
+            ip_slim_fz <= 0;
         end
+        default:vga_slim <= vga_smf_l3;
         endcase
+        end
+        else begin
+        case(ip_slim_fz)
+        0:vga_slim <= vga_smf_r1;
+        1:vga_slim <= vga_smf_r1;
+        2:vga_slim <= vga_smf_r2;
+        3:vga_slim <= vga_smf_r2;
+        4:vga_slim <= vga_smf_r2;
+        5:vga_slim <= vga_smf_r2;
+        6:vga_slim <= vga_smf_r2;
+        7:vga_slim <= vga_smf_r2;
+        127:begin
+            vga_slim <=vga_smf_r1 ;
+            ip_slim_fz <= 0;
+        end
+        default:vga_slim <= vga_smf_r3;
+        endcase
+        end
     end
     else begin 
-        case(ip_slim)
+        if(slim_state==0)begin
+        case(ip_slim%9)
         0:vga_slim <= vga_smw_l1;
         1:vga_slim <= vga_smw_l1;
         2:vga_slim <= vga_smw_l2;
@@ -83,19 +129,21 @@ always @(posedge clk )begin
         6:vga_slim <= vga_smw_l3;
         7:vga_slim <= vga_smw_l3;
         8:vga_slim <= vga_smw_l3;
-        9:vga_slim <= vga_smw_l3;
-        10:vga_slim <= vga_smw_l3;
-        11:vga_slim <= vga_smw_l3;
-        12:vga_slim <= vga_smw_l3;
-        13:vga_slim <= vga_smw_l3;
-        14:vga_slim <= vga_smw_l3;
-        15:begin
-            vga_slim <=vga_smw_l1 ;
-            ip_slim <= 0;
+        endcase
         end
-    endcase
+        else begin  
+        case(ip_slim%9)
+        0:vga_slim <= vga_smw_r1;
+        1:vga_slim <= vga_smw_r1;
+        2:vga_slim <= vga_smw_r2;
+        3:vga_slim <= vga_smw_r2;
+        4:vga_slim <= vga_smw_r2;
+        5:vga_slim <= vga_smw_r2;
+        6:vga_slim <= vga_smw_r3;
+        7:vga_slim <= vga_smw_r3;
+        8:vga_slim <= vga_smw_r3;
+        endcase
+        end
     end
 end
 endmodule
-//使用的时候直接调用slim_show模块，输入
-//slim_show slim_f1(.clk(clk),.ipcnt(ipcnt),.slim(slim[13:0]),.vga_slim(vga_slimf1));
