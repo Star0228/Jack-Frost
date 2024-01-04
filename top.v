@@ -15,6 +15,9 @@
     wire [3:0]score;
     wire [3:0]health;
     reg reset;
+    initial begin
+        reset = 1'b0;
+    end
     reg [31:0] clkdiv;
     always@(posedge clk)begin
         clkdiv <= clkdiv+1'b1;
@@ -35,10 +38,10 @@
     //first bit: 0:left 1:right
     //second bit: 0: on the ground 1: in the air
     //third bit: 0:stand 1:move
-    wire [2:0]blue_state;
+    reg [2:0]blue_state;
     initial begin
-        x_blue=10'd0;
-        y_blue=9'd0;
+        x_blue=10'd10;
+        y_blue=9'd267;
     end
    
     //Initialize the coordinate of the monsters with loop
@@ -46,11 +49,12 @@
     reg [9:0]x_slim[0:monster_num-1];
     reg [8:0]y_slim[0:monster_num-1];
     initial begin
-        for (integer i=0;i<monster_num;i=i+1)begin
-            x_slim[i]<=10'd48*(i+1);
-            y_slim[i]<=9'd0;
-        end
+        x_slim[1]<=10'd300;
+        y_slim[1]<=9'd367;
+        x_slim[0]<=10'd250;
+        y_slim[0]<=9'd197;
     end
+            
     //Initialize snowflake's coordinate with loop
     parameter snowflake_num = 15;
     reg [9:0]x_snowf[0:snowflake_num-1];
@@ -68,17 +72,21 @@
     reg [9:0]x_ground[0:ground_num-1];
     reg [8:0]y_ground[0:ground_num-1];
     initial begin
-        for (integer i=0;i<20;i=i+1)begin
+        for (integer i=0;i<22;i=i+1)begin
             x_ground[i]<=10'd25*i;
-            y_ground[i]<=9'd374;
+            y_ground[i]<=9'd400;
         end
-        for (integer i=20;i<40;i=i+1)begin
-            x_ground[i]<=10'd25*i-20*25;
-            y_ground[i]<=9'd30;
+        for(integer i=22;i<29;i=i+1)begin
+            x_ground[i]<=100+10'd25*(i-22);
+            y_ground[i]<=310;
         end
-        for (integer i=40;i<ground_num;i=i+1)begin
-            x_ground[i]<=10'd28*i-40*28;
-            y_ground[i]<=9'd300;
+        for (integer i=29;i<36;i=i+1)begin
+            x_ground[i]<=300+10'd25*(i-29);
+            y_ground[i]<=9'd310;
+        end
+        for (integer i=36;i<ground_num;i=i+1)begin
+            x_ground[i]<=200+10'd25*(i-36);
+            y_ground[i]<=9'd230;
         end
     end
 ////////////////////////////////Initialize the coordinates of various objects//////////////////////////////
@@ -133,85 +141,128 @@
 
 ////////////////////////////////Implement the moves of the game//////////////////////////////
     // Instantiate the 1ms clock module
-    clk_10ms clk_10ms1(.clk(clk),.clk_10ms(clk_total));
-
+    clk_1ms clk_1ms1(.clk(clk),.clk_1ms(clk_total));
+    parameter W_KEY = 8'h1D;
+    parameter S_KEY = 8'h1B;
+    parameter A_KEY = 8'h1C;
+    parameter D_KEY = 8'h23;
+    parameter R_KEY = 8'h2D;
     // Instantiate the PS2 Keyboard module
     wire [9:0] instruction;
-    wire ready, overflow;
-    reg [3:0] wsad_down;
-    reg rdn;
-    initial begin
-        rdn = 1'b0;
-    end
+    wire ready;
+    reg [3:0] wasd_down;//0:W 1:A 2:S 3:D
 
-    ps2_keyboard ps2_keyboard1(.clk(clk),.clrn(rstn),.ps2_clk(ps2_clk),.ps2_data(ps2_data),.rdn(rdn),.data(instruction),.ready(ready),.overflow(overflow));
-    parameter W_KEY = 10'h1D;
-    parameter S_KEY = 10'h1B;
-    parameter A_KEY = 10'h1C;
-    parameter D_KEY = 10'h23;
-    parameter R_KEY = 10'h15;
+    ps2_ver2 ps2_ver21(.clk(clk),.rst(1'b0),.ps2_clk(ps2_clk),.ps2_data(ps2_data),.data_out(instruction),.ready(ready));
+
     always@(posedge clk)begin
         if(ready)begin
-            if(instruction == W_KEY)begin
-                wsad_down[0] <= 1'b1;
-            end else if(instruction == S_KEY)begin
-                wsad_down[2] <= 1'b1;
-            end else if(instruction == A_KEY)begin
-                wsad_down[1] <= 1'b1;
-            end else if(instruction == D_KEY)begin
-                wsad_down[3] <= 1'b1;
-            end else begin
-                wsad_down[0] <= 1'b0;
-                wsad_down[1] <= 1'b0;
-                wsad_down[2] <= 1'b0;
-                wsad_down[3] <= 1'b0;
+            if(instruction[7:0] == W_KEY && instruction[8] == 1'b0)begin
+                wasd_down[0] <= 1'b1;
+            end 
+            else begin
+                wasd_down[0] <= 1'b0;
             end
-            if(instruction == R_KEY)begin
-                reset <= 1'b1;
-                #5000;
-                reset <= 1'b0;
+            if(instruction == S_KEY)begin
+                wasd_down[2] <= 1'b1;
             end else begin
-                reset <= 1'b0;
+                wasd_down[2] <= 1'b0;
+            end
+            if(instruction[7:0] == D_KEY)begin
+                wasd_down[3] <= 1'b1;
+            end
+            else begin
+                wasd_down[3] <= 1'b0;
+            end
+            if(instruction[7:0] == A_KEY)begin
+                wasd_down[1] <= 1'b1;
+            end
+            else begin
+                wasd_down[1] <= 1'b0;
+            end
+            if(instruction[7:0] == R_KEY && instruction[8] == 1'b0)begin
+                reset <= ~reset;
             end
         end
     end
 
-    wire [8:0] vertical_speed;
-
-    reg [8:0] vertical_speed_reg;
-    wire [9:0] x_temp;
-    wire [8:0] y_temp;
-    always@(posedge clk)begin
-        vertical_speed_reg <= vertical_speed;
-        x_blue <= x_temp;
-        y_blue <= y_temp;
-    end
-
-    reg [3:0] collision_state;
+    reg [3:0] collision_state;//0 down 1 up 2 right 3 left
     wire [3:0] collision_state_single[0:ground_num-1];
     genvar is_Collision_i;
     generate
         for (is_Collision_i=0;is_Collision_i<ground_num;is_Collision_i=is_Collision_i+1)begin:is_Collision
-            collision is_Collision_i(.clk(clk),.x_blue(current_x_reg),.y_blue(current_y_reg),.x_ground(x_ground[is_Collision_i]),.y_ground(y_ground[is_Collision_i]),.is_Collision(collision_state_single[is_Collision_i]));
+            collision is_Collision_i(.clk(clk),.x_blue(x_blue),.y_blue(y_blue),.x_ground(x_ground[is_Collision_i]),.y_ground(y_ground[is_Collision_i]),.is_Collision(collision_state_single[is_Collision_i]));
         end
     endgenerate
     //combine the collision state of the ground
     always@(posedge clk)begin
-        collision_state[0] <= collision_state_single[0][0];
-        collision_state[1] <= collision_state_single[0][1];
-        collision_state[2] <= collision_state_single[0][2];
-        collision_state[3] <= collision_state_single[0][3];
-        for (integer i=1;i<ground_num;i=i+1)begin
-            collision_state[0] <= collision_state[0] | collision_state_single[i][0];
-            collision_state[1] <= collision_state[1] | collision_state_single[i][1];
-            collision_state[2] <= collision_state[2] | collision_state_single[i][2];
-            collision_state[3] <= collision_state[3] | collision_state_single[i][3];
-        end
+            collision_state[0] <=  collision_state_single[0][0]|collision_state_single[1][0]|collision_state_single[2][0]|collision_state_single[3][0]|collision_state_single[4][0]|collision_state_single[5][0]|collision_state_single[6][0]|collision_state_single[7][0]|collision_state_single[8][0]|collision_state_single[9][0]|collision_state_single[10][0]|collision_state_single[11][0]|collision_state_single[12][0]|collision_state_single[13][0]|collision_state_single[14][0]|collision_state_single[15][0]|collision_state_single[16][0]|collision_state_single[17][0]|collision_state_single[18][0]|collision_state_single[19][0]|collision_state_single[20][0]|collision_state_single[21][0]|collision_state_single[22][0]|collision_state_single[23][0]|collision_state_single[24][0]|collision_state_single[25][0]|collision_state_single[26][0]|collision_state_single[27][0]|collision_state_single[28][0]|collision_state_single[29][0]|collision_state_single[30][0]|collision_state_single[31][0]|collision_state_single[32][0]|collision_state_single[33][0]|collision_state_single[34][0]|collision_state_single[35][0]|collision_state_single[36][0]|collision_state_single[37][0]|collision_state_single[38][0]|collision_state_single[39][0]|collision_state_single[40][0]|collision_state_single[41][0]|collision_state_single[42][0]|collision_state_single[43][0]|collision_state_single[44][0]|collision_state_single[45][0]|collision_state_single[46][0]|collision_state_single[47][0]|collision_state_single[48][0]|collision_state_single[49][0];
+            collision_state[1] <=  collision_state_single[0][1]|collision_state_single[1][1]|collision_state_single[2][1]|collision_state_single[3][1]|collision_state_single[4][1]|collision_state_single[5][1]|collision_state_single[6][1]|collision_state_single[7][1]|collision_state_single[8][1]|collision_state_single[9][1]|collision_state_single[10][1]|collision_state_single[11][1]|collision_state_single[12][1]|collision_state_single[13][1]|collision_state_single[14][1]|collision_state_single[15][1]|collision_state_single[16][1]|collision_state_single[17][1]|collision_state_single[18][1]|collision_state_single[19][1]|collision_state_single[20][1]|collision_state_single[21][1]|collision_state_single[22][1]|collision_state_single[23][1]|collision_state_single[24][1]|collision_state_single[25][1]|collision_state_single[26][1]|collision_state_single[27][1]|collision_state_single[28][1]|collision_state_single[29][1]|collision_state_single[30][1]|collision_state_single[31][1]|collision_state_single[32][1]|collision_state_single[33][1]|collision_state_single[34][1]|collision_state_single[35][1]|collision_state_single[36][1]|collision_state_single[37][1]|collision_state_single[38][1]|collision_state_single[39][1]|collision_state_single[40][1]|collision_state_single[41][1]|collision_state_single[42][1]|collision_state_single[43][1]|collision_state_single[44][1]|collision_state_single[45][1]|collision_state_single[46][1]|collision_state_single[47][1]|collision_state_single[48][1]|collision_state_single[49][1];
+            collision_state[2] <= collision_state_single[0][2]|collision_state_single[1][2]|collision_state_single[2][2]|collision_state_single[3][2]|collision_state_single[4][2]|collision_state_single[5][2]|collision_state_single[6][2]|collision_state_single[7][2]|collision_state_single[8][2]|collision_state_single[9][2]|collision_state_single[10][2]|collision_state_single[11][2]|collision_state_single[12][2]|collision_state_single[13][2]|collision_state_single[14][2]|collision_state_single[15][2]|collision_state_single[16][2]|collision_state_single[17][2]|collision_state_single[18][2]|collision_state_single[19][2]|collision_state_single[20][2]|collision_state_single[21][2]|collision_state_single[22][2]|collision_state_single[23][2]|collision_state_single[24][2]|collision_state_single[25][2]|collision_state_single[26][2]|collision_state_single[27][2]|collision_state_single[28][2]|collision_state_single[29][2]|collision_state_single[30][2]|collision_state_single[31][2]|collision_state_single[32][2]|collision_state_single[33][2]|collision_state_single[34][2]|collision_state_single[35][2]|collision_state_single[36][2]|collision_state_single[37][2]|collision_state_single[38][2]|collision_state_single[39][2]|collision_state_single[40][2]|collision_state_single[41][2]|collision_state_single[42][2]|collision_state_single[43][2]|collision_state_single[44][2]|collision_state_single[45][2]|collision_state_single[46][2]|collision_state_single[47][2]|collision_state_single[48][2]|collision_state_single[49][2];
+            collision_state[3] <= collision_state_single[0][3]|collision_state_single[1][3]|collision_state_single[2][3]|collision_state_single[3][3]|collision_state_single[4][3]|collision_state_single[5][3]|collision_state_single[6][3]|collision_state_single[7][3]|collision_state_single[8][3]|collision_state_single[9][3]|collision_state_single[10][3]|collision_state_single[11][3]|collision_state_single[12][3]|collision_state_single[13][3]|collision_state_single[14][3]|collision_state_single[15][3]|collision_state_single[16][3]|collision_state_single[17][3]|collision_state_single[18][3]|collision_state_single[19][3]|collision_state_single[20][3]|collision_state_single[21][3]|collision_state_single[22][3]|collision_state_single[23][3]|collision_state_single[24][3]|collision_state_single[25][3]|collision_state_single[26][3]|collision_state_single[27][3]|collision_state_single[28][3]|collision_state_single[29][3]|collision_state_single[30][3]|collision_state_single[31][3]|collision_state_single[32][3]|collision_state_single[33][3]|collision_state_single[34][3]|collision_state_single[35][3]|collision_state_single[36][3]|collision_state_single[37][3]|collision_state_single[38][3]|collision_state_single[39][3]|collision_state_single[40][3]|collision_state_single[41][3]|collision_state_single[42][3]|collision_state_single[43][3]|collision_state_single[44][3]|collision_state_single[45][3]|collision_state_single[46][3]|collision_state_single[47][3]|collision_state_single[48][3]|collision_state_single[49][3];
     end
 
-    move_blue blue_move(.clk(clk_total),.wsad_down(wsad_down),.current_x(x_blue),.current_y(y_blue),.current_speed(vertical_speed_reg),.collision_state(collision_state),.x_blue(x_temp),.y_blue(y_temp),.blue_state(blue_state),.vertical_speed(vertical_speed));
-
-
+    ////first bit: 0:left 1:right
+    //second bit: 0: on the ground 1: in the air
+    //third bit: 0:stand 1:move
+    //coll    0人物下   1 上  2 右  3 左
+    //wasd    0w  1a  2s  3d
+        reg [31:0] left_cnt, right_cnt, up_cnt, down_cnt, threshold;
+        initial begin
+            left_cnt <= 0;
+            right_cnt <= 0;
+            up_cnt <= 0;
+            down_cnt <= 0;
+            threshold <= 31'd1250000;
+        end
+        always @ (posedge clk) begin
+            //update x_blue
+                if (wasd_down[1] == 1'b1 && wasd_down[3] == 1'b0 && collision_state[3] == 1'b0) begin
+                    blue_state[0] <= 1'b0;
+                    blue_state[2] <= 1'b1;
+                    if(left_cnt < 12_500_00)begin
+                        left_cnt <= left_cnt + 1;
+                    end else begin
+                        left_cnt <= 0;
+                        x_blue <= x_blue - 10'd1;
+                    end
+                end 
+                else if (wasd_down[3] == 1'b1 && collision_state[2] == 1'b0) begin
+                    blue_state[0] <= 1'b1;
+                    blue_state[2] <= 1'b1;
+                    if(right_cnt < 12_500_00)begin
+                        right_cnt <= right_cnt + 1;
+                    end else begin
+                        right_cnt <= 0;
+                        x_blue <= x_blue + 10'd1;
+                    end
+                end 
+                else begin
+                    blue_state[2] <= 1'b0;
+                end
+            //update y_blue
+                if(wasd_down[0] == 1'b1 && wasd_down[2] == 1'b0 && collision_state[1] == 1'b0) begin //jump from the ground
+                    if(up_cnt < 12_500_00)begin
+                        up_cnt <= up_cnt + 1;
+                    end else begin
+                        up_cnt <= 0;
+                        y_blue <= y_blue - 9'd1;
+                    end
+                end
+                else if(wasd_down[2] == 1'b1 && collision_state[0] == 1'b0) begin //fall from the air
+                    if(down_cnt < 12_500_00)begin
+                        down_cnt <= down_cnt + 1;
+                    end else begin
+                        down_cnt <= 0;
+                        y_blue <= y_blue + 9'd1;
+                    end
+                end
+            //update the state of Jack
+                if (collision_state[0] == 1'b0) begin 
+                    blue_state[1] <= 1'b1; //in the air
+                end else begin
+                    blue_state[1] <= 1'b0; //on the ground
+                end
+        end
 ////////////////////////////////Implement the moves of the game//////////////////////////////
    
 
@@ -306,6 +357,9 @@
         //1.背景
         if(game ==2'b01&&col_addr_x>=0&&col_addr_x<=550&&row_addr_y>=0&&row_addr_y<=400)begin
             vga_data<=vga_bg[11:0]; 
+        end
+        if(col_addr_x>550||row_addr_y>440)begin
+            vga_data<=12'h000;
         end
         //2.方块
         for(integer i=0;i<ground_num;i=i+1)begin
