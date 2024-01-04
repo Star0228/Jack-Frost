@@ -147,7 +147,6 @@
     parameter A_KEY = 8'h1C;
     parameter D_KEY = 8'h23;
     parameter R_KEY = 8'h2D;
-    parameter Break_KEY = 8';
     // Instantiate the PS2 Keyboard module
     wire [9:0] instruction;
     wire ready;
@@ -201,28 +200,17 @@
     //third bit: 0:stand 1:move
     //coll    0人物下   1 上  2 右  3 左
     //wasd    0w  1a  2s  3d
-<<<<<<< HEAD
-        reg [31:0] left_cnt, right_cnt, up_cnt, down_cnt;
-        reg isJump;
-        reg [31:0] JumpTimer, FallTimer, JumpTimerUpdate, FallTimerUpdate;
-=======
         reg [9:0] left_cnt, right_cnt, up_cnt, down_cnt;
         reg isJump;
         reg [9:0] JumpTimer, FallTimer, JumpTimerUpdate, FallTimerUpdate;
->>>>>>> star
         initial begin
             left_cnt <= 0;
             right_cnt <= 0;
             up_cnt <= 0;
             down_cnt <= 0;
             isJump <= 1'b0;
-<<<<<<< HEAD
-            JumpTimer <= 31'd250000;
-            FallTimer <= 31'd500000;
-=======
             JumpTimer <= 9'd25;
             FallTimer <= 9'd50;
->>>>>>> star
             JumpTimerUpdate <= 0;
             FallTimerUpdate <= 0;
         end
@@ -261,53 +249,6 @@
                     if(collision_state[1] == 1'b1 || JumpTimer >= 9'd50) begin//touch the ceiling
                         isJump = 1'b0;
                     end
-<<<<<<< HEAD
-                end 
-                else begin
-                    blue_state[2] <= 1'b0;
-                end
-            //update y_blue
-                if(collision_state[1] == 1'b1 || JumpTimer == 31'd500000) begin//touch the ceiling
-                    isJump = 1'b0;
-                end
-                else if(wasd_down[0] == 1'b1 && collision_state[0] == 1'b1) begin //jump from the ground
-                    isJump = 1'b1;
-                end
-
-                if(isJump == 1'b0)begin
-                    JumpTimer <= 31'd250000;
-                    JumpTimerUpdate <= 0;
-                    if(collision_state[0] == 1'b0) begin //fall from the air
-                        if(FallTimerUpdate == 24) begin
-                            if(FallTimer > 31'd200000)
-                                FallTimer <= FallTimer - 31'd50000;
-                            else
-                                FallTimer <= 31'd200000;
-                            FallTimerUpdate <= 0;
-                        end else if(down_cnt < FallTimer)begin
-                            down_cnt <= down_cnt + 1;
-                        end else begin
-                            down_cnt <= 0;
-                            y_blue <= y_blue + 9'd1;
-                            FallTimerUpdate <= FallTimerUpdate + 1;
-                        end
-                    end else begin
-                        FallTimer <= 31'd500000;
-                        FallTimerUpdate <= 0;
-                    end
-                end else begin//jump in the air
-                    FallTimer <= 31'd500000;
-                    FallTimerUpdate <= 0;
-                    if(JumpTimerUpdate == 24) begin
-                        JumpTimer <= JumpTimer + 31'd50000;
-                        JumpTimerUpdate <= 0;
-                    end else if(up_cnt < JumpTimer)begin
-                        up_cnt <= up_cnt + 1;
-                    end else begin
-                        up_cnt <= 0;
-                        y_blue <= y_blue - 9'd1;
-                        JumpTimerUpdate <= JumpTimerUpdate + 1;
-=======
                     else if(wasd_down[0] == 1'b1 && collision_state[0] == 1'b1) begin //jump from the ground
                         isJump = 1'b1;
                     end
@@ -346,7 +287,6 @@
                             y_blue <= y_blue - 9'd1;
                             JumpTimerUpdate <= JumpTimerUpdate + 1;
                         end
->>>>>>> star
                     end
                 //update the state of Jack
                     if (collision_state[0] == 1'b0) begin 

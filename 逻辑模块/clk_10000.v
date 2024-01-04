@@ -1,4 +1,4 @@
-module clk_10ms(
+module clk_10000(
     input wire clk,
     output reg clk_10000,
 );
