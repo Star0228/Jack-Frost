@@ -141,7 +141,7 @@
 
 ////////////////////////////////Implement the moves of the game//////////////////////////////
     // Instantiate the 1ms clock module
-    clk_1ms clk_1ms1(.clk(clk),.clk_1ms(clk_total));
+    clk_10000 clk_10000_1(.clk(clk),.clk_10000(clk_total));
     parameter W_KEY = 8'h1D;
     parameter S_KEY = 8'h1B;
     parameter A_KEY = 8'h1C;
@@ -159,25 +159,22 @@
         if(ready)begin
             if(instruction[7:0] == W_KEY && instruction[8] == 1'b0)begin
                 wasd_down[0] <= 1'b1;
-            end 
-            else begin
+            end else if(instruction[7:0] != W_KEY && instruction[8] == 1'b1)begin
                 wasd_down[0] <= 1'b0;
             end
             if(instruction == S_KEY && instruction[8] == 1'b0)begin
                 wasd_down[2] <= 1'b1;
-            end else begin
+            end else if(instruction[7:0] != S_KEY && instruction[8] == 1'b1)begin
                 wasd_down[2] <= 1'b0;
             end
             if(instruction[7:0] == D_KEY && instruction[8] == 1'b0)begin
                 wasd_down[3] <= 1'b1;
-            end
-            else begin
+            end else if(instruction[7:0] != D_KEY && instruction[8] == 1'b1)begin
                 wasd_down[3] <= 1'b0;
             end
             if(instruction[7:0] == A_KEY && instruction[8] == 1'b0)begin
                 wasd_down[1] <= 1'b1;
-            end
-            else begin
+            end else if(instruction[7:0] != A_KEY && instruction[8] == 1'b1)begin
                 wasd_down[1] <= 1'b0;
             end
             // if(instruction[7:0] == R_KEY && instruction[8] == 1'b0)begin
@@ -211,94 +208,101 @@
     //third bit: 0:stand 1:move
     //coll    0人物下   1 上  2 右  3 左
     //wasd    0w  1a  2s  3d
-        reg [31:0] left_cnt, right_cnt, up_cnt, down_cnt;
+        reg [9:0] left_cnt, right_cnt, up_cnt, down_cnt;
         reg isJump;
-        reg [31:0] JumpTimer, FallTimer, JumpTimerUpdate, FallTimerUpdate;
+        reg [9:0] JumpTimer, FallTimer, JumpTimerUpdate, FallTimerUpdate;
         initial begin
             left_cnt <= 0;
             right_cnt <= 0;
             up_cnt <= 0;
             down_cnt <= 0;
             isJump <= 1'b0;
-            JumpTimer <= 31'd250000;
-            FallTimer <= 31'd500000;
+            JumpTimer <= 9'd25;
+            FallTimer <= 9'd50;
             JumpTimerUpdate <= 0;
             FallTimerUpdate <= 0;
         end
-        always @ (posedge clk) begin
-            //update x_blue
-                if (wasd_down[1] == 1'b1 && wasd_down[3] == 1'b0 && collision_state[3] == 1'b0) begin
-                    blue_state[0] <= 1'b0;
-                    blue_state[2] <= 1'b1;
-                    if(left_cnt < 12_500_00)begin
-                        left_cnt <= left_cnt + 1;
-                    end else begin
-                        left_cnt <= 0;
-                        x_blue <= x_blue - 10'd1;
-                    end
-                end 
-                else if (wasd_down[3] == 1'b1 && collision_state[2] == 1'b0) begin
-                    blue_state[0] <= 1'b1;
-                    blue_state[2] <= 1'b1;
-                    if(right_cnt < 12_500_00)begin
-                        right_cnt <= right_cnt + 1;
-                    end else begin
-                        right_cnt <= 0;
-                        x_blue <= x_blue + 10'd1;
-                    end
-                end 
-                else begin
-                    blue_state[2] <= 1'b0;
-                end
-            //update y_blue
-                if(collision_state[1] == 1'b1 || JumpTimer == 31'd500000) begin//touch the ceiling
-                    isJump = 1'b0;
-                end
-                else if(wasd_down[0] == 1'b1 && collision_state[0] == 1'b1) begin //jump from the ground
-                    isJump = 1'b1;
-                end
-
-                if(isJump == 1'b0)begin
-                    JumpTimer <= 31'd250000;
-                    JumpTimerUpdate <= 0;
-                    if(collision_state[0] == 1'b0) begin //fall from the air
-                        if(FallTimerUpdate == 24) begin
-                            if(FallTimer > 31'd200000)
-                                FallTimer <= FallTimer - 31'd50000;
-                            else
-                                FallTimer <= 31'd200000;
-                            FallTimerUpdate <= 0;
-                        end else if(down_cnt < FallTimer)begin
-                            down_cnt <= down_cnt + 1;
+        always @ (posedge clk_total) begin
+            if(instruction[7:0] == R_KEY && instruction[8] == 1'b0)begin
+                x_blue <= 10'd0;
+                y_blue <= 9'd367;
+            end
+            else begin
+                //update x_blue
+                    if (wasd_down[1] == 1'b1 && wasd_down[3] == 1'b0 && collision_state[3] == 1'b0) begin//left
+                        blue_state[0] <= 1'b0;
+                        blue_state[2] <= 1'b1;
+                        if(left_cnt < 125)begin
+                            left_cnt <= left_cnt + 1;
                         end else begin
-                            down_cnt <= 0;
-                            y_blue <= y_blue + 9'd1;
-                            FallTimerUpdate <= FallTimerUpdate + 1;
+                            left_cnt <= 0;
+                            x_blue <= x_blue - 10'd1;
                         end
-                    end else begin
-                        FallTimer <= 31'd500000;
-                        FallTimerUpdate <= 0;
+                    end 
+                    else if (wasd_down[3] == 1'b1 && collision_state[2] == 1'b0) begin
+                        blue_state[0] <= 1'b1;
+                        blue_state[2] <= 1'b1;
+                        if(right_cnt < 125)begin
+                            right_cnt <= right_cnt + 1;
+                        end else begin
+                            right_cnt <= 0;
+                            x_blue <= x_blue + 10'd1;
+                        end
+                    end 
+                    else begin
+                        blue_state[2] <= 1'b0;
                     end
-                end else begin//jump in the air
-                    FallTimer <= 31'd500000;
-                    FallTimerUpdate <= 0;
-                    if(JumpTimerUpdate == 24) begin
-                        JumpTimer <= JumpTimer + 31'd50000;
+                //update y_blue
+                //update the isJump
+                    if(collision_state[1] == 1'b1 || JumpTimer >= 9'd50) begin//touch the ceiling
+                        isJump = 1'b0;
+                    end
+                    else if(wasd_down[0] == 1'b1 && collision_state[0] == 1'b1) begin //jump from the ground
+                        isJump = 1'b1;
+                    end
+                //implement the jump and fall
+                    if(isJump == 1'b0)begin
+                        JumpTimer <= 9'd25;
                         JumpTimerUpdate <= 0;
-                    end else if(up_cnt < JumpTimer)begin
-                        up_cnt <= up_cnt + 1;
-                    end else begin
-                        up_cnt <= 0;
-                        y_blue <= y_blue - 9'd1;
-                        JumpTimerUpdate <= JumpTimerUpdate + 1;
+                        if(collision_state[0] == 1'b0) begin //fall from the air with increasing speed
+                            if(FallTimerUpdate == 24) begin// decrease the timer to control the speed of the fall
+                                if(FallTimer > 9'd20)
+                                    FallTimer <= FallTimer - 9'd5;
+                                else//the max speed of the fall
+                                    FallTimer <= 9'd20;
+                                FallTimerUpdate <= 0;
+                            end else if(down_cnt < FallTimer)begin
+                                down_cnt <= down_cnt + 1;
+                            end else begin
+                                down_cnt <= 0;
+                                y_blue <= y_blue + 9'd1;
+                                FallTimerUpdate <= FallTimerUpdate + 1;
+                            end
+                        end else begin
+                            FallTimer <= 9'd50;
+                            FallTimerUpdate <= 0;
+                        end
+                    end else begin//jump in the air with decreasing speed
+                        FallTimer <= 9'd50;
+                        FallTimerUpdate <= 0;
+                        if(JumpTimerUpdate == 24) begin// increase the timer to control the speed of the jump
+                            JumpTimer <= JumpTimer + 9'd5;
+                            JumpTimerUpdate <= 0;
+                        end else if(up_cnt < JumpTimer)begin
+                            up_cnt <= up_cnt + 1;
+                        end else begin
+                            up_cnt <= 0;
+                            y_blue <= y_blue - 9'd1;
+                            JumpTimerUpdate <= JumpTimerUpdate + 1;
+                        end
                     end
-                end
-            //update the state of Jack
-                if (collision_state[0] == 1'b0) begin 
-                    blue_state[1] <= 1'b1; //in the air
-                end else begin
-                    blue_state[1] <= 1'b0; //on the ground
-                end
+                //update the state of Jack
+                    if (collision_state[0] == 1'b0) begin 
+                        blue_state[1] <= 1'b1; //in the air
+                    end else begin
+                        blue_state[1] <= 1'b0; //on the ground
+                    end
+            end
         end
 ////////////////////////////////Implement the moves of the game//////////////////////////////
    

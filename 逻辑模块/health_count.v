@@ -1,3 +1,4 @@
+ `timescale 1ms / 10ns
 module health_count(
     input clk,
     input [1:0]slim_damage,
@@ -12,7 +13,7 @@ always@(posedge clk)begin
     if(slim_damage&&!wudi)begin
         health<=health-4'd1;
         wudi<=1'b1;
-        #3000000;
+        #3000;
         wudi<=1'b0;
     end
 end
