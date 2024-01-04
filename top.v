@@ -147,6 +147,7 @@
     parameter A_KEY = 8'h1C;
     parameter D_KEY = 8'h23;
     parameter R_KEY = 8'h2D;
+    parameter Q_KEY = 8'h15;
     // Instantiate the PS2 Keyboard module
     wire [9:0] instruction;
     wire ready;
@@ -183,6 +184,9 @@
             //     x_blue <= 10'd0;
             //     y_blue <= 9'd367;
             // end
+             if(instruction[7:0] == Q_KEY && instruction[8] == 1'b0)begin
+                reset = ~reset;
+            end
         end
     end
 
@@ -431,8 +435,8 @@
             end
         end
         //begin background
-        // if(game==2'b00&&col_addr_x>=0&&col_addr_x<=550&&row_addr_y>=0&&row_addr_y<=400)begin
-            // vga_data<=vga_bg1[11:0];   
+        // if(game==2'b00&&col_addr_x>=0&&col_addr_x<=550&&row_addr_y>=0&&row_addr_y<=440)begin
+        //     vga_data<=vga_bg1[11:0];   
         // end
     end
 ////////////////////////////////Image processing//////////////////////////////
