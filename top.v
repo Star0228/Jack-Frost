@@ -222,86 +222,79 @@
             FallTimerUpdate <= 0;
         end
         always @ (posedge clk) begin
-            if(instruction[7:0] == R_KEY && instruction[8] == 1'b0)begin
-                x_blue <= 10'd0;
-                y_blue <= 9'd367;
-            end
-            else begin
-                //update x_blue
-                    if (wasd_down[1] == 1'b1 && wasd_down[3] == 1'b0 && collision_state[3] == 1'b0) begin//left
-                        blue_state[0] <= 1'b0;
-                        blue_state[2] <= 1'b1;
-                        if(left_cnt < 12_500_00)begin
-                            left_cnt <= left_cnt + 1;
-                        end else begin
-                            left_cnt <= 0;
-                            x_blue <= x_blue - 10'd1;
-                        end
-                    end 
-                    else if (wasd_down[3] == 1'b1 && collision_state[2] == 1'b0) begin
-                        blue_state[0] <= 1'b1;
-                        blue_state[2] <= 1'b1;
-                        if(right_cnt < 12_500_00)begin
-                            right_cnt <= right_cnt + 1;
-                        end else begin
-                            right_cnt <= 0;
-                            x_blue <= x_blue + 10'd1;
-                        end
-                    end 
-                    else begin
-                        blue_state[2] <= 1'b0;
+            //update x_blue
+                if (wasd_down[1] == 1'b1 && wasd_down[3] == 1'b0 && collision_state[3] == 1'b0) begin
+                    blue_state[0] <= 1'b0;
+                    blue_state[2] <= 1'b1;
+                    if(left_cnt < 12_500_00)begin
+                        left_cnt <= left_cnt + 1;
+                    end else begin
+                        left_cnt <= 0;
+                        x_blue <= x_blue - 10'd1;
                     end
-                //update y_blue
-                //update the isJump
-                    if(collision_state[1] == 1'b1 || JumpTimer >= 31'd500000) begin//touch the ceiling
-                        isJump = 1'b0;
+                end 
+                else if (wasd_down[3] == 1'b1 && collision_state[2] == 1'b0) begin
+                    blue_state[0] <= 1'b1;
+                    blue_state[2] <= 1'b1;
+                    if(right_cnt < 12_500_00)begin
+                        right_cnt <= right_cnt + 1;
+                    end else begin
+                        right_cnt <= 0;
+                        x_blue <= x_blue + 10'd1;
                     end
-                    else if(wasd_down[0] == 1'b1 && collision_state[0] == 1'b1) begin //jump from the ground
-                        isJump = 1'b1;
-                    end
-                //implement the jump and fall
-                    if(isJump == 1'b0)begin
-                        JumpTimer <= 31'd250000;
-                        JumpTimerUpdate <= 0;
-                        if(collision_state[0] == 1'b0) begin //fall from the air with increasing speed
-                            if(FallTimerUpdate == 24) begin// decrease the timer to control the speed of the fall
-                                if(FallTimer > 31'd200000)
-                                    FallTimer <= FallTimer - 31'd50000;
-                                else//the max speed of the fall
-                                    FallTimer <= 31'd200000;
-                                FallTimerUpdate <= 0;
-                            end else if(down_cnt < FallTimer)begin
-                                down_cnt <= down_cnt + 1;
-                            end else begin
-                                down_cnt <= 0;
-                                y_blue <= y_blue + 9'd1;
-                                FallTimerUpdate <= FallTimerUpdate + 1;
-                            end
-                        end else begin
-                            FallTimer <= 31'd500000;
+                end 
+                else begin
+                    blue_state[2] <= 1'b0;
+                end
+            //update y_blue
+                if(collision_state[1] == 1'b1 || JumpTimer == 31'd500000) begin//touch the ceiling
+                    isJump = 1'b0;
+                end
+                else if(wasd_down[0] == 1'b1 && collision_state[0] == 1'b1) begin //jump from the ground
+                    isJump = 1'b1;
+                end
+
+                if(isJump == 1'b0)begin
+                    JumpTimer <= 31'd250000;
+                    JumpTimerUpdate <= 0;
+                    if(collision_state[0] == 1'b0) begin //fall from the air
+                        if(FallTimerUpdate == 24) begin
+                            if(FallTimer > 31'd200000)
+                                FallTimer <= FallTimer - 31'd50000;
+                            else
+                                FallTimer <= 31'd200000;
                             FallTimerUpdate <= 0;
+                        end else if(down_cnt < FallTimer)begin
+                            down_cnt <= down_cnt + 1;
+                        end else begin
+                            down_cnt <= 0;
+                            y_blue <= y_blue + 9'd1;
+                            FallTimerUpdate <= FallTimerUpdate + 1;
                         end
-                    end else begin//jump in the air with decreasing speed
+                    end else begin
                         FallTimer <= 31'd500000;
                         FallTimerUpdate <= 0;
-                        if(JumpTimerUpdate == 24) begin// increase the timer to control the speed of the jump
-                            JumpTimer <= JumpTimer + 31'd50000;
-                            JumpTimerUpdate <= 0;
-                        end else if(up_cnt < JumpTimer)begin
-                            up_cnt <= up_cnt + 1;
-                        end else begin
-                            up_cnt <= 0;
-                            y_blue <= y_blue - 9'd1;
-                            JumpTimerUpdate <= JumpTimerUpdate + 1;
-                        end
                     end
-                //update the state of Jack
-                    if (collision_state[0] == 1'b0) begin 
-                        blue_state[1] <= 1'b1; //in the air
+                end else begin//jump in the air
+                    FallTimer <= 31'd500000;
+                    FallTimerUpdate <= 0;
+                    if(JumpTimerUpdate == 24) begin
+                        JumpTimer <= JumpTimer + 31'd50000;
+                        JumpTimerUpdate <= 0;
+                    end else if(up_cnt < JumpTimer)begin
+                        up_cnt <= up_cnt + 1;
                     end else begin
-                        blue_state[1] <= 1'b0; //on the ground
+                        up_cnt <= 0;
+                        y_blue <= y_blue - 9'd1;
+                        JumpTimerUpdate <= JumpTimerUpdate + 1;
                     end
-            end
+                end
+            //update the state of Jack
+                if (collision_state[0] == 1'b0) begin 
+                    blue_state[1] <= 1'b1; //in the air
+                end else begin
+                    blue_state[1] <= 1'b0; //on the ground
+                end
         end
 ////////////////////////////////Implement the moves of the game//////////////////////////////
    
