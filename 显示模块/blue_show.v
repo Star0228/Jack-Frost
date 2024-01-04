@@ -79,25 +79,25 @@ always @(posedge clk )begin
                 end
         endcase
         end
-        if(blue_state[1]==0)begin
+        if(blue_state[0]==0)begin
             case(ip_blue)
-                 0:vga_blue <= vga_blue_jump;
-                1:vga_blue <= vga_blue_jump;
-                2:vga_blue <= vga_blue_jump;
-                3:vga_blue <= vga_blue_jump;
-                4:vga_blue <= vga_blue_jump;
-                5:vga_blue <= vga_blue_jump;
-                6:vga_blue <= vga_blue_jump;
-                7:vga_blue <= vga_blue_jump;
-                8:vga_blue <= vga_blue_jump;
-                9:vga_blue <= vga_blue_jump;
-                10:vga_blue <= vga_blue_jump;
-                11:vga_blue <= vga_blue_jump;
-                12:vga_blue <= vga_blue_jump;
-                13:vga_blue <= vga_blue_jump;
-                14:vga_blue <= vga_blue_jump;
+                 0:vga_blue <= vga_bl_ljump;
+                1:vga_blue <= vga_bl_ljump;
+                2:vga_blue <= vga_bl_ljump;
+                3:vga_blue <= vga_bl_ljump;
+                4:vga_blue <= vga_bl_ljump;
+                5:vga_blue <= vga_bl_ljump;
+                6:vga_blue <= vga_bl_ljump;
+                7:vga_blue <= vga_bl_ljump;
+                8:vga_blue <= vga_bl_ljump;
+                9:vga_blue <= vga_bl_ljump;
+                10:vga_blue <= vga_bl_ljump;
+                11:vga_blue <= vga_bl_ljump;
+                12:vga_blue <= vga_bl_ljump;
+                13:vga_blue <= vga_bl_ljump;
+                14:vga_blue <= vga_bl_ljump;
                 15:begin
-                    vga_blue <= vga_blue_jump;
+                    vga_blue <= vga_bl_ljump;
                     ip_blue <= 0;
                 end
         endcase
