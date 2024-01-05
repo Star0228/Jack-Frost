@@ -1,0 +1,17 @@
+# Output products list for <begin_bg>
+_xmsgs/pn_parser.xmsgs
+begin_bg/blk_mem_gen_v7_3_readme.txt
+begin_bg/doc/blk_mem_gen_v7_3_vinfo.html
+begin_bg/doc/pg058-blk-mem-gen.pdf
+begin_bg.asy
+begin_bg.gise
+begin_bg.mif
+begin_bg.ngc
+begin_bg.sym
+begin_bg.v
+begin_bg.veo
+begin_bg.xco
+begin_bg.xise
+begin_bg_flist.txt
+begin_bg_xmdf.tcl
+summary.log

@@ -1,0 +1,17 @@
+# Output products list for <blue_r_walk_3>
+_xmsgs/pn_parser.xmsgs
+blue_r_walk_3/blk_mem_gen_v7_3_readme.txt
+blue_r_walk_3/doc/blk_mem_gen_v7_3_vinfo.html
+blue_r_walk_3/doc/pg058-blk-mem-gen.pdf
+blue_r_walk_3.asy
+blue_r_walk_3.gise
+blue_r_walk_3.mif
+blue_r_walk_3.ngc
+blue_r_walk_3.sym
+blue_r_walk_3.v
+blue_r_walk_3.veo
+blue_r_walk_3.xco
+blue_r_walk_3.xise
+blue_r_walk_3_flist.txt
+blue_r_walk_3_xmdf.tcl
+summary.log

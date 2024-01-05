@@ -1,0 +1,17 @@
+# Output products list for <slim_frozen_3>
+_xmsgs/pn_parser.xmsgs
+slim_frozen_3/blk_mem_gen_v7_3_readme.txt
+slim_frozen_3/doc/blk_mem_gen_v7_3_vinfo.html
+slim_frozen_3/doc/pg058-blk-mem-gen.pdf
+slim_frozen_3.asy
+slim_frozen_3.gise
+slim_frozen_3.mif
+slim_frozen_3.ngc
+slim_frozen_3.sym
+slim_frozen_3.v
+slim_frozen_3.veo
+slim_frozen_3.xco
+slim_frozen_3.xise
+slim_frozen_3_flist.txt
+slim_frozen_3_xmdf.tcl
+summary.log

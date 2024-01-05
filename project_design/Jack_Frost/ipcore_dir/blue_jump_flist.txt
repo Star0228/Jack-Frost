@@ -1,0 +1,17 @@
+# Output products list for <blue_jump>
+_xmsgs/pn_parser.xmsgs
+blue_jump/blk_mem_gen_v7_3_readme.txt
+blue_jump/doc/blk_mem_gen_v7_3_vinfo.html
+blue_jump/doc/pg058-blk-mem-gen.pdf
+blue_jump.asy
+blue_jump.gise
+blue_jump.mif
+blue_jump.ngc
+blue_jump.sym
+blue_jump.v
+blue_jump.veo
+blue_jump.xco
+blue_jump.xise
+blue_jump_flist.txt
+blue_jump_xmdf.tcl
+summary.log

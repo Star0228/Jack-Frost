@@ -1,0 +1,17 @@
+# Output products list for <ground_ice>
+_xmsgs/pn_parser.xmsgs
+ground_ice/blk_mem_gen_v7_3_readme.txt
+ground_ice/doc/blk_mem_gen_v7_3_vinfo.html
+ground_ice/doc/pg058-blk-mem-gen.pdf
+ground_ice.asy
+ground_ice.gise
+ground_ice.mif
+ground_ice.ngc
+ground_ice.sym
+ground_ice.v
+ground_ice.veo
+ground_ice.xco
+ground_ice.xise
+ground_ice_flist.txt
+ground_ice_xmdf.tcl
+summary.log

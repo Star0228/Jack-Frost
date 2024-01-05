@@ -1,0 +1,17 @@
+# Output products list for <slim_frozen_7>
+_xmsgs/pn_parser.xmsgs
+slim_frozen_7/blk_mem_gen_v7_3_readme.txt
+slim_frozen_7/doc/blk_mem_gen_v7_3_vinfo.html
+slim_frozen_7/doc/pg058-blk-mem-gen.pdf
+slim_frozen_7.asy
+slim_frozen_7.gise
+slim_frozen_7.mif
+slim_frozen_7.ngc
+slim_frozen_7.sym
+slim_frozen_7.v
+slim_frozen_7.veo
+slim_frozen_7.xco
+slim_frozen_7.xise
+slim_frozen_7_flist.txt
+slim_frozen_7_xmdf.tcl
+summary.log

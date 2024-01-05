@@ -1,0 +1,17 @@
+# Output products list for <lose>
+_xmsgs/pn_parser.xmsgs
+lose/blk_mem_gen_v7_3_readme.txt
+lose/doc/blk_mem_gen_v7_3_vinfo.html
+lose/doc/pg058-blk-mem-gen.pdf
+lose.asy
+lose.gise
+lose.mif
+lose.ngc
+lose.sym
+lose.v
+lose.veo
+lose.xco
+lose.xise
+lose_flist.txt
+lose_xmdf.tcl
+summary.log

@@ -1,0 +1,17 @@
+# Output products list for <blue_static_5>
+_xmsgs/pn_parser.xmsgs
+blue_static_5/blk_mem_gen_v7_3_readme.txt
+blue_static_5/doc/blk_mem_gen_v7_3_vinfo.html
+blue_static_5/doc/pg058-blk-mem-gen.pdf
+blue_static_5.asy
+blue_static_5.gise
+blue_static_5.mif
+blue_static_5.ngc
+blue_static_5.sym
+blue_static_5.v
+blue_static_5.veo
+blue_static_5.xco
+blue_static_5.xise
+blue_static_5_flist.txt
+blue_static_5_xmdf.tcl
+summary.log

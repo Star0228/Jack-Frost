@@ -1,0 +1,16 @@
+# Output products list for <snowf_11>
+_xmsgs/pn_parser.xmsgs
+snowf_11/blk_mem_gen_v7_3_readme.txt
+snowf_11/doc/blk_mem_gen_v7_3_vinfo.html
+snowf_11/doc/pg058-blk-mem-gen.pdf
+snowf_11.asy
+snowf_11.gise
+snowf_11.ngc
+snowf_11.sym
+snowf_11.v
+snowf_11.veo
+snowf_11.xco
+snowf_11.xise
+snowf_11_flist.txt
+snowf_11_xmdf.tcl
+summary.log
