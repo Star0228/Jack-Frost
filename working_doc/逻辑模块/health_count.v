@@ -6,7 +6,6 @@ module health_count(
     input [31:0]ipcnt,
     output reg [3:0]health
 );
-///the number of bk_for
 initial begin
     health <= 4'd3;
 end
@@ -28,6 +27,7 @@ always@(posedge clk)begin
     end
     if(num==64)begin
         wudi<=1'b0;
+        //long time that the jack is wudi
     end
 end
 endmodule

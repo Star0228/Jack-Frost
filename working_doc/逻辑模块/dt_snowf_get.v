@@ -15,5 +15,6 @@ always @(posedge clk) begin
     if (x_blue+10'd23 > x_snowf+10'd10&&x_blue+10'd23<x_snowf+10'd14&&y_blue+9'd20>y_snowf+9'd13-9'd10&&y_blue+9'd20<y_snowf+9'd23+9'd10) begin
         snowf_get <= 1;
     end 
+    //the situation that the jack touch the snowflake
 end
 endmodule
