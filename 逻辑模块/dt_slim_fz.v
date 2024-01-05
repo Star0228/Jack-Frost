@@ -3,7 +3,7 @@ module dt_slim_fz(
     input clk,
     input [9:0]x_blue,x_slim,
     input [8:0]y_blue,y_slim,
-    input ipcnt,
+    input [31:0]ipcnt,
     output reg frozen
 );
 initial begin
@@ -22,7 +22,7 @@ always @(posedge clk) begin
         
     end
     if(num == 15)begin
-            frozen <= 0;
+        frozen <= 0;
     end
 end
 endmodule

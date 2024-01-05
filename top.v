@@ -14,6 +14,7 @@
     wire clk_total;
     wire [3:0]score;
     wire [3:0]health;
+    reg [31:0]ipcnt;
     reg reset;
     initial begin
         reset = 1'b0;
@@ -27,7 +28,6 @@
     wire [9:0]col_addr_x;
     wire [8:0]row_addr_y;
     vgac v1(.vga_clk(clkdiv[1]),.clrn(1'b1),.d_in(vga_data),.row_addr(row_addr_y),.col_addr(col_addr_x),.hs(hs),.vs(vs),.r(r),.g(g),.b(b));
-    Sseg_Dev m7(.clk(clk),.rst(1'b0),.Start(clkdiv[20]),.flash(1),.Hexs({score,24'b0,health}),.point({8'b01000001}),.LES(8'b00000000),.seg_clk(segled_clk),.seg_clrn(SEGLED_CLR),.seg_sout(SEGLED_DO),.SEG_PEN(SEGLED_PEN));
 ////////////////Global Variables and Initialize//////////////////////////////
 
 ////////////////////////////////Initialize the coordinates of various objects//////////////////////////////
@@ -116,8 +116,8 @@
     //2. icing the monsters
     wire [monster_num-1:0]slim_frozen;
     //update the signal with loop
-    dt_slim_fz dt_slim_fz1(.clk(clk),.x_blue(x_blue),.y_blue(y_blue),.x_slim(x_slim1),.y_slim(y_slim1),.frozen(slim_frozen[0]));
-    dt_slim_fz dt_slim_fz2(.clk(clk),.x_blue(x_blue),.y_blue(y_blue),.x_slim(x_slim2),.y_slim(y_slim2),.frozen(slim_frozen[1]));
+    dt_slim_fz dt_slim_fz1(.ipcnt(ipcnt),.clk(clk),.x_blue(x_blue),.y_blue(y_blue),.x_slim(x_slim1),.y_slim(y_slim1),.frozen(slim_frozen[0]));
+    dt_slim_fz dt_slim_fz2(.ipcnt(ipcnt),.clk(clk),.x_blue(x_blue),.y_blue(y_blue),.x_slim(x_slim2),.y_slim(y_slim2),.frozen(slim_frozen[1]));
 
     //3. damaged by the monsters
     wire [monster_num-1:0]slim_damage;
@@ -353,7 +353,6 @@
     end
 
     //renew the image
-    reg [31:0]ipcnt;
     //这里便能控制单次刷新后保持不变
     always @(posedge clk) begin
         if(ipcnt == 6_000_000) begin  // 40ms*100M=4M，由于计数器只有3位，所以这里实例只能计数到500k，所以选用了40ms/5=8ms，即2.5*100k
@@ -440,6 +439,8 @@
             vga_data<=vga_lose;   
         end
     end
+    Sseg_Dev m7(.clk(clk),.rst(1'b0),.Start(clkdiv[20]),.flash(1),.Hexs({score,24'b0,health}),.point({8'b01000001}),.LES(8'b00000000),.seg_clk(segled_clk),.seg_clrn(SEGLED_CLR),.seg_sout(SEGLED_DO),.SEG_PEN(SEGLED_PEN));
+
 ////////////////////////////////Image processing//////////////////////////////
 
 endmodule
