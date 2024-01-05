@@ -124,7 +124,7 @@
     //update the signal with loop
     dt_slim_bk dt_slim_bk1(.clk(clk),.x_blue(x_blue),.y_blue(y_blue),.x_slim(x_slim1),.y_slim(y_slim1),.isfrozen(slim_frozen[0]),.broken(slim_damage[0]));
     dt_slim_bk dt_slim_bk2(.clk(clk),.x_blue(x_blue),.y_blue(y_blue),.x_slim(x_slim2),.y_slim(y_slim2),.isfrozen(slim_frozen[1]),.broken(slim_damage[1]));
-    health_count health_f(.reset(reset),.clk(clk),.slim_damage(slim_damage),.health(health));
+    health_count health_f(.ipcnt(ipcnt),.reset(reset),.clk(clk),.slim_damage(slim_damage),.health(health));
   
     //4. get the snowflakes
     wire [snowflake_num-1:0]snowf_get;    

@@ -9,10 +9,10 @@ module dt_slim_fz(
 initial begin
     frozen <= 0;//62*36   47*41/43
 end
-reg [3:0]num;
+reg [7:0]num;
 always @(posedge clk) begin
     if (ipcnt == 6000000) begin
-        num <= (num+1)%16;
+        num <= (num+1)%256;
     end
     if(frozen==0)begin
         num<=0;     
@@ -21,7 +21,7 @@ always @(posedge clk) begin
         frozen <= 1;
         
     end
-    if(num == 15)begin
+    if(num == 255)begin
         frozen <= 0;
     end
 end
