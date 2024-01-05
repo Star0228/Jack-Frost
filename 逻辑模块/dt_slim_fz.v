@@ -19,9 +19,10 @@ always @(posedge clk) begin
     end
     if (x_blue+10'd24 < x_slim+10'd62&&x_blue+10'd24 > x_slim && y_blue + 9'd41< y_slim+9'd2&&y_blue+9'd41 > y_slim-9'd2) begin
         frozen <= 1;
-        if(num == 15)begin
+        
+    end
+    if(num == 15)begin
             frozen <= 0;
-        end
     end
 end
 endmodule

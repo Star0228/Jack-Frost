@@ -27,7 +27,7 @@
     wire [9:0]col_addr_x;
     wire [8:0]row_addr_y;
     vgac v1(.vga_clk(clkdiv[1]),.clrn(1'b1),.d_in(vga_data),.row_addr(row_addr_y),.col_addr(col_addr_x),.hs(hs),.vs(vs),.r(r),.g(g),.b(b));
-    Sseg_Dev m7(.clk(clk),.rst(1'b0),.Start(clkdiv[20]),.flash(1),.Hexs({4'b0000,score,20'b0,health}),.point({8'b01000001}),.LES(8'b00000000),.seg_clk(segled_clk),.seg_clrn(SEGLED_CLR),.seg_sout(SEGLED_DO),.SEG_PEN(SEGLED_PEN));
+    Sseg_Dev m7(.clk(clk),.rst(1'b0),.Start(clkdiv[20]),.flash(1),.Hexs({score,24'b0,health}),.point({8'b01000001}),.LES(8'b00000000),.seg_clk(segled_clk),.seg_clrn(SEGLED_CLR),.seg_sout(SEGLED_DO),.SEG_PEN(SEGLED_PEN));
 ////////////////Global Variables and Initialize//////////////////////////////
 
 ////////////////////////////////Initialize the coordinates of various objects//////////////////////////////
@@ -309,7 +309,7 @@
     wire [11:0] vga_lose;
      // wire [11:0] vga_bg1;
     reg [18:0] bg;
-    reg [16:0] win_lose;
+    reg [18:0] win_lose;
     
     //蓝色小人静态图片的地址寄存器和vga输出
     wire [11:0]vga_blue;
@@ -393,7 +393,7 @@
         if(col_addr_x>=0&&col_addr_x<=550&&row_addr_y>=0&&row_addr_y<=400)begin
             vga_data<=vga_bg[11:0];   
         end
-        if(col_addr_x>550||row_addr_y>440)begin
+        if(col_addr_x>550||row_addr_y>400)begin
             vga_data<=12'h000;
         end
         //2.方块
@@ -434,10 +434,10 @@
         end
         //win or lose 
         if(game==2'b11&&col_addr_x>=180&&col_addr_x<=370&&row_addr_y>=134&&row_addr_y<=266)begin
-            vga_data<=vga_win[11:0];   
+            vga_data<=vga_win;   
         end
         if(game==2'b10&&col_addr_x>=180&&col_addr_x<=370&&row_addr_y>=134&&row_addr_y<=266)begin
-            vga_data<=vga_lose[11:0];   
+            vga_data<=vga_lose;   
         end
     end
 ////////////////////////////////Image processing//////////////////////////////

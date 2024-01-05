@@ -53,6 +53,6 @@ always @(posedge clk) begin
     if(snowf_get[14])begin
         tem <= tem + 4'd1;
     end
-    score <= tem;
+    score[3:0] <= tem[3:0];
 end
 endmodule
