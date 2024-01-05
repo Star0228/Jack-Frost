@@ -1,5 +1,5 @@
 `timescale 1ms / 10ns
-module slim_show(
+module slim_show1(
     input clk,
     input [31:0]ipcnt,
     input slim_frozen,
@@ -12,8 +12,8 @@ module slim_show(
 //3帧  1  3   7    1
 //34*33
 initial begin
-    x_slim <= 10'd300;
-    y_slim <= 9'd367;
+    x_slim <= 10'd240;
+    y_slim <= 9'd192;
 end
 reg [13:0]slim;
 reg [13:0]slim_r;

@@ -8,11 +8,50 @@ integer i;
 reg [3:0]tem;
 always @(posedge clk) begin
     tem <= 4'd0;
-    for (i = 0; i < 15; i = i+1) begin
-        // 如果寄存器的某个位是"1"，那么我们增加一比特
-        if (snowf_get[i]) begin
-           tem <=tem + 4'd1;
-        end
+    if(snowf_get[0])begin
+        tem <= tem + 4'd1;
+    end
+    if(snowf_get[1])begin
+        tem <= tem + 4'd1;
+    end
+    if(snowf_get[2])begin
+        tem <= tem + 4'd1;
+    end
+    if(snowf_get[3])begin
+        tem <= tem + 4'd1;
+    end
+    if(snowf_get[4])begin
+        tem <= tem + 4'd1;
+    end
+    if(snowf_get[5])begin
+        tem <= tem + 4'd1;
+    end
+    if(snowf_get[6])begin
+        tem <= tem + 4'd1;
+    end
+    if(snowf_get[7])begin
+        tem <= tem + 4'd1;
+    end
+    if(snowf_get[8])begin
+        tem <= tem + 4'd1;
+    end
+    if(snowf_get[9])begin
+        tem <= tem + 4'd1;
+    end
+    if(snowf_get[10])begin
+        tem <= tem + 4'd1;
+    end
+    if(snowf_get[11])begin
+        tem <= tem + 4'd1;
+    end
+    if(snowf_get[12])begin
+        tem <= tem + 4'd1;
+    end
+    if(snowf_get[13])begin
+        tem <= tem + 4'd1;
+    end
+    if(snowf_get[14])begin
+        tem <= tem + 4'd1;
     end
     score <= tem;
 end

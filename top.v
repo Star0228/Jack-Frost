@@ -63,7 +63,7 @@
             x_snowf[i]<=10'd28*(i-5)+10'd350;
             y_snowf[i]<=9'd370;
         end
-        for (integer i=10;i<14;i=i+1)begin
+        for (integer i=10;i<15;i=i+1)begin
             x_snowf[i]<=10'd28*(i-10);
             y_snowf[i]<=9'd105;
         end
@@ -87,12 +87,12 @@
             x_ground[i]<=425+10'd25*(i-27);
             y_ground[i]<=9'd310;
         end
-        for (integer i=36;i<44;i=i+1)begin
-            x_ground[i]<=150+10'd25*(i-36);
+        for (integer i=32;i<43;i=i+1)begin
+            x_ground[i]<=150+10'd25*(i-32);
             y_ground[i]<=9'd225;
         end
-        for (integer i=44;i<49;i=i+1)begin
-            x_ground[i]<=10'd25*(i-44);
+        for (integer i=43;i<50;i=i+1)begin
+            x_ground[i]<=10'd25*(i-43);
             y_ground[i]<=9'd135;
         end
 
@@ -132,7 +132,7 @@
     genvar dt_snowf_get_i;
     generate
         for (dt_snowf_get_i=0;dt_snowf_get_i<snowflake_num;dt_snowf_get_i=dt_snowf_get_i+1)begin:dt_snowf_get
-            dt_snowf_get dt_snowf_get_i(.clk(clk),.x_blue(x_blue),.y_blue(y_blue),.x_snowf(x_snowf[dt_snowf_get_i]),.y_snowf(y_snowf[dt_snowf_get_i]),.snowf_get(snowf_get[dt_snowf_get_i]));
+            dt_snowf_get dt_snowf_get_i(.reset(reset),.clk(clk),.x_blue(x_blue),.y_blue(y_blue),.x_snowf(x_snowf[dt_snowf_get_i]),.y_snowf(y_snowf[dt_snowf_get_i]),.snowf_get(snowf_get[dt_snowf_get_i]));
         end
     endgenerate
     score_count score_f(.clk(clk),.snowf_get(snowf_get),.score(score));
@@ -305,8 +305,11 @@
     //The address of the photo and the output of vga
     //背景1的地址寄存器和vga输出
     wire [11:0] vga_bg; 
-    // wire [11:0] vga_bg1;
+    wire [11:0] vga_win;
+    wire [11:0] vga_lose;
+     // wire [11:0] vga_bg1;
     reg [18:0] bg;
+    reg [16:0] win_lose;
     
     //蓝色小人静态图片的地址寄存器和vga输出
     wire [11:0]vga_blue;
@@ -330,6 +333,7 @@
     always @(posedge clk)begin
         //背景551*401
         bg<= (col_addr_x>=0&&col_addr_x<=550&&row_addr_y>=0&&row_addr_y<=400)?(row_addr_y)*551+col_addr_x:0;
+        win_lose <=(col_addr_x>=180&&col_addr_x<=370&&row_addr_y>=134&&row_addr_y<=266)?(row_addr_y)*191+col_addr_x:0;
         //蓝色小人静态图片47*41（x_blue,y_blue）图片自带428的背景色
         blue<= (col_addr_x>=x_blue&&col_addr_x<=x_blue+46&&row_addr_y>=y_blue&&row_addr_y<=y_blue+40)?(row_addr_y-y_blue)*47+col_addr_x-x_blue:0;
 
@@ -362,10 +366,11 @@
     //assign the address to the vga
     // begin_bg bg1(.clka(clk),.addra(bg),.douta(vga_bg1));
     background bg2(.clka(clk),.addra(bg),.douta(vga_bg));
-
+    win winf(.clka(clk),.addra(win_lose),.douta(vga_win));
+    lose losef(.clka(clk),.addra(win_lose),.douta(vga_lose));
     blue_show blue_show1(.clk(clk),.ipcnt(ipcnt),.blue(blue),.blue_state(blue_state),.vga_blue(vga_blue));
-    slim_show slim_show_1(.col_addr_x(col_addr_x),.row_addr_y(row_addr_y),.clk(clk),.ipcnt(ipcnt),.slim_frozen(slim_frozen[0]),.vga_slim(vga_slim1),.x_slim(x_slim1),.y_slim(y_slim1),.num(0));
-    slim_show slim_show_2(.col_addr_x(col_addr_x),.row_addr_y(row_addr_y),.clk(clk),.ipcnt(ipcnt),.slim_frozen(slim_frozen[1]),.vga_slim(vga_slim2),.x_slim(x_slim2),.y_slim(y_slim2),.num(1));
+    slim_show slim_show_1(.col_addr_x(col_addr_x),.row_addr_y(row_addr_y),.clk(clk),.ipcnt(ipcnt),.slim_frozen(slim_frozen[0]),.vga_slim(vga_slim1),.x_slim(x_slim1),.y_slim(y_slim1));
+    slim_show1 slim_show_2(.col_addr_x(col_addr_x),.row_addr_y(row_addr_y),.clk(clk),.ipcnt(ipcnt),.slim_frozen(slim_frozen[1]),.vga_slim(vga_slim2),.x_slim(x_slim2),.y_slim(y_slim2));
     genvar ground_show_i;
     generate
         for (ground_show_i=0;ground_show_i<ground_num;ground_show_i=ground_show_i+1)begin:ground_show
@@ -427,10 +432,13 @@
                 vga_data<=vga_blue[11:0];   
             end
         end
-        //begin background
-        // if(game==2'b00&&col_addr_x>=0&&col_addr_x<=550&&row_addr_y>=0&&row_addr_y<=440)begin
-        //     vga_data<=vga_bg1[11:0];   
-        // end
+        //win or lose 
+        if(game==2'b11&&col_addr_x>=180&&col_addr_x<=370&&row_addr_y>=134&&row_addr_y<=266)begin
+            vga_data<=vga_win[11:0];   
+        end
+        if(game==2'b10&&col_addr_x>=180&&col_addr_x<=370&&row_addr_y>=134&&row_addr_y<=266)begin
+            vga_data<=vga_lose[11:0];   
+        end
     end
 ////////////////////////////////Image processing//////////////////////////////
 
