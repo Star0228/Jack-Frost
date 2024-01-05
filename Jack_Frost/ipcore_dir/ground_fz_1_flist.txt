@@ -1,0 +1,17 @@
+# Output products list for <ground_fz_1>
+_xmsgs/pn_parser.xmsgs
+ground_fz_1/blk_mem_gen_v7_3_readme.txt
+ground_fz_1/doc/blk_mem_gen_v7_3_vinfo.html
+ground_fz_1/doc/pg058-blk-mem-gen.pdf
+ground_fz_1.asy
+ground_fz_1.gise
+ground_fz_1.mif
+ground_fz_1.ngc
+ground_fz_1.sym
+ground_fz_1.v
+ground_fz_1.veo
+ground_fz_1.xco
+ground_fz_1.xise
+ground_fz_1_flist.txt
+ground_fz_1_xmdf.tcl
+summary.log

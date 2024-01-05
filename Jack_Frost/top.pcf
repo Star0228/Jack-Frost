@@ -1,0 +1,29 @@
+//! **************************************************************************
+// Written by: Map P.20131013 on Fri Jan 05 17:06:09 2024
+//! **************************************************************************
+
+SCHEMATIC START;
+COMP "hs" LOCATE = SITE "M22" LEVEL 1;
+COMP "vs" LOCATE = SITE "M21" LEVEL 1;
+COMP "SEGLED_CLR" LOCATE = SITE "M20" LEVEL 1;
+COMP "ps2_clk" LOCATE = SITE "N18" LEVEL 1;
+COMP "r<0>" LOCATE = SITE "N21" LEVEL 1;
+COMP "r<1>" LOCATE = SITE "N22" LEVEL 1;
+COMP "r<2>" LOCATE = SITE "R21" LEVEL 1;
+COMP "r<3>" LOCATE = SITE "P21" LEVEL 1;
+COMP "clk" LOCATE = SITE "AC18" LEVEL 1;
+COMP "b<0>" LOCATE = SITE "T20" LEVEL 1;
+COMP "b<1>" LOCATE = SITE "R20" LEVEL 1;
+COMP "b<2>" LOCATE = SITE "T22" LEVEL 1;
+COMP "b<3>" LOCATE = SITE "T23" LEVEL 1;
+COMP "SEGLED_PEN" LOCATE = SITE "R18" LEVEL 1;
+COMP "g<0>" LOCATE = SITE "R22" LEVEL 1;
+COMP "g<1>" LOCATE = SITE "R23" LEVEL 1;
+COMP "g<2>" LOCATE = SITE "T24" LEVEL 1;
+COMP "g<3>" LOCATE = SITE "T25" LEVEL 1;
+COMP "rstn" LOCATE = SITE "W13" LEVEL 1;
+COMP "ps2_data" LOCATE = SITE "M19" LEVEL 1;
+COMP "SEGLED_DO" LOCATE = SITE "L24" LEVEL 1;
+COMP "segled_clk" LOCATE = SITE "M24" LEVEL 1;
+SCHEMATIC END;
+

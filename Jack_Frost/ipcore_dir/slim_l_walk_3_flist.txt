@@ -1,0 +1,17 @@
+# Output products list for <slim_l_walk_3>
+_xmsgs/pn_parser.xmsgs
+slim_l_walk_3/blk_mem_gen_v7_3_readme.txt
+slim_l_walk_3/doc/blk_mem_gen_v7_3_vinfo.html
+slim_l_walk_3/doc/pg058-blk-mem-gen.pdf
+slim_l_walk_3.asy
+slim_l_walk_3.gise
+slim_l_walk_3.mif
+slim_l_walk_3.ngc
+slim_l_walk_3.sym
+slim_l_walk_3.v
+slim_l_walk_3.veo
+slim_l_walk_3.xco
+slim_l_walk_3.xise
+slim_l_walk_3_flist.txt
+slim_l_walk_3_xmdf.tcl
+summary.log

@@ -1,0 +1,17 @@
+# Output products list for <ground_fz_3>
+_xmsgs/pn_parser.xmsgs
+ground_fz_3/blk_mem_gen_v7_3_readme.txt
+ground_fz_3/doc/blk_mem_gen_v7_3_vinfo.html
+ground_fz_3/doc/pg058-blk-mem-gen.pdf
+ground_fz_3.asy
+ground_fz_3.gise
+ground_fz_3.mif
+ground_fz_3.ngc
+ground_fz_3.sym
+ground_fz_3.v
+ground_fz_3.veo
+ground_fz_3.xco
+ground_fz_3.xise
+ground_fz_3_flist.txt
+ground_fz_3_xmdf.tcl
+summary.log

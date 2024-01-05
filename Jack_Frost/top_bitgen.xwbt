@@ -1,0 +1,8 @@
+INTSTYLE=ise
+INFILE=/tmp/Logic/Jack_Frost/top.ncd
+OUTFILE=/tmp/Logic/Jack_Frost/top.bit
+FAMILY=Kintex7
+PART=xc7k160t-1ffg676
+WORKINGDIR=/tmp/Logic/Jack_Frost
+LICENSE=WebPack
+USER_INFO=__0_0_0

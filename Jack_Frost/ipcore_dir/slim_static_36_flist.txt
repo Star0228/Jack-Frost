@@ -1,0 +1,17 @@
+# Output products list for <slim_static_36>
+_xmsgs/pn_parser.xmsgs
+slim_static_36/blk_mem_gen_v7_3_readme.txt
+slim_static_36/doc/blk_mem_gen_v7_3_vinfo.html
+slim_static_36/doc/pg058-blk-mem-gen.pdf
+slim_static_36.asy
+slim_static_36.gise
+slim_static_36.mif
+slim_static_36.ngc
+slim_static_36.sym
+slim_static_36.v
+slim_static_36.veo
+slim_static_36.xco
+slim_static_36.xise
+slim_static_36_flist.txt
+slim_static_36_xmdf.tcl
+summary.log
