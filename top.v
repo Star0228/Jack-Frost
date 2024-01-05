@@ -223,7 +223,7 @@
             end
             else begin
                 //update x_blue
-                    if (wasd_down[1] == 1'b1 && wasd_down[3] == 1'b0 && collision_state[3] == 1'b0) begin//left
+                    if (wasd_down[1] == 1'b1 && wasd_down[3] == 1'b0 && collision_state[3] == 1'b0 && x_blue > 10'd1) begin//left
                         blue_state[0] <= 1'b0;
                         blue_state[2] <= 1'b1;
                         if(left_cnt < 75)begin
@@ -233,7 +233,7 @@
                             x_blue <= x_blue - 10'd1;
                         end
                     end 
-                    else if (wasd_down[3] == 1'b1 && collision_state[2] == 1'b0) begin
+                    else if (wasd_down[3] == 1'b1 && collision_state[2] == 1'b0 && x_blue < 10'd500) begin
                         blue_state[0] <= 1'b1;
                         blue_state[2] <= 1'b1;
                         if(right_cnt < 75)begin
@@ -333,7 +333,7 @@
     always @(posedge clk)begin
         //背景551*401
         bg<= (col_addr_x>=0&&col_addr_x<=550&&row_addr_y>=0&&row_addr_y<=400)?(row_addr_y)*551+col_addr_x:0;
-        win_lose <=(col_addr_x>=180&&col_addr_x<=370&&row_addr_y>=134&&row_addr_y<=266)?(row_addr_y)*191+col_addr_x:0;
+        win_lose <=(col_addr_x>=180&&col_addr_x<=370&&row_addr_y>=134&&row_addr_y<=266)?(row_addr_y++9'd20)*191+col_addr_x+10'd45:0;
         //蓝色小人静态图片47*41（x_blue,y_blue）图片自带428的背景色
         blue<= (col_addr_x>=x_blue&&col_addr_x<=x_blue+46&&row_addr_y>=y_blue&&row_addr_y<=y_blue+40)?(row_addr_y-y_blue)*47+col_addr_x-x_blue:0;
 
