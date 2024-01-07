@@ -14,6 +14,7 @@ reg [13:0]blue_l;
 always@(posedge clk)begin
 blue_l[13:0]<=(14'd46-blue[13:0] % 14'd47)+(blue[13:0]/14'd47)*14'd47;
 end
+
 //蓝色小人向右静止的图片像素值  1 5 9 13
 wire [11:0]vga_blue_st_1,vga_blue_st_5,vga_blue_st_9,vga_blue_st_13;
 blue_static_1 blue_st_1f(.clka(clk),.addra(blue),.douta(vga_blue_st_1));
